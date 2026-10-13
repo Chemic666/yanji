@@ -16,4 +16,4 @@ FIRST VIEWPORT: 今日340 DIP专注及感想列、剩余宽度记录及节奏列
 FORM: Windows WPF命名Grid；seed: none (user pinned direction).
 FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance.
 
-Native WPF checks supersede unsupported DOM/CSS and mobile-platform workflows. No web detector or independent agent review is claimed; user forbids subagents.
+Native WPF checks supersede unsupported DOM/CSS and mobile-platform workflows. No web detector or independent agent review is claimed; this execution used sequential review in one workspace conversation. This is an execution limitation, not a user prohibition on subagents.

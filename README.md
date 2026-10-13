@@ -1,8 +1,10 @@
-# 研迹 YanJi V0.2
+# 研迹 YanJi V0.2.1
 
 Windows 11 x64 本地考研备考管理客户端。2028 指入学年份，考试日期可留空。无账号、服务器、云同步或 AI。
 
-正式源码：`D:\Projects\yanji`。自包含程序放在 `releases\YanJi-v0.2.0-win-x64\YanJi.exe`；完整解压发布包后双击启动，无需安装 .NET SDK。日常使用不需要阅读代码。V0.1.1 与视觉样板发布目录及 Git 标签保留。
+正式源码：`D:\Projects\yanji`。自包含程序放在 `releases\YanJi-v0.2.1-win-x64\YanJi.exe`；完整解压发布包后双击启动，无需安装 .NET SDK。日常使用不需要阅读代码。V0.1.1、V0.2.0 与视觉样板发布目录及 Git 标签保留。
+
+V0.2.1 的当前交付与验证入口：[交付说明](docs/V021-DELIVERY.md)、[验证报告](docs/V021-VALIDATION.md)、[Skill 使用矩阵](docs/V021-SKILL-USAGE.md)、[设计规范](docs/V021-DESIGN.md)。以下 V0.2 文档同时保留为历史基线。
 
 - 使用、计时、补录、备份恢复：[V0.2 使用说明](docs/V02-USER-GUIDE.md)
 - 实际执行结果与未测边界：[V0.2 验证报告](docs/V02-VALIDATION.md)

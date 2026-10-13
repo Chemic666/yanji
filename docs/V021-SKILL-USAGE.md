@@ -166,7 +166,7 @@ Verification：实际commands为上表9项；source读取、v0.2.0 UI diff、12�
 
 ### Critique / audit / polish 来源与限制
 
-⚠️ DEGRADED: single-context（用户明确禁止子代理）。设计审查与技术核查在同一模型内依次完成，不独立；Questions skipped: 用户已批准完整计划并明确无需阶段确认。
+⚠️ DEGRADED: single-context（本轮执行未采用独立评审代理，并非用户明确禁止子代理）。设计审查与技术核查在同一工作会话内依次完成，不独立；Questions skipped: 用户已批准完整计划并明确无需阶段确认。
 
 首轮批量56页面+4详情；第二轮确认后，额外技术复验只处理已观察到的 MeasureOverride 裁切、口径文字首屏失败和工具栏输入高度，保留所有失败。没有第三个视觉方向或无限微调；最终停止外观打磨。before与final配对图及 comparison.html 依赖全部本地。
 
