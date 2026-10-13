@@ -1,0 +1,22 @@
+{
+  "Source": "https://github.com/Leonxlnx/taste-skill",
+  "Files": [
+    {
+      "Name": "LICENSE",
+      "Sha256": "4575A543AB88DAD12CCEA7D97E563D0BCE5B448B06072E65D3264497DAD326DF"
+    },
+    {
+      "Name": "redesign-skill.md",
+      "Sha256": "A75D547D04595FE97A5D377DDDF145D029D51487A4F2A0A5A9D3B532CA3B84CD"
+    },
+    {
+      "Name": "soft-skill.md",
+      "Sha256": "E1E32F5E2D420872C6C7332B53D5FF7721946766B78C4822B424C2D512C8FDBC"
+    }
+  ],
+  "PluginManifestVersion": "1.0.0",
+  "RuntimeDiscovery": "NOT AUTO LOADED",
+  "GlobalInstallation": "NOT INSTALLED",
+  "Use": "Manually read pinned project reference after review; no installation script",
+  "Commit": "d237dd399d57524945c0c81327da5da19f7a468d"
+}
