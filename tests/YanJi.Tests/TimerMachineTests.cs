@@ -91,7 +91,7 @@ public class TimerMachineTests
         timer.Finish(Sample(100_000));
         Assert.Equal(130_000, timer.Snapshot.DurationMs);
         Assert.Equal(TimerState.Completed, timer.Snapshot.State);
-        Assert.Single(timer.Snapshot.Parts.Where(x => x.Kind == PartKind.DurationOnly));
+        Assert.Single(timer.Snapshot.Parts, x => x.Kind == PartKind.DurationOnly);
     }
 
     [Fact]
@@ -110,4 +110,10 @@ public class TimerMachineTests
         Assert.Equal(900_000, timer.Snapshot.Parts.Where(x => x.Date == new DateOnly(2026, 10, 14)).Sum(x => x.DurationMs));
         Assert.Equal(1_200_000, timer.Snapshot.DurationMs);
     }
+    [Theory]
+    [InlineData(-1, 20000, "process-a")]
+    [InlineData(20000, -1, "process-a")]
+    [InlineData(20000, 20000, "process-b")]
+    public void CounterResetOrChangedProcessDoesNotCreditGap(long awake,long boot,string token)
+    {var timer=Started();timer.Advance(Sample(10000));timer.Advance(new(Sample(20000).Utc,awake,boot,token));Assert.Equal(TimerState.NeedsReview,timer.Snapshot.State);Assert.Equal(10000,timer.Snapshot.DurationMs);}
 }

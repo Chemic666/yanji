@@ -31,7 +31,7 @@ public sealed record SubjectTotal(string SubjectId, string Name, long DurationMs
 public sealed record ClockSample(DateTimeOffset Utc, long AwakeMs, long BootMs, string ProcessToken);
 public sealed record TimerSnapshot(string SessionId, string SubjectId, string? ChapterId, string Note,
     string ZoneId, TimerState State, List<StudyPart> Parts, ClockSample? LastSample,
-    long? TrustedEndUtcMs, string? ReviewReason = null)
+    long? TrustedEndUtcMs, string? ReviewReason = null, long Version = 0)
 {
     public long DurationMs => Parts.Sum(x => x.DurationMs);
     public bool IsActive => State is TimerState.Running or TimerState.Paused or TimerState.NeedsReview;

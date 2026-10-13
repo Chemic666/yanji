@@ -4,6 +4,7 @@ public sealed class TimerMachine
 {
     private TimerSnapshot _snapshot = new("", "", null, "", "Asia/Shanghai", TimerState.Idle, [], null, null);
     public TimerSnapshot Snapshot => _snapshot with { Parts = [.. _snapshot.Parts] };
+    public void ConfirmSaved(long version) => _snapshot = _snapshot with { Version = version };
     public void Start(string subjectId, string? chapterId, string note, string zoneId, ClockSample now)
     {
         if (_snapshot.IsActive) throw new InvalidOperationException("已有活动计时。");

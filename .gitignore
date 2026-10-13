@@ -4,6 +4,7 @@
 .idea/
 .tools/
 artifacts/
+releases/
 TestResults/
 *.db
 *.db-*
