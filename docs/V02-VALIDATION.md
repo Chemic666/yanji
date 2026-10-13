@@ -27,7 +27,7 @@
 |旧V0.1.1升级兼容|PASS|v02-upgrade-5a3cf33bb47145d1a505b891f307e651；旧二进制写入444条记录，新GUI打开全部表不变，含audit/settings；无迁移|
 |完整备份/恢复|PASS|旧、新备份分别校验和实际恢复，对比各自原始snapshot；integrity=ok；仅owned库|
 |大量记录与响应|PASS|400行虚拟化；实际容器3；刷新/布局样本229.9ms，非持续FPS基准|
-|自包含/ZIP|由package-validation.json确认|构建win-x64；解压逐文件SHA256和3次实际启动，不凭编译宣布可运行|
+|自包含/ZIP|PASS；最终身份见package-validation.json|首包495个文件解压SHA256匹配、3次实际启动；保留首包，最终清洁提交重建只更新版本身份，再次按相同门禁确认|
 |Skills发现与使用|PASS / 限制|五个入口repo/enabled，错误0；WPF搜索实际运行；Impeccable引擎context失败127，文本fallback，未下载引擎|
 |实际IME候选窗、手工全流程键盘|NOT TESTED|自动化中文赋值与焦点不能证明真实输入法|
 |100/125/150%设备切换、跨屏|NOT TESTED|未修改系统DPI；辅助渲染不等同真实设备|

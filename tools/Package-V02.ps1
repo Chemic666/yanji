@@ -8,6 +8,8 @@ $upgrade=Get-Content "$repo/artifacts/latest-v02-upgrade.txt"
 $performance=Get-Content "$repo/artifacts/latest-v02-final-performance.txt"
 if((git -C $repo status --porcelain).Length -gt 0){throw 'Commit verified source before packaging.'}
 $commit=(git -C $repo rev-parse HEAD).Trim()
+$productVersion=(Get-Item "$release/YanJi.exe").VersionInfo.ProductVersion
+if($productVersion -ne "0.2.0+$commit"){throw 'Rebuild from the clean delivery commit so embedded provenance matches source.'}
 $rows=Get-Content "$desktop/visual/results.json" -Raw | ConvertFrom-Json
 if($rows.Count -lt 90 -or @($rows | Where-Object Status -ne 'PASS').Count){throw 'Final WPF checks are incomplete.'}
 if((Get-Content "$upgrade/compatibility.json" -Raw | ConvertFrom-Json).Status -ne 'PASS'){throw 'Compatibility check missing.'}
@@ -21,7 +23,9 @@ Copy-Item "$repo/docs/V02-VALIDATION.md" "$release/VALIDATION.md"
 Copy-Item "$repo/docs/V02-DESIGN.md" "$release/DESIGN.md"
 Copy-Item "$repo/docs/V02-SKILLS.md" "$release/SKILLS.md"
 Copy-Item "$repo/THIRD-PARTY-NOTICES.md" "$release/THIRD-PARTY-NOTICES.md"
-Copy-Item "$repo/releases/YanJi-v0.1.1-win-x64/licenses" "$release/licenses" -Recurse
+$sourceLicenses="$repo/releases/YanJi-v0.1.1-win-x64/licenses"
+if(!(Test-Path "$release/licenses")){Copy-Item $sourceLicenses "$release/licenses" -Recurse}
+else{foreach($license in Get-ChildItem -LiteralPath $sourceLicenses -Recurse -File){$target=Join-Path "$release/licenses" ([IO.Path]::GetRelativePath($sourceLicenses,$license.FullName));if(!(Test-Path -LiteralPath $target) -or (Get-FileHash -LiteralPath $target).Hash -ne (Get-FileHash -LiteralPath $license.FullName).Hash){throw 'Retained runtime license differs; inspect before packaging.'}}}
 @'
 研迹 YanJi V0.2 · Windows 11 x64
 完整解压文件夹后双击 YanJi.exe；无需安装 .NET SDK。

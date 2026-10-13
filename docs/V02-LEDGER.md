@@ -36,3 +36,9 @@
 - 正式发布路径最终90 PASS / 0 FAIL，v02-desktop-bc7218132f9c452ca6f4d5a5ec47763a，实际Tooltip HWND已捕获；包括原63、新展示/焦点/原生菜单/真实悬停24、高对比/月历3。
 - 最终核心70 PASS，旧库兼容复核v02-upgrade-5a3cf33bb47145d1a505b891f307e651 PASS；真实用户库仍未读取。
 - 所有owned测试进程均等待自然结束；最终默认渲染资源四段采样PASS，v02-performance-final-93f73671e9a04273bd0142238db7be0c。每段约60秒，默认15秒检查点样本全机CPU0.27%、峰值工作集282.4MiB。发布包ZIP完成后由manifest与package-validation核实。
+
+## 发布收尾
+
+- 首次ZIP解压495个文件逐一SHA256匹配，3次实际启动均使用包内运行时，Exit=0。程序无测试数据库，源码快照及证据ZIP已生成。
+- 收尾核对发现构建时工作区修改尚未提交，二进制ProductVersion的Git标识仍为c839d09。实际代码已验证，但元信息不够准确；保存此首包到owned artifacts，不作为最终交付，清洁提交后重新构建，包装门禁要求嵌入标识等于源码HEAD。
+- 最后变动仅审查记录、包装复用与版本元信息；正式页面/核心功能源码不再变化，不重复外观打磨。最终ZIP再次逐文件校验和实际启动确认，结果由交付package-validation.json/manifest保存。
