@@ -61,7 +61,7 @@ public partial class App : Application
                 }
                 Shutdown();return;
             }
-            var model=new MainViewModel(_dataDirectory);MainWindow=new MainWindow(model);MainWindow.Show();
+            var model=new MainViewModel(_dataDirectory);MainWindow=new MainWindow(model);if(PerformanceOnly||StartupOnly)MainWindow.ShowActivated=false;MainWindow.Show();
         }
         catch(Exception exception)
         {
