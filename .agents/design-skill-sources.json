@@ -1,0 +1,89 @@
+[
+  {
+    "Source": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill",
+    "Commit": "7246805992a42b7bba37d4cac83b01416f0c6c44",
+    "Version": "2.15.0",
+    "License": "MIT",
+    "Installations": [
+      {
+        "Path": "D:\\Projects\\yanji\\.agents\\skills\\ui-ux-pro-max",
+        "Name": "ui-ux-pro-max",
+        "SkillSha256": "ea087c341bfb5b23195c7302027268ede86da802554c18a5c4896a6017b439f9",
+        "Mode": "installed and read; current chat manual invocation",
+        "ExecutableAudit": "UIUX search-only stdlib, no network/process operations in runtime modules; Impeccable launcher no-download probe exit127; remaining selected skills text only"
+      }
+    ],
+    "Installer": "OpenAI skill-installer with explicit project --dest; no upstream installer executed"
+  },
+  {
+    "Source": "https://github.com/pbakaus/impeccable",
+    "Commit": "245ad82def45831dc56a21b683c7a1ff530b06cc",
+    "Version": "4.5.2",
+    "License": "Apache-2.0",
+    "Installations": [
+      {
+        "Path": "D:\\Projects\\yanji\\.agents\\skills\\impeccable",
+        "Name": "impeccable",
+        "SkillSha256": "58c0252bca04521de87007aeb495f7ec99dc4c7341bc890fe82b6d577573af91",
+        "Mode": "installed and read; current chat manual invocation",
+        "ExecutableAudit": "UIUX search-only stdlib, no network/process operations in runtime modules; Impeccable launcher no-download probe exit127; remaining selected skills text only"
+      }
+    ],
+    "Installer": "OpenAI skill-installer with explicit project --dest; no upstream installer executed"
+  },
+  {
+    "Source": "https://github.com/Leonxlnx/taste-skill",
+    "Commit": "d237dd399d57524945c0c81327da5da19f7a468d",
+    "Version": "1.0.0 manifest",
+    "License": "MIT",
+    "Installations": [
+      {
+        "Path": "D:\\Projects\\yanji\\.agents\\skills\\redesign-skill",
+        "Name": "redesign-existing-projects",
+        "SkillSha256": "a75d547d04595fe97a5d377dddf145d029d51487a4f2a0a5a9d3b532ca3b84cd",
+        "Mode": "installed and read; current chat manual invocation",
+        "ExecutableAudit": "UIUX search-only stdlib, no network/process operations in runtime modules; Impeccable launcher no-download probe exit127; remaining selected skills text only"
+      },
+      {
+        "Path": "D:\\Projects\\yanji\\.agents\\skills\\soft-skill",
+        "Name": "high-end-visual-design",
+        "SkillSha256": "e1e32f5e2d420872c6c7332b53d5ff7721946766b78c4822b424c2d512c8fdbc",
+        "Mode": "installed and read; current chat manual invocation",
+        "ExecutableAudit": "UIUX search-only stdlib, no network/process operations in runtime modules; Impeccable launcher no-download probe exit127; remaining selected skills text only"
+      }
+    ],
+    "Installer": "OpenAI skill-installer with explicit project --dest; no upstream installer executed"
+  },
+  {
+    "Source": "https://github.com/jakubkrehel/make-interfaces-feel-better",
+    "Commit": "35545ea1512ad59fa463e6b1f95ca9c052981fe6",
+    "Version": "no independent semver",
+    "License": "MIT",
+    "Installations": [
+      {
+        "Path": "D:\\Projects\\yanji\\.agents\\skills\\make-interfaces-feel-better",
+        "Name": "make-interfaces-feel-better",
+        "SkillSha256": "c1d508fa7bef8e47ee682b4f214c7a4ed1416b91d05a97285e555bad1c41a23e",
+        "Mode": "installed and read; current chat manual invocation",
+        "ExecutableAudit": "UIUX search-only stdlib, no network/process operations in runtime modules; Impeccable launcher no-download probe exit127; remaining selected skills text only"
+      }
+    ],
+    "Installer": "OpenAI skill-installer with explicit project --dest; no upstream installer executed"
+  },
+  {
+    "Source": "https://github.com/anthropics/skills",
+    "Commit": "dbd4588f9e1033efb41dad4bef2f7947c8993d44",
+    "Version": "no independent semver",
+    "License": "Apache-2.0",
+    "Installations": [],
+    "Installer": "OpenAI skill-installer with explicit project --dest; no upstream installer executed"
+  },
+  {
+    "Source": "https://github.com/vercel-labs/agent-skills",
+    "Commit": "063bee94c3f4df8453406c830b0a7df0f2860278",
+    "Version": "web-design-guidelines metadata 1.0.0",
+    "License": "NO LICENSE FILE FOUND for selected folder; reference only",
+    "Installations": [],
+    "Installer": "OpenAI skill-installer with explicit project --dest; no upstream installer executed"
+  }
+]

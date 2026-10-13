@@ -15,5 +15,7 @@ TestResults/
 *.user
 *.suo
 *.tmp
+**/__pycache__/
+*.pyc
 *.png
 !docs/*.png

@@ -1,0 +1,2 @@
+# Third-party skill sources remain byte-identical to the reviewed commit.
+skills/** -text -whitespace
