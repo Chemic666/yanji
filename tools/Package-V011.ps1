@@ -12,7 +12,9 @@ $commit=(git -C $repo rev-parse HEAD).Trim()
 $rows=Get-Content "$desktop\smoke\results.json" -Raw | ConvertFrom-Json
 if(@($rows | Where-Object Status -ne 'PASS').Count -or $rows.Count -lt 63){throw 'Final actual GUI verification is incomplete.'}
 if((Get-Content "$upgrade\compatibility.json" -Raw | ConvertFrom-Json).Status -ne 'PASS'){throw 'Old data compatibility verification missing.'}
-New-Item -ItemType Directory -Path $OutputDirectory -Force | Out-Null
+$OutputDirectory=[IO.Path]::GetFullPath($OutputDirectory)
+if(Test-Path -LiteralPath $OutputDirectory){if(!(Test-Path -LiteralPath $OutputDirectory -PathType Container) -or @(Get-ChildItem -LiteralPath $OutputDirectory -Force).Count){throw 'Delivery output must be absent or empty; existing files are preserved before any output or release mutation.'}}
+else{New-Item -ItemType Directory -Path $OutputDirectory | Out-Null}
 $runtimeZip=Join-Path $OutputDirectory 'YanJi-v0.1.1-win-x64.zip'
 $sourceZip=Join-Path $OutputDirectory 'YanJi-v0.1.1-source.zip'
 $evidenceZip=Join-Path $OutputDirectory 'YanJi-v0.1.1-evidence.zip'
@@ -21,7 +23,8 @@ Copy-Item "$repo\docs\V011-USER-GUIDE.md" "$release\USER-GUIDE.md"
 Copy-Item "$repo\docs\V011-VALIDATION.md" "$release\VALIDATION.md"
 Copy-Item "$repo\docs\V011-DESIGN.md" "$release\DESIGN.md"
 Copy-Item "$repo\THIRD-PARTY-NOTICES.md" "$release\THIRD-PARTY-NOTICES.md"
-Copy-Item "$repo\releases\YanJi-v0.1.0-win-x64\licenses" "$release\licenses" -Recurse
+New-Item -ItemType Directory -Path "$release\licenses" -Force | Out-Null
+Get-ChildItem -LiteralPath "$repo\releases\YanJi-v0.1.0-win-x64\licenses" | ForEach-Object {Copy-Item -LiteralPath $_.FullName -Destination "$release\licenses" -Recurse -Force}
 @'
 研迹 YanJi V0.1.1 · Windows 11 x64
 完整解压文件夹后双击 YanJi.exe；无需安装 .NET SDK。
