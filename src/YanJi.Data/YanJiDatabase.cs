@@ -176,6 +176,34 @@ public sealed class YanJiDatabase : IDisposable
     private static bool Equivalent(StudyRecord a,StudyRecord b)=>Json(a with{Version=0,CreatedAt=null,Parts=a.Parts.OrderBy(p=>p.Id).ToList()})==Json(b with{Version=0,CreatedAt=null,Parts=b.Parts.OrderBy(p=>p.Id).ToList()});
     public void DeleteRecord(string id, long version) { var record=Records(null,true).Single(x=>x.Id==id);SaveRecord(record with{Version=version,Deleted=true},"删除（可追溯）"); }
     public void RestoreRecord(string id,long version) {var record=Records(null,true).Single(x=>x.Id==id);SaveRecord(record with{Version=version,Deleted=false},"恢复已删除记录");}
+    public void ExcludePart(string id,string partId,long version)
+    {
+        lock(_gate){var record=Records(null,true).Single(x=>x.Id==id);
+            if(record.Deleted)throw new InvalidOperationException("请先恢复整次学习记录。");
+            if(record.Parts.Count<=1)throw new InvalidOperationException("最后一个片段请使用整次记录软删除，可完整恢复。");
+            if(!record.Parts.Any(p=>p.Id==partId))throw new InvalidOperationException("片段已变化，请刷新。");
+            SaveRecord(record with{Version=version,Parts=record.Parts.Where(p=>p.Id!=partId).ToList()},"排除学习片段 "+partId);}
+    }
+    public void RestorePart(string id,string partId,long version)
+    {
+        lock(_gate){var record=Records(null,true).Single(x=>x.Id==id);
+            if(record.Deleted)throw new InvalidOperationException("请先恢复整次学习记录。");
+            var part=ExcludedParts(id).SingleOrDefault(p=>p.Id==partId)??throw new InvalidOperationException("未找到可恢复的排除片段。");
+            SaveRecord(record with{Version=version,Parts=record.Parts.Append(part).OrderBy(p=>p.Date).ThenBy(p=>p.StartUtcMs).ToList()},"恢复学习片段 "+partId);}
+    }
+    public List<StudyPart> ExcludedParts(string id)
+    {
+        lock(_gate){var record=Records(null,true).Single(x=>x.Id==id);var visited=new HashSet<string>();List<StudyPart> excluded=[];
+            foreach(var revision in History(id).Where(r=>r.EntityKind=="session"&&r.BeforeJson!=null&&r.AfterJson!=null))
+            {
+                var removing=revision.Reason.StartsWith("排除学习片段 ",StringComparison.Ordinal);
+                if(!removing&&!revision.Reason.StartsWith("恢复学习片段 ",StringComparison.Ordinal))continue;
+                var before=Parse<StudyRecord>(revision.BeforeJson!);var after=Parse<StudyRecord>(revision.AfterJson!);
+                var changed=removing?before.Parts.Where(p=>!after.Parts.Any(a=>a.Id==p.Id)):after.Parts.Where(p=>!before.Parts.Any(a=>a.Id==p.Id));
+                foreach(var part in changed)if(visited.Add(part.Id)&&removing&&!record.Parts.Any(p=>p.Id==part.Id))excluded.Add(part);
+            }
+            return excluded.OrderBy(p=>p.Date).ThenBy(p=>p.StartUtcMs).ToList();}
+    }
     public List<Revision> History(string id)
     {
         lock(_gate){using var c=Open();using var cmd=Command(c,null,"SELECT id,kind,entity,version,at,reason,before_json,after_json FROM revisions WHERE entity=$id ORDER BY rowid DESC",("$id",id));
@@ -224,6 +252,8 @@ public sealed class YanJiDatabase : IDisposable
     public string Setting(string key,string fallback)
     {lock(_gate){using var c=Open();return Scalar(c,null,"SELECT payload FROM settings WHERE id=$id",("$id",key)) is string text?Parse<string>(text):fallback;}}
     public void SaveSetting(string key,string value)=>SaveEntity("settings",key,value,"设置修改");
+    public Dictionary<string,string> Settings()
+    {lock(_gate){using var c=Open();using var cmd=Command(c,null,"SELECT id,payload FROM settings");using var r=cmd.ExecuteReader();Dictionary<string,string> result=[];while(r.Read())result.Add(r.GetString(0),Parse<string>(r.GetString(1)));return result;}}
     public string Integrity(){lock(_gate){using var c=Open();return (string)Scalar(c,null,"PRAGMA integrity_check")!;}}
     public Dictionary<string,string> Diagnostics()
     {lock(_gate){using var c=Open();return new(){["sqlite"]=Convert.ToString(Scalar(c,null,"SELECT sqlite_version()"))!,["journal_mode"]=Convert.ToString(Scalar(c,null,"PRAGMA journal_mode"))!,["foreign_keys"]=Convert.ToString(Scalar(c,null,"PRAGMA foreign_keys"))!,["synchronous"]=Convert.ToString(Scalar(c,null,"PRAGMA synchronous"))!};}}
