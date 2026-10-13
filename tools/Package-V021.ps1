@@ -57,6 +57,18 @@ $upgrade=Get-Content "$repo/artifacts/v021-implementation/compatibility-path.txt
 Copy-Item $upgrade "$evidence/upgrade" -Recurse
 Copy-Item "$repo/artifacts/v021-completion.json" $evidence
 Copy-Item "$OutputDirectory/package-validation.json" $evidence
+foreach($log in Get-ChildItem $evidence -Recurse -File|Where-Object Extension -in @('.txt','.log')){
+ if($log.Name -match '^context'){
+  @('Sanitized engine execution excerpt: context --target src/YanJi.App/MainWindow.xaml; exit 0.','PRODUCT.md and DESIGN.md loaded. WPF platform/XAML unsupported; not a native engine PASS.','Complete raw CLI output retained locally, excluded from distribution.')|Set-Content -LiteralPath $log.FullName
+ }else{
+  $lines=Get-Content -LiteralPath $log.FullName
+  $safe=@('Sanitized distribution copy; complete raw diagnostic retained locally.')+@($lines|ForEach-Object{
+   if($_ -match '(?i)(authorization|bearer\s|access_token|refresh_token|id_token|client_secret|api_key|set-cookie|cookie\s*[:=])'){'[REDACTED credential-bearing line]'}
+   else{$_ -replace 'C:\\Users\\[^\\\s]+\\Documents\\Codex\\[^\s"<>]*','<cached-toolchain-path>'}
+  })
+  $safe|Set-Content -LiteralPath $log.FullName
+ }
+}
 'Only isolated synthetic data; no real user records. Before/after and failed attempts retained.'|Set-Content "$evidence/SYNTHETIC.txt"
 [IO.Compression.ZipFile]::CreateFromDirectory($evidence,"$OutputDirectory/YanJi-v0.2.1-evidence.zip")
 $packages=@(Get-ChildItem $OutputDirectory -Filter '*.zip'|ForEach-Object{[pscustomobject]@{Name=$_.Name;Path=$_.FullName;Bytes=$_.Length;Sha256=(Get-FileHash $_.FullName).Hash}})
