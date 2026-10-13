@@ -27,16 +27,20 @@ public static class VisualUpgradeRunner
     public static async Task RunAsync(MainWindow w,string output,Action<bool,string> check)
     {
         w.Width=1200;w.Height=800;w.UpdateLayout();await Task.Delay(100);
-        var vm=w.Model;var today=vm.LocalToday();var yesterday=today.AddDays(-1);
+        var vm=w.Model;var today=vm.LocalToday();
+        // Keep known test intervals away from the real timer saved by SmokeRunner,
+        // including when validation runs during the first twenty minutes of a day.
+        var fixtureDay=today.AddDays(-2);var yesterday=fixtureDay.AddDays(-1);
         var subjects=new[]{"math","english","408","politics"};
         for(var i=0;i<35;i++)vm.Database.SaveRecord(new("visual-"+i,subjects[i%4],null,SessionSource.Manual,i==0?"每日阅读与复盘":i==1?"长中文描述："+string.Concat(Enumerable.Repeat("理清概念与适用条件，整理每一处推导，下一次复习要先回顾错因。",8)):"章节练习与回顾",[TimeParts.Duration(today.AddDays(-i),TimeSpan.FromMinutes(25+(i*17)%110),vm.ZoneId)]),"视觉验收隔离数据");
-        var cross=vm.Database.SaveRecord(new("visual-cross","math",null,SessionSource.Timer,"同一次学习跨越午夜，分别计入本日与次日。",TimeParts.Interval(new DateTimeOffset(yesterday.ToDateTime(new TimeOnly(23,50)),TimeSpan.FromHours(8)),new DateTimeOffset(today.ToDateTime(new TimeOnly(0,20)),TimeSpan.FromHours(8)),"Asia/Shanghai")),"跨日验收");
+        var cross=vm.Database.SaveRecord(new("visual-cross","math",null,SessionSource.Timer,"同一次学习跨越午夜，分别计入本日与次日。",TimeParts.Interval(new DateTimeOffset(yesterday.ToDateTime(new TimeOnly(23,50)),TimeSpan.FromHours(8)),new DateTimeOffset(fixtureDay.ToDateTime(new TimeOnly(0,20)),TimeSpan.FromHours(8)),"Asia/Shanghai")),"跨日验收");
         vm.Database.SaveRecord(new("visual-known","english",null,SessionSource.Manual,"真实晨读区间",TimeParts.Interval(new DateTimeOffset(yesterday.ToDateTime(new TimeOnly(8,30)),TimeSpan.FromHours(8)),new DateTimeOffset(yesterday.ToDateTime(new TimeOnly(9,15)),TimeSpan.FromHours(8)),"Asia/Shanghai")),"真实区间验收");
         vm.Database.SaveChapter(new("visual-chapter","408","计算机网络 · 传输层",65,Mastery.Weak));vm.Database.SaveWeakPoint(new("visual-weak","TCP 拥塞控制的边界条件","区分慢开始、拥塞避免和快恢复。下次复习先用图画出窗口变化，再回到原题验收。","概念与边界","408","visual-chapter",WeakPointState.Reviewing,today.AddDays(2)));
         vm.Database.SaveRecord(new("visual-chapter-session","408","visual-chapter",SessionSource.Manual,"章节钻取应保持范围",[TimeParts.Duration(today,TimeSpan.FromMinutes(4),vm.ZoneId)]),"章节筛选验收");
         vm.Refresh();vm.StatsFrom=today.AddDays(-29).ToDateTime(TimeOnly.MinValue);vm.StatsTo=today.ToDateTime(TimeOnly.MinValue);vm.StatsSubjectId="";
         check(vm.Analysis?.DurationMs==vm.Database.DailyTotals(today.AddDays(-29),today).Sum(d=>d.DurationMs),"V011 graphs equal canonical saved milliseconds");
-        vm.RecordFrom=today.ToDateTime(TimeOnly.MinValue);vm.RecordTo=vm.RecordFrom;vm.RecordSubjectId="math";vm.RecordSource="timer";vm.RecordState="active";
+        await vm.ChangeDayAsync(fixtureDay.ToDateTime(TimeOnly.MinValue));
+        vm.RecordFrom=fixtureDay.ToDateTime(TimeOnly.MinValue);vm.RecordTo=vm.RecordFrom;vm.RecordSubjectId="math";vm.RecordSource="timer";vm.RecordState="active";
         check(vm.FilteredRecords.Any(r=>r.Record.Id==cross.Id)&&vm.FilteredRecords.All(r=>r.Record.Source==SessionSource.Timer&&r.Record.SubjectId=="math"),"V011 record date/subject/source/status filters");
         var row=vm.FilteredRecords.Single(r=>r.Record.Id==cross.Id);check(row.Contribution==1_200_000&&row.Record.DurationMs==1_800_000,"V011 cross-day contribution and whole duration are separate");
         vm.OpenDetail(row);w.UpdateLayout();SmokeRunner.Capture(w,Path.Combine(output,"detail-parts-light.png"));
@@ -44,7 +48,7 @@ public static class VisualUpgradeRunner
         {if(dialog is EditorDialog editor){editor.SetField("note","实际编辑入口：保留原始片段与整次身份");Click(Descendants(dialog).OfType<Button>().First(b=>b.IsDefault));}}));
         Click(Button(w,"编辑整次记录"));await Until(()=>!vm.Busy&&vm.SelectedRecord?.Record.Note=="实际编辑入口：保留原始片段与整次身份");
         check(vm.SelectedRecord!.Record.Id==cross.Id&&vm.SelectedRecord.Record.Parts.SequenceEqual(cross.Parts),"V011 actual record edit preserves identity and original interval parts");
-        check(vm.SelectedRecord.Contribution==1_200_000&&vm.SelectedRecord.ScopeFrom==today,"V011 detail refresh retains original day contribution scope");
+        check(vm.SelectedRecord.Contribution==1_200_000&&vm.SelectedRecord.ScopeFrom==fixtureDay,"V011 detail refresh retains original day contribution scope");
         var removed=cross.Parts[0];w.TestDialogShown=dialog=>dialog.Loaded+=(_,_)=>dialog.Dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle,new Action(()=>
         {SmokeRunner.Capture(dialog,Path.Combine(output,"confirm-part.png"));Click(Descendants(dialog).OfType<Button>().First(b=>Equals(b.Content,"排除此片段")));}));
         Click(Button(w,"排除片段",tag=>tag is PartRow p&&p.Part.Id==removed.Id));await Until(()=>!vm.Busy&&vm.ExcludedDetailParts.Any(p=>p.Part.Id==removed.Id));
@@ -53,7 +57,7 @@ public static class VisualUpgradeRunner
         var cancelShown=false;w.TestDialogShown=dialog=>dialog.Loaded+=(_,_)=>dialog.Dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle,new Action(()=>{cancelShown=true;Click(Descendants(dialog).OfType<Button>().First(b=>b.IsCancel));}));
         Click(Button(w,"删除整次记录"));await Until(()=>cancelShown&&!Application.Current.Windows.OfType<ConfirmDialog>().Any());check(vm.Database.Records().Any(r=>r.Id==cross.Id),"V011 cancelling deletion preserves records");
         w.TestDialogShown=dialog=>dialog.Loaded+=(_,_)=>dialog.Dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle,new Action(()=>
-        {var message=string.Join(" ",Descendants(dialog).OfType<TextBlock>().Select(t=>t.Text));check(message.Contains(yesterday.ToString("yyyy-MM-dd"))&&message.Contains(today.ToString("yyyy-MM-dd")),"V011 deletion confirmation names every affected date");SmokeRunner.Capture(dialog,Path.Combine(output,"confirm-session.png"));Click(Descendants(dialog).OfType<Button>().First(b=>Equals(b.Content,"软删除整次记录")));}));
+        {var message=string.Join(" ",Descendants(dialog).OfType<TextBlock>().Select(t=>t.Text));check(message.Contains(yesterday.ToString("yyyy-MM-dd"))&&message.Contains(fixtureDay.ToString("yyyy-MM-dd")),"V011 deletion confirmation names every affected date");SmokeRunner.Capture(dialog,Path.Combine(output,"confirm-session.png"));Click(Descendants(dialog).OfType<Button>().First(b=>Equals(b.Content,"软删除整次记录")));}));
         Click(Button(w,"删除整次记录"));await Until(()=>!vm.Busy&&vm.SelectedRecord?.Deleted==true);check(!vm.Database.Records().Any(r=>r.Id==cross.Id),"V011 actual whole-session soft delete refreshes statistics");
         Click(Button(w,"恢复整次记录"));await Until(()=>!vm.Busy&&vm.SelectedRecord?.Deleted==false);check(vm.Database.Records().Any(r=>r.Id==cross.Id),"V011 actual whole-session restore");vm.DrawerOpen=false;w.TestDialogShown=null;
         vm.Page=4;w.UpdateLayout();w.SubjectDonut.InvokePoint(0);await Task.Delay(80);check(vm.Page==6&&vm.FilteredRecords.All(r=>r.Record.SubjectId==vm.RecordSubjectId),"V011 subject donut drill-down enters filtered original records");
