@@ -68,6 +68,18 @@ internal static class V02VisualRunner
   w.Width=1200;w.Height=800;vm.Page=4;w.MainScroll.ScrollToBottom();await Shot(w,output,"statistics-secondary-dark");
   w.MainScroll.ScrollToTop();Keyboard.Focus(w.TrendChart);w.TrendChart.RaiseEvent(new KeyEventArgs(Keyboard.PrimaryDevice,PresentationSource.FromVisual(w),0,Key.Home){RoutedEvent=Keyboard.KeyDownEvent});
   check(AutomationProperties.GetHelpText(w.TrendChart).Contains("毫秒")&&Application.Current.Windows.Count>0,"V02 chart keyboard provides exact raw-duration description");
+  w.TrendChart.BringIntoView();w.UpdateLayout();w.Activate();Keyboard.Focus(w.ExitButton);await Task.Delay(80);ToolTipService.SetInitialShowDelay(w.TrendChart,100);
+  var pointer=NativeCapture.MoveToOwned(w.TrendChart,w.TrendChart.FirstHitCenter);
+  try
+  {
+   await Task.Delay(700);
+   var expected=DurationText.Exact(w.TrendChart.Data![0].Value);
+   check(w.TrendChart.IsMouseOver&&w.TrendChart.ToolTip is string hover&&hover.Contains(expected),"V02 actual owned-window pointer hover displays canonical milliseconds");
+   var tooltip=w.TrendChart.HoverTooltip;
+   check(tooltip.IsOpen&&tooltip.IsVisible&&tooltip.Content is string text&&text.Contains(expected),"V02 actual chart hover opens its native tooltip popup");NativeCapture.SavePopup(tooltip,Path.Combine(output,"chart-hover-exact-native.png"));
+  }
+  finally{NativeCapture.RestoreCursor(pointer);ToolTipService.SetInitialShowDelay(w.TrendChart,400);}
+  vm.StatsSubjectId="math";w.UpdateLayout();check(w.TrendChart.ToolTip==null,"V02 changing chart filter clears stale precision tooltip");vm.StatsSubjectId="";
   vm.Page=5;w.MainScroll.ScrollToTop();w.UpdateLayout();var theme=VisualUpgradeRunner.Descendants(w).OfType<CheckBox>().First(c=>Equals(c.Content,"深色主题"));Keyboard.Focus(theme);theme.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
   check(Keyboard.FocusedElement!=null,"V02 themed settings retain keyboard navigation");
   var converter=new DurationDisplayConverter();check((string)converter.Convert(1L,typeof(string),null!,System.Globalization.CultureInfo.InvariantCulture)=="0.001 秒","V02 compact display retains subsecond precision");
@@ -78,5 +90,15 @@ internal static class V02VisualRunner
   check(editor.ShowDialog()==true&&editor.Values?["minutes"]=="30","V02 validated editor can correct and save without a second dialog");
   if(editorFailure!=null)throw editorFailure;
   check(vm.Database.Integrity()=="ok","V02 presentation and interaction checks preserve database integrity");
+  vm.Page=1;await vm.ChangeDayAsync(today.ToDateTime(TimeOnly.MinValue));w.MainScroll.ScrollToTop();w.UpdateLayout();
+  var dayButton=VisualUpgradeRunner.Descendants(w).OfType<Button>().First(b=>b.DataContext is CalendarDay{Selected:true});
+  check(dayButton.BorderThickness.Left>=1&&((SolidColorBrush)dayButton.Background).Color==((SolidColorBrush)ThemeService.Brush("AccentSoft")).Color,"V02 selected calendar date has effective fill and visible border");
+  var original=(CalendarDay)dayButton.DataContext;var at=vm.Days.IndexOf(original);vm.Days[at]=original with{Status="待核对"};w.UpdateLayout();
+  dayButton=VisualUpgradeRunner.Descendants(w).OfType<Button>().First(b=>b.DataContext is CalendarDay{Selected:true});
+  check(dayButton.BorderThickness.Left>=1&&((SolidColorBrush)dayButton.BorderBrush).Color==((SolidColorBrush)ThemeService.Brush("Warning")).Color,"V02 pending-review calendar fixture has an effective warning border");
+  await Shot(w,output,"calendar-review-state-light");vm.Days[at]=original;
+  ThemeService.ApplyPalette(false,true);w.UpdateLayout();var selectedNav=(ListBoxItem)w.NavigationList.Items[1];
+  check(((SolidColorBrush)selectedNav.Foreground).Color==SystemColors.HighlightTextColor&&((SolidColorBrush)ThemeService.Brush("AccentSoft")).Color==SystemColors.HighlightColor,"V02 simulated high-contrast selection separates text and background");
+  await Shot(w,output,"high-contrast-palette-simulated");ThemeService.Apply(vm.DarkTheme);
  }
 }

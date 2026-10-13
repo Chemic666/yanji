@@ -6,10 +6,12 @@ public static class ThemeService
 {
     public static bool Dark {get;private set;}
     private static bool _initialized;
+    private static bool _highContrast;
     public static event Action? Changed;
-    public static void Apply(bool dark)
+    public static void Apply(bool dark)=>ApplyPalette(dark,SystemParameters.HighContrast);
+    internal static void ApplyPalette(bool dark,bool highContrast)
     {
-        if(_initialized&&Dark==dark)return;
+        if(_initialized&&Dark==dark&&_highContrast==highContrast)return;
         Dark=dark;
 #pragma warning disable WPF0001
         Application.Current.ThemeMode=dark?ThemeMode.Dark:ThemeMode.Light;
@@ -18,13 +20,22 @@ public static class ThemeService
             new[]{"#F6F4EE","#FEFDF9","#EDEFE7","#D9DED3","#29352E","#57665A","#456653","#DFE8D9","#A13E36","#F7E8E3","#805817","#F4ECD9","#ECEEE5","#425448","#E1E6DA","#354D3F","#899286","#FFFFFF"};
         var keys=new[]{"Canvas","CardBackground","Soft","Line","Ink","Muted","Accent","AccentSoft","Danger","DangerSoft","Warning","WarningSoft","NavigationBackground","NavigationInk","Hover","Pressed","DisabledInk","AccentInk"};
         for(var i=0;i<keys.Length;i++)Application.Current.Resources[keys[i]]=new SolidColorBrush((Color)ColorConverter.ConvertFromString(colors[i]));
-        if(SystemParameters.HighContrast)
+        Application.Current.Resources["SelectedInk"]=Application.Current.Resources["Accent"];
+        Application.Current.Resources["SelectionSurface"]=Application.Current.Resources["AccentSoft"];
+        if(highContrast)
         {
             foreach(var key in new[]{"Canvas","CardBackground","Soft","NavigationBackground"})Application.Current.Resources[key]=SystemColors.WindowBrush;
             foreach(var key in new[]{"Ink","Muted","NavigationInk"})Application.Current.Resources[key]=SystemColors.WindowTextBrush;
             foreach(var key in new[]{"Line","Accent"})Application.Current.Resources[key]=SystemColors.HighlightBrush;
             Application.Current.Resources["AccentSoft"]=SystemColors.HighlightBrush;Application.Current.Resources["AccentInk"]=SystemColors.HighlightTextBrush;
+            Application.Current.Resources["SelectedInk"]=SystemColors.HighlightTextBrush;
+            Application.Current.Resources["SelectionSurface"]=SystemColors.WindowBrush;
+            Application.Current.Resources["Hover"]=SystemColors.ControlBrush;
+            Application.Current.Resources["DisabledInk"]=SystemColors.GrayTextBrush;
+            foreach(var key in new[]{"Danger","Warning"})Application.Current.Resources[key]=SystemColors.WindowTextBrush;
+            foreach(var key in new[]{"DangerSoft","WarningSoft"})Application.Current.Resources[key]=SystemColors.WindowBrush;
         }
+        _highContrast=highContrast;
         _initialized=true;
         Changed?.Invoke();
     }

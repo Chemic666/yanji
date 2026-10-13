@@ -18,7 +18,7 @@ public sealed record PlotPoint(string Key,string Label,long Value,string Color,s
 /// <summary>Business charts drawn from immutable canonical projections. Geometry is display only.</summary>
 public sealed class StudyChart : FrameworkElement
 {
-    public static readonly DependencyProperty DataProperty=DependencyProperty.Register(nameof(Data),typeof(IReadOnlyList<PlotPoint>),typeof(StudyChart),new FrameworkPropertyMetadata(null,FrameworkPropertyMetadataOptions.AffectsRender|FrameworkPropertyMetadataOptions.AffectsMeasure));
+    public static readonly DependencyProperty DataProperty=DependencyProperty.Register(nameof(Data),typeof(IReadOnlyList<PlotPoint>),typeof(StudyChart),new FrameworkPropertyMetadata(null,FrameworkPropertyMetadataOptions.AffectsRender|FrameworkPropertyMetadataOptions.AffectsMeasure,(d,_)=>((StudyChart)d).ResetSelection()));
     public static readonly DependencyProperty ModeProperty=DependencyProperty.Register(nameof(Mode),typeof(string),typeof(StudyChart),new FrameworkPropertyMetadata("Trend",FrameworkPropertyMetadataOptions.AffectsRender|FrameworkPropertyMetadataOptions.AffectsMeasure));
     public static readonly DependencyProperty UnitProperty=DependencyProperty.Register(nameof(Unit),typeof(string),typeof(StudyChart),new FrameworkPropertyMetadata("time",FrameworkPropertyMetadataOptions.AffectsRender));
     public IReadOnlyList<PlotPoint>? Data {get=>(IReadOnlyList<PlotPoint>?)GetValue(DataProperty);set=>SetValue(DataProperty,value);}
@@ -28,8 +28,12 @@ public sealed class StudyChart : FrameworkElement
     private readonly List<(Geometry Shape,PlotPoint Point)> _hits=[];
     private int _selected=-1;
     private readonly ToolTip _keyboardTip=new(){Placement=PlacementMode.Top,StaysOpen=true};
+    private readonly ToolTip _hoverTip=new(){Placement=PlacementMode.RelativePoint,StaysOpen=true};
     public int HitCount=>_hits.Count;
-    public StudyChart(){Focusable=true;Cursor=Cursors.Hand;SnapsToDevicePixels=true;AutomationProperties.SetName(this,"学习图表，左右箭头选择数据，Enter 查看原始记录");}
+    internal Point FirstHitCenter=>new(_hits[0].Shape.Bounds.Left+_hits[0].Shape.Bounds.Width/2,_hits[0].Shape.Bounds.Top+_hits[0].Shape.Bounds.Height/2);
+    internal ToolTip HoverTooltip=>_hoverTip;
+    private void ResetSelection(){_selected=-1;ToolTip=null;_keyboardTip.IsOpen=false;_hoverTip.IsOpen=false;}
+    public StudyChart(){Focusable=true;Cursor=Cursors.Hand;SnapsToDevicePixels=true;ToolTipService.SetIsEnabled(this,false);_hoverTip.Style=_keyboardTip.Style=(Style)Application.Current.FindResource("FocusToolTip");AutomationProperties.SetName(this,"学习图表，左右箭头选择数据，Enter 查看原始记录");}
     protected override AutomationPeer OnCreateAutomationPeer()=>new FrameworkElementAutomationPeer(this);
     protected override Size MeasureOverride(Size available)=>new(double.IsInfinity(available.Width)?500:available.Width,
         Mode=="Heatmap"?154:Mode=="Timeline"?Math.Max(96,(Data?.Count??0)*52+28):Mode=="Donut"?Math.Max(220,(Data?.Count??0)*44+12):Mode=="Sparkline"?44:220);
@@ -100,13 +104,13 @@ public sealed class StudyChart : FrameworkElement
         }
         if(_selected>=0&&_selected<_hits.Count&&(IsKeyboardFocused||IsMouseOver)){dc.DrawGeometry(null,new Pen(ThemeService.Brush("Ink"),1.5),_hits[_selected].Shape);}
     }
-    protected override void OnMouseMove(MouseEventArgs e){base.OnMouseMove(e);var p=e.GetPosition(this);var hit=_hits.FindLastIndex(h=>h.Shape.FillContains(p));if(hit!=_selected){_selected=hit;ToolTip=hit<0?null:Description(_hits[hit].Point);InvalidateVisual();}}
+    protected override void OnMouseMove(MouseEventArgs e){base.OnMouseMove(e);var p=e.GetPosition(this);var hit=_hits.FindLastIndex(h=>h.Shape.FillContains(p));ToolTip=hit<0?null:Description(_hits[hit].Point);_hoverTip.IsOpen=hit>=0;if(hit>=0){_hoverTip.PlacementTarget=this;_hoverTip.PlacementRectangle=new Rect(p.X+12,p.Y+16,1,1);_hoverTip.Content=ToolTip;_keyboardTip.IsOpen=false;}if(hit!=_selected){_selected=hit;InvalidateVisual();}}
     protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e){base.OnMouseLeftButtonDown(e);Focus();var hit=_hits.FindLastIndex(h=>h.Shape.FillContains(e.GetPosition(this)));if(hit>=0){_selected=hit;PointInvoked?.Invoke(_hits[hit].Point);e.Handled=true;}}
     protected override void OnKeyDown(KeyEventArgs e){base.OnKeyDown(e);if(_hits.Count==0)return;
         if(e.Key is Key.Left or Key.Right or Key.Home or Key.End){_selected=e.Key==Key.Home?0:e.Key==Key.End?_hits.Count-1:Math.Clamp(_selected+(e.Key==Key.Left?-1:1),0,_hits.Count-1);var description=Description(_hits[_selected].Point);AutomationProperties.SetHelpText(this,description);_keyboardTip.PlacementTarget=this;_keyboardTip.Content=description;_keyboardTip.IsOpen=true;InvalidateVisual();e.Handled=true;}
         if(e.Key==Key.Enter&&_selected>=0&&_selected<_hits.Count){PointInvoked?.Invoke(_hits[_selected].Point);e.Handled=true;}}
     protected override void OnGotKeyboardFocus(KeyboardFocusChangedEventArgs e){base.OnGotKeyboardFocus(e);if(_selected<0)_selected=0;InvalidateVisual();}
     protected override void OnLostKeyboardFocus(KeyboardFocusChangedEventArgs e){base.OnLostKeyboardFocus(e);_keyboardTip.IsOpen=false;InvalidateVisual();}
-    protected override void OnMouseLeave(MouseEventArgs e){base.OnMouseLeave(e);if(!IsKeyboardFocused){_selected=-1;ToolTip=null;}InvalidateVisual();}
+    protected override void OnMouseLeave(MouseEventArgs e){base.OnMouseLeave(e);_hoverTip.IsOpen=false;if(!IsKeyboardFocused){_selected=-1;ToolTip=null;}InvalidateVisual();}
     public void InvokePoint(int index){if(Data!=null&&index>=0&&index<Data.Count)PointInvoked?.Invoke(Data[index]);}
 }
