@@ -29,6 +29,7 @@ public partial class MainWindow : Window
     public MainWindow(MainViewModel model)
     {
         Model=model;InitializeComponent();DataContext=model;
+        ThemeService.Changed+=RefreshChartThemes;
         Width=Math.Min(1200,SystemParameters.WorkArea.Width);Height=Math.Min(800,SystemParameters.WorkArea.Height);
         var menu=new Forms.ContextMenuStrip();menu.Items.Add("打开研迹",null,(_,_)=>Dispatcher.Invoke(ShowFromTray));menu.Items.Add("退出应用",null,async(_,_)=>await Dispatcher.InvokeAsync(RequestExitAsync).Task.Unwrap());
         _tray=new Forms.NotifyIcon{Text="研迹 YanJi",Icon=System.Drawing.SystemIcons.Application,ContextMenuStrip=menu,Visible=true};
@@ -38,7 +39,7 @@ public partial class MainWindow : Window
         SourceInitialized+=(_,_)=>{var handle=new WindowInteropHelper(this).Handle;_source=HwndSource.FromHwnd(handle);_source.AddHook(HandleMessage);WTSRegisterSessionNotification(handle,0);((App)Application.Current).RecordWindow(handle);};
         Loaded+=async(_,_)=>{await Model.InitializeAsync();_tick.Start();if(((App)Application.Current).SmokePath!=null)await SmokeRunner.RunAsync(this,((App)Application.Current).SmokePath!);};
         Closing+=OnClosing;
-        Closed+=(_,_)=>{_tick.Stop();if(_source!=null){WTSUnRegisterSessionNotification(_source.Handle);_source.RemoveHook(HandleMessage);}_tray.Dispose();Model.Database.Dispose();Application.Current.Shutdown();};
+        Closed+=(_,_)=>{ThemeService.Changed-=RefreshChartThemes;_tick.Stop();if(_source!=null){WTSUnRegisterSessionNotification(_source.Handle);_source.RemoveHook(HandleMessage);}_tray.Dispose();Model.Database.Dispose();Application.Current.Shutdown();};
     }
     public void ShowFromTray(){Show();WindowState=WindowState.Normal;Activate();}
     private IntPtr HandleMessage(IntPtr hwnd,int message,IntPtr wParam,IntPtr lParam,ref bool handled)
@@ -80,17 +81,17 @@ public partial class MainWindow : Window
         foreach(var (label,value) in new[]{("结束并保存",1),("暂停后退出",2),("取消退出",0)}){var button=new Button{Content=label};button.Click+=(_,_)=>{result=value;dialog.Close();};stack.Children.Add(button);}dialog.Content=stack;dialog.Height=280;dialog.ShowDialog();return result;
     }
     private async void Exit_Click(object sender,RoutedEventArgs e)=>await RequestExitAsync();
-    private async void Navigation_Changed(object sender,SelectionChangedEventArgs e){if(DataContext is MainViewModel vm)await vm.SaveReflectionAsync();}
+    private async void Navigation_Changed(object sender,SelectionChangedEventArgs e){if(DataContext is MainViewModel vm){if(vm.Page==0)await vm.ChangeDayAsync(vm.LocalToday().ToDateTime(TimeOnly.MinValue));else await vm.SaveReflectionAsync();MainScroll.ScrollToTop();}}
     private async void TodayDetails_Click(object sender,RoutedEventArgs e){await Model.ChangeDayAsync(Model.LocalToday().ToDateTime(TimeOnly.MinValue));Model.Page=1;}
     private async void SaveReflection_Click(object sender,RoutedEventArgs e)=>await Model.SaveReflectionAsync();
     private async void KeepConfirmed_Click(object sender,RoutedEventArgs e)=>await Model.ResolveAsync([]);
     private static string Id()=>Guid.NewGuid().ToString("N");
-    private List<Choice> SubjectChoices(bool optional=false)=> (optional?new List<Choice>{new("","不指定科目")}:[]).Concat(Model.AllSubjects.Select(s=>new Choice(s.Id,s.Name+(s.Archived?"（归档）":"")))).ToList();
-    private List<Choice> ChapterChoices()=>new List<Choice>{new("","不指定章节")}.Concat(Model.AllChapters.Select(c=>new Choice(c.Id,(Model.AllSubjects.FirstOrDefault(s=>s.Id==c.SubjectId)?.Name??"")+" · "+c.Name))).ToList();
+    private List<Choice> SubjectChoices(bool optional=false,bool includeArchived=true)=> (optional?new List<Choice>{new("","不指定科目")}:[]).Concat(Model.AllSubjects.Where(s=>includeArchived||!s.Archived).Select(s=>new Choice(s.Id,s.Name+(s.Archived?"（归档）":"")))).ToList();
+    private List<Choice> ChapterChoices(bool includeArchived=true)=>new List<Choice>{new("","不指定章节")}.Concat(Model.AllChapters.Where(c=>includeArchived||!c.Archived&&Model.Subjects.Any(s=>s.Id==c.SubjectId)).Select(c=>new Choice(c.Id,(Model.AllSubjects.FirstOrDefault(s=>s.Id==c.SubjectId)?.Name??"")+" · "+c.Name))).ToList();
     private static string? Null(string text)=>string.IsNullOrWhiteSpace(text)?null:text;
     private static DateOnly? Date(string text)=>Null(text)==null?null:DateOnly.ParseExact(text.Trim(),"yyyy-MM-dd",CultureInfo.InvariantCulture);
     private Dictionary<string,string>? Edit(string title,Field[] fields,string hint="",Func<Dictionary<string,string>,string?>? validate=null)
-    {var dialog=new EditorDialog(this,title,fields,hint,validate);return dialog.ShowDialog()==true?dialog.Values:null;}
+    {var dialog=new EditorDialog(this,title,fields,hint,validate);TestDialogShown?.Invoke(dialog);return dialog.ShowDialog()==true?dialog.Values:null;}
     private static string? Required(Dictionary<string,string> values,params string[] keys)=>keys.Any(key=>string.IsNullOrWhiteSpace(values[key]))?"请填写必填项。":null;
     private async void AddSubject_Click(object sender,RoutedEventArgs e)=>await EditSubjectAsync(null);
     private async void EditSubject_Click(object sender,RoutedEventArgs e)=>await EditSubjectAsync(((Button)sender).Tag as Subject);
@@ -146,8 +147,8 @@ public partial class MainWindow : Window
         var record=((RecordRow)((Button)sender).Tag).Record;
         if(Model.TimerActive&&record.Id==Model.Timer.SessionId){MessageBox.Show(this,"请先结束活动计时，再修正这条记录。","研迹");return;}
         var allocation=string.Join('\n',record.Parts.GroupBy(p=>p.Date).Select(g=>$"{g.Key:yyyy-MM-dd} = {(g.Sum(p=>p.DurationMs)/60000d).ToString("0.######",CultureInfo.InvariantCulture)}"));
-        var v=Edit("每日记录 · 查看与修正",[new("subject","科目 *",record.SubjectId,SubjectChoices()),new("chapter","主要章节（可选）",record.ChapterId??"",ChapterChoices()),new("note","备注",record.Note,Multiline:true),new("mode","时间修正方式","keep",[new("keep","保留原有时间片段"),new("duration","改为按日期分配的纯时长"),new("interval","改为明确起止时间")]),new("allocation","日期 = 分钟（仅纯时长模式生效）",allocation,Multiline:true),new("start","开始时间（仅区间模式；含偏移）"),new("end","结束时间（仅区间模式；含偏移）"),new("deleted","记录状态",record.Deleted?"1":"0",[new("0","有效（恢复后需重新检查区间重叠）"),new("1","软删除，保留历史")])],"这是修改已有记录，不会追加一条。跨日记录可逐日修正；原始区间会保留在历史中。",v=>{if(v["mode"]=="duration")Allocations(v["allocation"],Model.ZoneId);if(v["mode"]=="interval")Interval(v,Model.ZoneId);return Required(v,"subject")??CheckChapter(v);});
-        if(v==null)return;try{await Model.FlushTimerAsync();await Model.RunAsync(()=>Model.Database.SaveRecord(record with{SubjectId=v["subject"],ChapterId=Null(v["chapter"]),Note=v["note"],Deleted=v["deleted"]=="1",Parts=v["mode"]=="keep"?record.Parts:v["mode"]=="duration"?Allocations(v["allocation"],Model.ZoneId):Interval(v,Model.ZoneId)},"用户修正已有记录"),"记录已修正，统计已更新");}catch(Exception exception){Model.Status=exception.Message;}
+        var v=Edit("每日记录 · 查看与修正",[new("subject","科目 *",record.SubjectId,SubjectChoices()),new("chapter","主要章节（可选）",record.ChapterId??"",ChapterChoices()),new("note","备注",record.Note,Multiline:true),new("mode","时间修正方式","keep",[new("keep","保留原有时间片段"),new("duration","改为按日期分配的纯时长"),new("interval","改为明确起止时间")]),new("allocation","日期 = 分钟（仅纯时长模式生效）",allocation,Multiline:true),new("start","开始时间（仅区间模式；含偏移）"),new("end","结束时间（仅区间模式；含偏移）")],$"这是修改已有记录，不会追加一条。整次 {MainViewModel.Duration(record.DurationMs)}；受影响日期：{string.Join("、",record.Parts.Select(p=>p.Date).Distinct())}。原始片段保留在历史中。",v=>{if(v["mode"]=="duration")Allocations(v["allocation"],Model.ZoneId);if(v["mode"]=="interval")Interval(v,Model.ZoneId);return Required(v,"subject")??CheckChapter(v);});
+        if(v==null)return;try{await Model.FlushTimerAsync();await Model.RunAsync(()=>Model.Database.SaveRecord(record with{SubjectId=v["subject"],ChapterId=Null(v["chapter"]),Note=v["note"],Parts=v["mode"]=="keep"?record.Parts:v["mode"]=="duration"?Allocations(v["allocation"],Model.ZoneId):Interval(v,Model.ZoneId)},"用户修正已有记录"),"记录已修正，统计已更新");}catch(Exception exception){Model.Status=exception.Message;}
     }
     private void History_Click(object sender,RoutedEventArgs e)
     {

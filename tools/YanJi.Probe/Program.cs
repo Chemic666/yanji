@@ -6,6 +6,26 @@ using YanJi.Data;
 
 if(args.Length<2)throw new ArgumentException("Specify --run <new isolated directory> or --child <directory>.");
 var root=Path.GetFullPath(args[1]);
+if(args[0] is "--compat-capture" or "--compat-verify" or "--compat-reset")
+{
+    if(!File.Exists(Path.Combine(root,"owned-upgrade.marker")))throw new ArgumentException("Compatibility probe requires an explicitly owned fixture marker.");
+    using var db=new YanJiDatabase(Path.Combine(root,"data"));
+    string State()=>JsonSerializer.Serialize(new{Records=db.Records(null,true).OrderBy(r=>r.Id),Subjects=db.Subjects(true).OrderBy(s=>s.Id),Chapters=db.Chapters(null,true).OrderBy(c=>c.Id),Tasks=db.Tasks().OrderBy(t=>t.Id),Weak=db.WeakPoints().OrderBy(w=>w.Id),Reflections=db.Records(null,true).SelectMany(r=>r.Parts.Select(p=>p.Date)).Distinct().Order().Select(d=>new{Date=d,Text=db.Reflection(d)}),History=db.Records(null,true).Select(r=>new{r.Id,Count=db.History(r.Id).Count}).OrderBy(r=>r.Id)});
+    var baseline=Path.Combine(root,"v010-state.json");var oldBackup=Path.Combine(root,"v010-full.yanjibak");
+    if(args[0]=="--compat-reset")
+    {db.ValidateBackup(oldBackup);db.RestoreBackup(oldBackup);if(State()!=File.ReadAllText(baseline))throw new Exception("Owned fixture reset failed.");File.WriteAllText(Path.Combine(root,"fixture-reset-"+Guid.NewGuid().ToString("N")+".json"),JsonSerializer.Serialize(new{Status="PASS",Evidence="Explicit owned fixture reset from retained V0.1 full backup"}));return;}
+    if(args[0]=="--compat-capture")
+    {using var writer=new StreamWriter(new FileStream(baseline,FileMode.CreateNew));writer.Write(State());db.Backup(oldBackup);Console.WriteLine("V0.1 actual fixture captured.");return;}
+    if(State()!=File.ReadAllText(baseline))throw new Exception("Upgrade changed existing record, part, audit or related facts.");
+    var total=db.Records().Sum(r=>r.DurationMs);var cross=db.Records().FirstOrDefault(r=>r.Parts.Count>1)??throw new Exception("Actual old fixture must contain multiple parts.");
+    var removed=cross.Parts[0];db.ExcludePart(cross.Id,removed.Id,cross.Version);var after=db.Records().Single(r=>r.Id==cross.Id);db.RestorePart(after.Id,removed.Id,after.Version);
+    if(db.Records().Sum(r=>r.DurationMs)!=total)throw new Exception("Upgrade part roundtrip changed exact duration.");
+    var upgraded=Path.Combine(root,"v011-full-"+Guid.NewGuid().ToString("N")+".yanjibak");db.Backup(upgraded);db.ValidateBackup(upgraded);db.ValidateBackup(oldBackup);db.RestoreBackup(oldBackup);
+    if(State()!=File.ReadAllText(baseline)||db.Integrity()!="ok")throw new Exception("Old complete backup restore did not preserve exact old facts.");
+    using var schemaConnection=new SqliteConnection($"Data Source={db.DatabasePath};Mode=ReadOnly;Pooling=False");schemaConnection.Open();using var schemaCommand=schemaConnection.CreateCommand();schemaCommand.CommandText="PRAGMA user_version";var schema=Convert.ToInt32(schemaCommand.ExecuteScalar());if(schema!=1)throw new Exception("Unexpected schema version.");
+    var report=new{Status="PASS",Evidence="V0.1 binary wrote fixture; V0.1.1 binary opened it; exact full facts compared; upgraded part exclude/restore; both backup versions validated and V0.1 backup restored",Records=db.Records(null,true).Count,TotalMs=total,SchemaVersion=schema,Integrity=db.Integrity(),ExistingFactsUnchanged=true,Migration="none"};
+    File.WriteAllText(Path.Combine(root,"compatibility.json"),JsonSerializer.Serialize(report,new JsonSerializerOptions{WriteIndented=true}));Console.WriteLine(JsonSerializer.Serialize(report));return;
+}
 if(args[0].StartsWith("--restore-child-",StringComparison.Ordinal))
 {
     using var db=new YanJiDatabase(Path.Combine(root,"data"));var stop=args[0].EndsWith("before",StringComparison.Ordinal)?"before-replace":"after-replace";

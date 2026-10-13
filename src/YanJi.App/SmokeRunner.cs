@@ -32,6 +32,7 @@ public static class SmokeRunner
                 File.WriteAllText(Path.Combine(output,"startup.json"),JsonSerializer.Serialize(new{Status="PASS",UiReadyMs=((App)Application.Current).StartupClock.Elapsed.TotalMilliseconds,Runtime=System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription,RuntimeDirectory=System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory(),SQLite=vm.Database.Diagnostics(),ProcessId=Environment.ProcessId}));return;}
             if(((App)Application.Current).PerformanceOnly)
             {await PerformanceRunner.RunAsync(window,output);Assert(true,"Fresh self-contained process performance completed");return;}
+            VisualUpgradeRunner.CaptureEmpty(window,output);
             vm.ManualMinutes="37";vm.ManualNote="中文输入验证：高等数学 · 极限";await vm.AddManualCommand.ExecuteAsync(null);
             Assert(vm.Database.Records().Any(r=>r.Note=="中文输入验证：高等数学 · 极限"&&r.DurationMs==2220000),"Manual command with Chinese note persisted");
             await vm.StartCommand.ExecuteAsync(null);Assert(vm.TimerRunning,"Start timer via command");await Task.Delay(1200);await vm.TickAsync();
@@ -77,14 +78,15 @@ public static class SmokeRunner
             }));
             Assert(editor.ShowDialog()==true&&editor.Values?["text"]=="中文测试","Actual editor default-save action preserves Chinese text");
             var backup=Path.Combine(output,"smoke.yanjibak");vm.Database.Backup(backup);vm.Database.ValidateBackup(backup);vm.Database.ExportCsv(Path.Combine(output,"smoke.csv"));Assert(File.Exists(backup),"UI process backup and CSV");
+            await VisualUpgradeRunner.RunAsync(window,output,Assert);
             var dpi=VisualTreeHelper.GetDpi(window);using var process=Process.GetCurrentProcess();
             File.WriteAllText(Path.Combine(output,"environment.json"),JsonSerializer.Serialize(new{Runtime=System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription,RuntimeDirectory=System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory(),OS=Environment.OSVersion.ToString(),ClockSources=WindowsClock.Sources,SQLite=vm.Database.Diagnostics(),DpiX=dpi.PixelsPerInchX,DpiY=dpi.PixelsPerInchY,WorkingSet=process.WorkingSet64,PrivateBytes=process.PrivateMemorySize64,DataDirectory=vm.Database.DirectoryPath},new JsonSerializerOptions{WriteIndented=true}));
             if(((App)Application.Current).Measure)await PerformanceRunner.RunAsync(window,output);
         }
-        catch(Exception exception){results.Add(new{Name="Unhandled smoke failure",Status="FAIL",Details=exception.ToString()});}
+        catch(Exception exception){((App)Application.Current).ValidationFailed=true;results.Add(new{Name="Unhandled smoke failure",Status="FAIL",Details=exception.ToString()});}
         finally{File.WriteAllText(Path.Combine(output,"results.json"),JsonSerializer.Serialize(results,new JsonSerializerOptions{WriteIndented=true}));window.SmokeClose();}
     }
-    private static void Capture(Window window,string path,double scale=1)
+    internal static void Capture(Window window,string path,double scale=1)
     {
         var bitmap=new RenderTargetBitmap((int)(window.ActualWidth*scale),(int)(window.ActualHeight*scale),96*scale,96*scale,PixelFormats.Pbgra32);bitmap.Render(window);
         var encoder=new PngBitmapEncoder();encoder.Frames.Add(BitmapFrame.Create(bitmap));using var stream=new FileStream(path,FileMode.CreateNew);encoder.Save(stream);

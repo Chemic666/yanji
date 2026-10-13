@@ -18,6 +18,7 @@ public partial class App : Application
     public bool Measure {get;private set;}
     public bool PerformanceOnly {get;private set;}
     public bool StartupOnly {get;private set;}
+    internal bool ValidationFailed {get;set;}
     internal Stopwatch StartupClock {get;}=Stopwatch.StartNew();
     public uint ShowMessage {get;private set;}
     [DllImport("user32.dll",CharSet=CharSet.Unicode)]private static extern uint RegisterWindowMessage(string name);
@@ -71,5 +72,5 @@ public partial class App : Application
     }
     public void RecordWindow(IntPtr handle)=>File.WriteAllLines(Path.Combine(_dataDirectory,"window.id"),[handle.ToInt64().ToString(),Environment.ProcessId.ToString()]);
     protected override void OnExit(ExitEventArgs e)
-    {if(_instance!=null){try{_instance.ReleaseMutex();}catch(ApplicationException){} _instance.Dispose();}base.OnExit(e);}
+    {if(ValidationFailed)e.ApplicationExitCode=1;if(_instance!=null){try{_instance.ReleaseMutex();}catch(ApplicationException){} _instance.Dispose();}base.OnExit(e);}
 }

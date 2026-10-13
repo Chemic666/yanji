@@ -11,6 +11,7 @@ public sealed class EditorDialog : Window
 {
     private readonly Dictionary<string,Control> _controls=[];
     public Dictionary<string,string>? Values {get;private set;}
+    internal void SetField(string key,string value){if(_controls[key] is TextBox text)text.Text=value;else ((ComboBox)_controls[key]).SelectedValue=value;}
     public EditorDialog(Window owner,string title,IEnumerable<Field> fields,string hint="",Func<Dictionary<string,string>,string?>? validate=null)
     {
         Style=(Style)FindResource(typeof(Window));Owner=owner;Title=title;Width=600;Height=660;MinWidth=480;MinHeight=420;MaxHeight=SystemParameters.WorkArea.Height;

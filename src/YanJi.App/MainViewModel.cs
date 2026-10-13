@@ -13,10 +13,19 @@ using YanJi.Data;
 
 namespace YanJi.App;
 
-public sealed record RecordRow(StudyRecord Record,string Subject,string Chapter,string Duration,string Allocation,string Source)
-{ public string Note=>Record.Note; public string State=>Record.Deleted?"已删除":""; }
-public sealed record CalendarDay(DateTime Date,string Day,string Duration,bool InMonth,bool Selected)
-{ public string Label=>Day+"\n"+Duration; }
+public sealed record RecordRow(StudyRecord Record,string Subject,string Chapter,string Duration,string Allocation,string Source,long? Contribution=null,bool Pending=false,DateOnly? ScopeFrom=null,DateOnly? ScopeTo=null,PartKind? ScopeKind=null)
+{
+    public string Note=>Record.Note.Length==0?"无备注":Record.Note;
+    public string State=>Record.Deleted?"已删除":Pending?"待核对":"有效";
+    public string Color=>ThemeService.SubjectColor(Record.SubjectId);
+    public bool Deleted=>Record.Deleted;
+    public string ScopedDuration=>Contribution is long ms?DurationText.Format(ms):Duration;
+    public string ScopeLabel=>Contribution!=null?"本页贡献 "+ScopedDuration+" · 整次 "+Duration:"整次 "+Duration;
+    public string Dates=>string.Join("、",Record.Parts.Select(p=>p.Date).Distinct().Order().Select(d=>d.ToString("yyyy-MM-dd")));
+    public string Summary=>Source+" · "+State+" · "+Record.Parts.Count+" 个片段 · "+Dates;
+}
+public sealed record CalendarDay(DateTime Date,string Day,string Duration,bool InMonth,bool Selected,string Status="尚无记录",string Color="#EDF3F5")
+{ public string Label=>Day+"\n"+(Duration.Length>0?Duration:Status=="尚无记录"?"无记录":Status);public string Description=>$"{Date:yyyy-MM-dd} · {Status}"+(Duration.Length>0?" · "+Duration:""); }
 public sealed record StatRow(string Label,string Duration,double Width);
 public sealed partial class MainViewModel : ObservableObject
 {
@@ -90,8 +99,7 @@ public sealed partial class MainViewModel : ObservableObject
         StatsTo=ManualDate;StatsFrom=ManualDate.AddDays(-29);Refresh();UpdateTimer();
     }
     public DateOnly LocalToday()=>DateOnly.FromDateTime(TimeZoneInfo.ConvertTime(DateTimeOffset.UtcNow,TimeParts.ResolveZone(ZoneId)).DateTime);
-    public static string Duration(long milliseconds)
-    {var minutes=milliseconds/60000d;return minutes<60?$"{minutes:0.#} 分钟":$"{(int)(minutes/60)} 小时 {minutes%60:0} 分";}
+    public static string Duration(long milliseconds)=>DurationText.Format(milliseconds);
     private static void Replace<T>(ObservableCollection<T> target,IEnumerable<T> source){target.Clear();foreach(var item in source)target.Add(item);}
     private void LoadChapters(ObservableCollection<Chapter> target,string? subject,bool archived=false)
     {Replace(target,new[]{new Chapter("",subject??"","不指定章节")}.Concat(subject==null?[]:Database.Chapters(subject,archived)));}
@@ -105,9 +113,9 @@ public sealed partial class MainViewModel : ObservableObject
     private void UpdateWarning()
     {if(ManualSubject==null)return;var day=DateOnly.FromDateTime(ManualDate);var any=Database.Records(day).Any(r=>r.SubjectId==ManualSubject.Id);
         ManualWarning=any?"这一天已有该科目记录。追加前请核对；纯时长可能重叠，但不会擅自扣减。":"纯时长不生成起止时间；无法确定重叠时，不扣减学习时间。";}
-    private RecordRow Row(StudyRecord record)=>new(record,AllSubjects.FirstOrDefault(s=>s.Id==record.SubjectId)?.Name??record.SubjectId,
+    private RecordRow Row(StudyRecord record,DateOnly? focus=null)=>new(record,AllSubjects.FirstOrDefault(s=>s.Id==record.SubjectId)?.Name??record.SubjectId,
         AllChapters.FirstOrDefault(c=>c.Id==record.ChapterId)?.Name??"未指定章节",Duration(record.DurationMs),
-        string.Join(" · ",record.Parts.GroupBy(p=>p.Date).Select(g=>$"{g.Key:MM-dd} {Duration(g.Sum(p=>p.DurationMs))}")),record.Source==SessionSource.Timer?"计时":"补录");
+        string.Join(" · ",record.Parts.GroupBy(p=>p.Date).Select(g=>$"{g.Key:MM-dd} {Duration(g.Sum(p=>p.DurationMs))}")),record.Source==SessionSource.Timer?"计时":"补录",focus==null?null:record.Parts.Where(p=>p.Date==focus).Sum(p=>p.DurationMs),record.Id==Timer.SessionId&&Timer.State==TimerState.NeedsReview,focus,focus);
     public void Refresh()
     {
         var snapshot=_timer.Snapshot;var active=snapshot.IsActive;
@@ -125,22 +133,20 @@ public sealed partial class MainViewModel : ObservableObject
         ExamDate=Database.Setting("exam-date","") is string date&&date.Length>0?"考试日期 "+date:"2028 年入学 · 考试日期待定";
         var today=LocalToday();var week=today.AddDays(-(((int)today.DayOfWeek+6)%7));var month=new DateOnly(today.Year,today.Month,1);
         TodayTotal=Duration(Database.DailyTotals(today,today).Sum(x=>x.DurationMs));WeekTotal=Duration(Database.DailyTotals(week,today).Sum(x=>x.DurationMs));MonthTotal=Duration(Database.DailyTotals(month,today).Sum(x=>x.DurationMs));
-        Replace(TodayRecords,Database.Records(today).Select(Row));LoadDay();RefreshStats();UpdateWarning();
+        Replace(TodayRecords,Database.Records(today).OrderByDescending(r=>r.CreatedAt).Take(8).Select(r=>Row(r,today)));RefreshPresentation();LoadDay();UpdateWarning();
     }
     private void LoadDay()
     {
-        var date=DateOnly.FromDateTime(SelectedDate);Replace(DayRecords,Database.Records(date,ShowDeleted).Select(Row));
+        var date=DateOnly.FromDateTime(SelectedDate);Replace(DayRecords,Database.Records(date,ShowDeleted).Select(r=>Row(r,date)));
         if(!_reflectionDirty)
         {_loadingReflection=true;Reflection=Database.Reflection(date);_reflectionDate=date;_loadingReflection=false;}
         var first=new DateOnly(CalendarMonth.Year,CalendarMonth.Month,1);var start=first.AddDays(-(((int)first.DayOfWeek+6)%7));
         var totals=Database.DailyTotals(start,start.AddDays(41)).ToDictionary(t=>t.Date,t=>t.DurationMs);
-        MonthLabel=CalendarMonth.ToString("yyyy 年 M 月");Replace(Days,Enumerable.Range(0,42).Select(i=>{var d=start.AddDays(i);return new CalendarDay(d.ToDateTime(TimeOnly.MinValue),d.Day.ToString(),totals.TryGetValue(d,out var ms)?Duration(ms):"",d.Month==first.Month,d==date);}));
+        MonthLabel=CalendarMonth.ToString("yyyy 年 M 月");Replace(Days,Enumerable.Range(0,42).Select(i=>{var d=start.AddDays(i);var ms=totals.GetValueOrDefault(d);return new CalendarDay(d.ToDateTime(TimeOnly.MinValue),d.Day.ToString(),ms>0?Duration(ms):"",d.Month==first.Month,d==date,DayStatus(d,ms),ms>0?ThemeService.SubjectColor("math"):ThemeService.Dark?"#223440":"#EDF3F5");}));RefreshDayPresentation();
     }
     public void RefreshStats()
     {
-        var from=DateOnly.FromDateTime(StatsFrom);var to=DateOnly.FromDateTime(StatsTo);if(to<from){Status="统计结束日期不能早于开始日期。";return;}
-        var totals=Database.DailyTotals(from,to);StatsTotal=Duration(totals.Sum(x=>x.DurationMs));var maximum=Math.Max(1,totals.Select(x=>x.DurationMs).DefaultIfEmpty(0).Max());
-        Replace(Stats,totals.Select(x=>new StatRow(x.Date.ToString("MM-dd ddd",CultureInfo.GetCultureInfo("zh-CN")),Duration(x.DurationMs),Math.Max(2,280d*x.DurationMs/maximum))));
+        BuildAnalytics();
     }
     public async Task<bool> RunAsync(Action operation,string success,bool refresh=true)
     {
