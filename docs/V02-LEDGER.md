@@ -35,4 +35,4 @@
 - 新增真实指针悬停验证曾发现默认Tooltip仅赋值却未出现；统一由StudyChart管理原生WPF提示。鼠标移出/数据筛选更新关闭旧提示，键盘与悬停共享精确描述。
 - 正式发布路径最终90 PASS / 0 FAIL，v02-desktop-bc7218132f9c452ca6f4d5a5ec47763a，实际Tooltip HWND已捕获；包括原63、新展示/焦点/原生菜单/真实悬停24、高对比/月历3。
 - 最终核心70 PASS，旧库兼容复核v02-upgrade-5a3cf33bb47145d1a505b891f307e651 PASS；真实用户库仍未读取。
-- 所有owned测试进程均等待自然结束；最终默认渲染资源采样正在单独执行，发布包ZIP完成后由manifest与package-validation核实。
+- 所有owned测试进程均等待自然结束；最终默认渲染资源四段采样PASS，v02-performance-final-93f73671e9a04273bd0142238db7be0c。每段约60秒，默认15秒检查点样本全机CPU0.27%、峰值工作集282.4MiB。发布包ZIP完成后由manifest与package-validation核实。
