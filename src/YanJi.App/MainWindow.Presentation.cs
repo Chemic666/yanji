@@ -24,13 +24,17 @@ public partial class MainWindow
         NavColumn.Width=new GridLength(narrow?72:184);BrandWord.FontSize=narrow?16:27;BrandHint.Visibility=VersionHint.Visibility=narrow?Visibility.Collapsed:Visibility.Visible;ExitButton.Content=narrow?"退出":"退出应用";ExitButton.Padding=new Thickness(narrow?2:8,8,narrow?2:8,8);ExitButton.Margin=new Thickness(0);
         foreach(var item in NavigationList.Items.OfType<ListBoxItem>())item.Padding=new Thickness(narrow?8:12,11,narrow?4:12,11);
         foreach(var text in VisualChildren(this).OfType<TextBlock>().Where(t=>Equals(t.Tag,"NavLabel")))text.Visibility=narrow?Visibility.Collapsed:Visibility.Visible;
-        MainScroll.Padding=new Thickness(narrow?20:32,28,narrow?20:32,12);
+        MainScroll.Padding=new Thickness(narrow?20:24,16,narrow?20:24,12);
         if(RecordList!=null)RecordList.MaxHeight=Math.Max(200,ActualHeight-300);
-        void Columns(ColumnDefinition left,ColumnDefinition gap,ColumnDefinition right,FrameworkElement panel,double ratio)
-        {left.Width=new GridLength(narrow?1:ratio,GridUnitType.Star);gap.Width=new GridLength(narrow?0:20);right.Width=new GridLength(narrow?0:1,GridUnitType.Star);Grid.SetColumn(panel,narrow?0:2);Grid.SetRow(panel,narrow?1:0);}
-        Columns(TodayLeft,TodayGap,TodayRight,TodayReflection,1.1);Columns(CalendarLeft,CalendarGap,CalendarRight,CalendarDetail,1/1.35);Columns(StatsLeft,StatsGap,StatsRight,StatsDailyCard,1.4);
+        var content=Math.Max(0,ActualWidth-(narrow?72:184)-MainScroll.Padding.Left-MainScroll.Padding.Right-24);
+        void Columns(ColumnDefinition left,ColumnDefinition gap,ColumnDefinition right,FrameworkElement panel,double ratio,double threshold)
+        {var stack=content<threshold;left.Width=new GridLength(stack?1:ratio,GridUnitType.Star);gap.Width=new GridLength(stack?0:16);right.Width=new GridLength(stack?0:1,GridUnitType.Star);Grid.SetColumn(panel,stack?0:2);Grid.SetRow(panel,stack?1:0);}
+        Columns(TodayLeft,TodayGap,TodayRight,TodayReflection,.72,700);Columns(CalendarLeft,CalendarGap,CalendarRight,CalendarDetail,1/1.35,740);Columns(StatsLeft,StatsGap,StatsRight,StatsDailyCard,1.7,850);
+        if(TimerFields!=null&&TimerChapterField!=null)
+        {var stack=content<700?content:((content-16)*.72/1.72);var vertical=stack<280;TimerFields.ColumnDefinitions[1].Width=new GridLength(vertical?0:12);TimerFields.ColumnDefinitions[2].Width=new GridLength(vertical?0:1,GridUnitType.Star);Grid.SetColumn(TimerChapterField,vertical?0:2);Grid.SetRow(TimerChapterField,vertical?1:0);}
+        if(DrawerSurface!=null)DrawerSurface.Width=Math.Min(620,Math.Max(0,ActualWidth-32));
         foreach(var pair in new[]{(AuxGrid2,AuxRight2),(AuxGrid3,AuxRight3),(AuxGrid5,AuxRight5)})
-        {pair.Item1.ColumnDefinitions[0].Width=new GridLength(narrow?1:1.4,GridUnitType.Star);pair.Item1.ColumnDefinitions[1].Width=new GridLength(narrow?0:20);pair.Item1.ColumnDefinitions[2].Width=new GridLength(narrow?0:1,GridUnitType.Star);Grid.SetColumn(pair.Item2,narrow?0:2);Grid.SetRow(pair.Item2,narrow?1:0);}
+        {var stack=content<740;pair.Item1.ColumnDefinitions[0].Width=new GridLength(stack?1:1.6,GridUnitType.Star);pair.Item1.ColumnDefinitions[1].Width=new GridLength(stack?0:16);pair.Item1.ColumnDefinitions[2].Width=new GridLength(stack?0:1,GridUnitType.Star);Grid.SetColumn(pair.Item2,stack?0:2);Grid.SetRow(pair.Item2,stack?1:0);}
     }
     private void Window_KeyDown(object sender,KeyEventArgs e)
     {if(e.Key==Key.Escape&&Model.DrawerOpen){CloseDrawer_Click(this,e);e.Handled=true;}else if(!Model.DrawerOpen&&e.Key==Key.N&&(Keyboard.Modifiers&ModifierKeys.Control)!=0){QuickAdd_Click(this,e);e.Handled=true;}}
@@ -58,8 +62,9 @@ public partial class MainWindow
     private async void ChapterDrill_Click(object sender,RoutedEventArgs e)
     {if(!await Model.SaveReflectionAsync())return;var point=(PlotPoint)((Button)sender).Tag;Model.OpenRecords(DateOnly.FromDateTime(Model.StatsFrom),DateOnly.FromDateTime(Model.StatsTo),Model.StatsSubjectId,point.Key);MainScroll.ScrollToTop();}
     private void Detail_Click(object sender,RoutedEventArgs e){if(((Button)sender).Tag is RecordRow row)ShowDetail(row);}
-    private void ShowDetail(RecordRow row){_detailFocus=Keyboard.FocusedElement;Model.OpenDetail(row);Dispatcher.BeginInvoke(new Action(()=>VisualChildren(DetailDrawer).OfType<Button>().FirstOrDefault()?.Focus()));}
-    private void CloseDrawer_Click(object sender,RoutedEventArgs e){Model.DrawerOpen=false;Keyboard.Focus(_detailFocus);}
+    private void ShowDetail(RecordRow row){_detailFocus=Keyboard.FocusedElement;Model.OpenDetail(row);Dispatcher.BeginInvoke(new Action(()=>DrawerCloseButton.Focus()));}
+    private void CloseDrawer_Click(object sender,RoutedEventArgs e)
+    {Model.DrawerOpen=false;Dispatcher.BeginInvoke(new Action(()=>{if(_detailFocus is FrameworkElement {IsVisible:true,IsEnabled:true} element&&PresentationSource.FromVisual(element)!=null)element.Focus();else if(Model.Page==0)TodayRecordList.Focus();else if(Model.Page==6)RecordList.Focus();else NavigationList.Focus();}));}
     private async void RestDay_Click(object sender,RoutedEventArgs e)=>await Model.ToggleRestDayAsync();
     internal static string DeletionImpact(RecordRow row)=>$"科目：{row.Subject}\n整次时长：{row.Duration}\n受影响日期：{row.Dates}\n{row.Record.Parts.Count} 个有效片段\n\n删除的是整次学习，所有上述日期的贡献会从日历与统计移除。记录和修订历史保留，可在已删除明细中恢复。";
     private async void DeleteRecord_Click(object sender,RoutedEventArgs e)

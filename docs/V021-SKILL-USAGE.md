@@ -1,6 +1,6 @@
 # 研迹 V0.2.1 Skill 实际使用与关键分析
 
-状态：**关键分析已完成；产品实施、fresh配对抓图、新版回归和打包未执行**。本文件记录当前真实 Codex High 会话，不以先前 Medium 的 `artifacts/v021-skills-session/loaded-evidence.json` 代替当前加载/使用证据。
+状态：**下方旧 High 记录保留为历史；当前 D 工作区恢复会话已实施正式 WPF 改版并执行新回归。** 当前证据以文末「恢复实施会话」和 artifacts/v021-implementation/current-skill-match.json 为准，打包实际结果见 artifacts/v021-completion.json；不借旧会话冒充当前运行时加载。
 
 ## 当前运行时匹配与原始证据
 
@@ -142,3 +142,50 @@ Verification：实际commands为上表9项；source读取、v0.2.0 UI diff、12�
 4. 本阶段可提交两份docs（本地，不推送）；raw artifacts按既有.gitignore保留于磁盘，不强制加入二进制/真实数据库。
 
 可以切回 Medium；无需再次阶段确认。
+
+## 恢复实施会话：当前真实匹配
+
+本会话 cwd=D:\Projects\yanji；available-skills 的 r12 根与用户五次完整 Skill 注入一致。当前 functions.exec/tools.exec_command 对五个 SKILL.md 实际 Get-Content，并匹配 name/path 与 SHA256，记录 artifacts/v021-implementation/current-skill-match.json。没有 skills/list 探针、安装、字体下载、子代理或其他聊天通信。使用 executing-plans 与 verification-before-completion 流程指导；用户已完成分析和明确执行授权覆盖再次访谈/阶段审批。
+
+| Skill | 运行时匹配 | 指导读取 | 引擎/工具执行 | 代码落实 | 原生验证 |
+|---|---|---|---|---|---|
+| ui-ux-pro-max | 当前 catalog+完整用户注入+磁盘 hash | 当前正文；quick-reference/pro-rules，区分 mobile 范围 | 当前 Python `keyboard focus controls --stack wpf`，exit0，3条，top Support keyboard navigation | XAML Tab/focus、目标尺寸、原始图点下钻与WPF资源 | 原生操作检查；不等于完整Narrator认证 |
+| redesign-existing-projects | 当前同路径匹配 | 当前正文；沿用已批准 Diagnose | 文本 Skill，无独立引擎；源码+实际 before/after | 六页面构图、列表密度、统一表面、设置连续区 | 原生浅深、900/1200、空与长文 |
+| high-end-visual-design | 当前同路径匹配 | 当前正文 | 文本 Skill，无独立引擎 | 暖纸/柔绿材料与不等权分栏；固定 brief 优先 | 直接观察原生图，不声称营销模板合规 |
+| impeccable | 当前同路径匹配 | 当前正文；init/operate/critique/audit.native/layout/typeset/polish/craft-floor | 本会话 launcher `context --target src/YanJi.App/MainWindow.xaml` 一次，exit0，context-current.txt/stderr；实际加载 PRODUCT/DESIGN | Operate 层级、native适配、测量与口径修复、有限审查 | 模型 guided critique/audit/polish + WPF验收；不是引擎 WPF PASS |
+| make-interfaces-feel-better | 当前同路径匹配 | 当前正文；typography/surfaces | 文本 Skill，无独立引擎 | 定宽数字/单位 Run、40DIP动作、焦点、静态反馈、虚拟化 | full范围的五类证据，见下表 |
+
+### 安全实际执行摘录
+
+- `tools/Invoke-Build.ps1 -Arguments @('build','YanJi.slnx','-c','Release','--no-restore','-m:1','-nr:false','-p:UseSharedCompilation=false')`：构建 exit0、0警告0错误；失败尝试另存日志，不把失败当PASS。
+- `.agents/skills/impeccable/scripts/impeccable.cmd context --target src/YanJi.App/MainWindow.xaml`：进程 IMPECCABLE_BIN 指向已核验官方签名/hash二进制，IMPECCABLE_HOME=项目 artifacts；exit0，PRODUCT/DESIGN 与 surface 已加载。没有全局安装或未知二进制执行。
+- `python .agents/skills/ui-ux-pro-max/scripts/search.py 'keyboard focus controls' --stack wpf`：Found3，Source stacks/wpf.csv；采纳键盘导航和仅视图逻辑 code-behind，未改业务模型。
+- 新执行核心测试70项通过；最终原生计数、发布程序回归和包装验证以 V021-VALIDATION.md、completion.json 的实际文件为准。
+
+引擎仍报告 Platform 值不在 web/ios/android/adaptive enum 中，并回退 web；hasVisualImplementation 对 XAML 不可靠。明确拒绝改填另一个原生平台，不运行 web detect/live/DOM/CSS 或 iOS/Android 真机流程冒充WPF。context 的 drift 提示不作为旁路修复或第二轮设计访谈；Operate 继续 code-first。当前设置不是完整 WPF engine context 支持。
+
+### Critique / audit / polish 来源与限制
+
+⚠️ DEGRADED: single-context（用户明确禁止子代理）。设计审查与技术核查在同一模型内依次完成，不独立；Questions skipped: 用户已批准完整计划并明确无需阶段确认。
+
+首轮批量56页面+4详情；第二轮确认后，额外技术复验只处理已观察到的 MeasureOverride 裁切、口径文字首屏失败和工具栏输入高度，保留所有失败。没有第三个视觉方向或无限微调；最终停止外观打磨。before与final配对图及 comparison.html 依赖全部本地。
+
+| full 类别 | 实際检查证据 | 结果/边界 |
+|---|---|---|
+| Typography | Styles.xaml、NaturalDuration.cs、今日/统计自然时长、长中文，原始精度断言 | 数字/单位层级与毫秒保留；物理IME未测 |
+| Surfaces | 六页面+明细、drawer浅深/两窗口/空长文；接触目标/无主横溢出断言 | 原生窗口观察与视口门禁；其他DPI未测 |
+| Animations | 未新增自定义动画；现有静态hover/focus/pressed/disabled | 10%慢速运动检查不适用，没有虚构浏览器动画面板验收 |
+| Icons | 既有WPF vector导航与状态、颜色辅助、可见按钮与AutomationName | 无新图标库；Narrator实际读序未测 |
+| Performance | Recycling记录列表、图表几何、默认渲染四样本 | 真实采样文件；不声称所有帧率/设备覆盖 |
+
+| Severity | Location | Before | After | Why |
+|---|---|---|---|---|
+| HIGH | MainWindow.Presentation.cs Layout_Changed / MainWindow.xaml 今日 | 900一律堆叠、动作在折下首屏不可见 | 导航与内容阈值分离；双栏计时、输入按自身宽度排版 | 操作可达性，实际视口边界验证 |
+| MEDIUM | NaturalDuration.cs / MainWindow.xaml 指标 | 全串数字/单位同权重、粗大时长 | 原毫秒生成分段Run、单位55%、精确可访问名 | 层级和定宽数字稳定性 |
+| HIGH | StudyChart.cs MeasureOverride | MaxHeight限制下仍返回220，轴被clip | 测量服从available.Height，命中与渲染使用同一实际尺寸 | 保留完整轴与真实几何 |
+| MEDIUM | MainWindow.xaml 统计 / StudyChart Ranking | 等权大饼、工具栏“应用范围”暗示提交 | 主次图、44DIP横条、即时更新/刷新说明 | 比较扫描与准确反馈 |
+| MEDIUM | MainWindow.xaml 今日模板/设置/计划/详情 | 高密度 full行挤掉节奏、等高或多张设置卡、未知关闭焦点 | 有界compact三动作、连续设置、自然高度、命名关闭和fallback | 密度、空间分配、焦点恢复 |
+
+采用：共享原生资源、直接标签与精确Tooltip、保留结构/焦点线、语义浅深 token。拒绝：全卡双壳/噪点/玻璃；全按钮scale与首屏入场；字体下载和第二样式系统；用Web或移动平台流程代替WPF；为扩目标放大真实小值柱。
+
+本范围Verdict：Approve（本轮已执行范围，122项原生检查与70核心测试通过）；未验证边界始终包含物理IME、Narrator、真实系统DPI/高对比/电源切换、干净机断网与全部GPU帧时间。没有宣称完整平台认证。

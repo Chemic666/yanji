@@ -35,8 +35,11 @@ public sealed class StudyChart : FrameworkElement
     private void ResetSelection(){_selected=-1;ToolTip=null;_keyboardTip.IsOpen=false;_hoverTip.IsOpen=false;}
     public StudyChart(){Focusable=true;Cursor=Cursors.Hand;SnapsToDevicePixels=true;ToolTipService.SetIsEnabled(this,false);_hoverTip.Style=_keyboardTip.Style=(Style)Application.Current.FindResource("FocusToolTip");AutomationProperties.SetName(this,"学习图表，左右箭头选择数据，Enter 查看原始记录");}
     protected override AutomationPeer OnCreateAutomationPeer()=>new FrameworkElementAutomationPeer(this);
-    protected override Size MeasureOverride(Size available)=>new(double.IsInfinity(available.Width)?500:available.Width,
-        Mode=="Heatmap"?154:Mode=="Timeline"?Math.Max(96,(Data?.Count??0)*52+28):Mode=="Donut"?Math.Max(220,(Data?.Count??0)*44+12):Mode=="Sparkline"?44:220);
+    protected override Size MeasureOverride(Size available)
+    {
+        var height=Mode=="Heatmap"?154:Mode=="Timeline"?Math.Max(96,(Data?.Count??0)*52+28):Mode=="Ranking"?((Data?.Any(p=>p.Value>0)??false)?Data.Count*44:80):Mode=="Donut"?((Data?.Any(p=>p.Value>0)??false)?Math.Max(220,(Data?.Count??0)*44+12):80):Mode=="Sparkline"?44:((Data?.Any(p=>p.Value>0)??false)?220:80);
+        return new Size(double.IsInfinity(available.Width)?500:available.Width,Math.Min(height,available.Height));
+    }
     public void RefreshTheme()=>InvalidateVisual();
     private static Brush ColorBrush(string color)=>new SolidColorBrush((Color)ColorConverter.ConvertFromString(color));
     private static string Value(PlotPoint p,string unit)=>unit=="time"?DurationText.Format(p.Value):p.Value+" "+unit;
@@ -48,9 +51,22 @@ public sealed class StudyChart : FrameworkElement
     {
         base.OnRender(dc);_hits.Clear();dc.DrawRectangle(Brushes.Transparent,null,new(0,0,ActualWidth,ActualHeight));
         var data=Data??[];var width=ActualWidth;var height=ActualHeight;if(width<30||height<20)return;
-        if(data.Count==0||(Mode is "Donut" or "Trend" or "Stacked" or "Sparkline")&&data.All(p=>p.Value==0))
+        if(data.Count==0||(Mode is "Ranking" or "Donut" or "Trend" or "Stacked" or "Sparkline")&&data.All(p=>p.Value==0))
         {Text(dc,"尚无有效学习数据",16,height/2-12,14,ThemeService.Brush("Muted"),width-32);return;}
-        if(Mode=="Donut")
+        if(Mode=="Ranking")
+        {
+            var sum=data.Sum(p=>(double)p.Value);var max=Math.Max(1,data.Max(p=>p.Value));
+            for(var i=0;i<data.Count;i++)
+            {
+                var p=data[i];var y=i*44d;var labelWidth=Math.Max(40,width*.38);
+                Text(dc,p.Label,0,y,12,ThemeService.Brush("Ink"),labelWidth);
+                Text(dc,$"{DurationText.Compact(p.Value)} · {100d*p.Value/sum:0.#}%",labelWidth+8,y,11,null,Math.Max(1,width-labelWidth-8));
+                var bar=new Rect(0,y+25,width,5);dc.DrawRoundedRectangle(ThemeService.Brush("Soft"),null,bar,2,2);
+                if(p.Value>0)dc.DrawRoundedRectangle(ColorBrush(p.Color),null,new Rect(0,y+25,width*(p.Value/(double)max),5),2,2);
+                Hit(new RectangleGeometry(new Rect(0,y,width,40)),p);
+            }
+        }
+        else if(Mode=="Donut")
         {
             var sum=data.Sum(p=>p.Value);var cx=86d;var cy=105d;var radius=62d;var angle=-Math.PI/2;
             dc.DrawEllipse(null,new Pen(ThemeService.Brush("Soft"),20),new(cx,cy),radius,radius);

@@ -25,7 +25,7 @@ if(args[0] is "--v02-compat-capture" or "--v02-compat-verify")
     db.RestoreBackup(fresh);if(State()!=expected)throw new Exception("V0.2 full backup restore changed original facts.");
     var oldSnapshot=Path.Combine(root,"old-backup.sqlite");using(var archive=System.IO.Compression.ZipFile.OpenRead(old))System.IO.Compression.ZipFileExtensions.ExtractToFile(archive.GetEntry("database.sqlite")!,oldSnapshot);
     var expectedOld=State(oldSnapshot);db.RestoreBackup(old);if(State()!=expectedOld||db.Integrity()!="ok")throw new Exception("V0.1.1 full backup restore changed its own original snapshot facts.");
-    File.WriteAllText(Path.Combine(root,"compatibility.json"),JsonSerializer.Serialize(new{Status="PASS",WriterVersion="0.1.1",ReaderVersion="0.2.0",AllTablesUnchanged=true,OldAndNewBackupsValidatedAndRestored=true,PartRoundtrip=true,Records=db.Records(null,true).Count,TotalMs=db.Records().Sum(r=>r.DurationMs),Integrity=db.Integrity(),Migration="none"},new JsonSerializerOptions{WriteIndented=true}));Console.WriteLine("PASS: all tables unchanged, both backups restored, owned part operations.");return;
+    File.WriteAllText(Path.Combine(root,"compatibility.json"),JsonSerializer.Serialize(new{Status="PASS",WriterVersion="0.1.1",ReaderVersion=typeof(YanJiDatabase).Assembly.GetName().Version?.ToString(),AllTablesUnchanged=true,OldAndNewBackupsValidatedAndRestored=true,PartRoundtrip=true,Records=db.Records(null,true).Count,TotalMs=db.Records().Sum(r=>r.DurationMs),Integrity=db.Integrity(),Migration="none"},new JsonSerializerOptions{WriteIndented=true}));Console.WriteLine("PASS: all tables unchanged, both backups restored, owned part operations.");return;
 }
 if(args[0] is "--compat-capture" or "--compat-verify" or "--compat-reset")
 {

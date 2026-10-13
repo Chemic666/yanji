@@ -37,7 +37,7 @@ public partial class MainWindow : Window
         _tick.Tick+=async(_,_)=>{try{await Model.TickAsync();_tray.Text="研迹 · "+Model.TimerText;}catch(Exception e){Model.Status="自动保存未完成："+e.Message;}};
         Model.Error+=text=>{var smoke=((App)Application.Current).SmokePath;if(smoke!=null){Directory.CreateDirectory(smoke);File.AppendAllText(Path.Combine(smoke,"operation-errors.txt"),text+"\n");}else MessageBox.Show(this,text,"研迹",MessageBoxButton.OK,MessageBoxImage.Information);};
         SourceInitialized+=(_,_)=>{var handle=new WindowInteropHelper(this).Handle;_source=HwndSource.FromHwnd(handle);_source.AddHook(HandleMessage);WTSRegisterSessionNotification(handle,0);((App)Application.Current).RecordWindow(handle);};
-        Loaded+=async(_,_)=>{await Model.InitializeAsync();_tick.Start();if(((App)Application.Current).SmokePath!=null)await SmokeRunner.RunAsync(this,((App)Application.Current).SmokePath!);};
+        Loaded+=async(_,_)=>{await Model.InitializeAsync();_tick.Start();if(((App)Application.Current).V021Capture)await V021CaptureRunner.RunAsync(this,((App)Application.Current).SmokePath!,((App)Application.Current).V021Fixture!);else if(((App)Application.Current).SmokePath!=null)await SmokeRunner.RunAsync(this,((App)Application.Current).SmokePath!);};
         Closing+=OnClosing;
         Closed+=(_,_)=>{ThemeService.Changed-=RefreshChartThemes;_tick.Stop();if(_source!=null){WTSUnRegisterSessionNotification(_source.Handle);_source.RemoveHook(HandleMessage);}_tray.Dispose();Model.Database.Dispose();Application.Current.Shutdown();};
     }
