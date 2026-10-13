@@ -1,0 +1,22 @@
+<Application x:Class="YanJi.App.App" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" ShutdownMode="OnExplicitShutdown">
+ <Application.Resources>
+  <SolidColorBrush x:Key="Accent" Color="#167D8D"/><SolidColorBrush x:Key="Ink" Color="#182B3A"/>
+  <SolidColorBrush x:Key="Muted" Color="#677987"/><SolidColorBrush x:Key="Canvas" Color="#F3F6F8"/>
+  <SolidColorBrush x:Key="Line" Color="#DCE5EB"/><SolidColorBrush x:Key="CardBackground" Color="White"/>
+  <Style TargetType="Window"><Setter Property="FontFamily" Value="Microsoft YaHei UI"/><Setter Property="FontSize" Value="14"/><Setter Property="Foreground" Value="{StaticResource Ink}"/><Setter Property="Background" Value="{StaticResource Canvas}"/></Style>
+  <Style TargetType="TextBlock"><Setter Property="TextWrapping" Value="Wrap"/></Style>
+  <Style x:Key="Heading" TargetType="TextBlock"><Setter Property="FontSize" Value="28"/><Setter Property="FontWeight" Value="SemiBold"/><Setter Property="Margin" Value="0,0,0,8"/></Style>
+  <Style x:Key="Subheading" TargetType="TextBlock"><Setter Property="FontSize" Value="18"/><Setter Property="FontWeight" Value="SemiBold"/><Setter Property="Margin" Value="0,0,0,16"/></Style>
+  <Style x:Key="MutedText" TargetType="TextBlock"><Setter Property="Foreground" Value="{StaticResource Muted}"/><Setter Property="Margin" Value="0,0,0,12"/></Style>
+  <Style x:Key="Card" TargetType="Border"><Setter Property="Background" Value="{StaticResource CardBackground}"/><Setter Property="CornerRadius" Value="12"/><Setter Property="Padding" Value="24"/><Setter Property="Margin" Value="0,0,0,16"/><Setter Property="BorderBrush" Value="{StaticResource Line}"/><Setter Property="BorderThickness" Value="1"/></Style>
+  <Style TargetType="Button">
+   <Setter Property="Padding" Value="16,9"/><Setter Property="Margin" Value="0,0,8,8"/><Setter Property="Foreground" Value="{StaticResource Ink}"/><Setter Property="Background" Value="#EDF3F6"/><Setter Property="BorderBrush" Value="{StaticResource Line}"/><Setter Property="Cursor" Value="Hand"/>
+   <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border x:Name="Body" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="8" Padding="{TemplateBinding Padding}"><ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Body" Property="Opacity" Value="0.85"/></Trigger><Trigger Property="IsEnabled" Value="False"><Setter TargetName="Body" Property="Opacity" Value="0.4"/></Trigger><Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="Body" Property="BorderBrush" Value="#167D8D"/><Setter TargetName="Body" Property="BorderThickness" Value="2"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter>
+  </Style>
+  <Style x:Key="Primary" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}"><Setter Property="Background" Value="{StaticResource Accent}"/><Setter Property="Foreground" Value="White"/><Setter Property="BorderBrush" Value="{StaticResource Accent}"/></Style>
+  <Style TargetType="TextBox"><Setter Property="Padding" Value="10,8"/><Setter Property="Margin" Value="0,4,0,12"/><Setter Property="BorderBrush" Value="{StaticResource Line}"/><Setter Property="MinHeight" Value="38"/><Setter Property="VerticalContentAlignment" Value="Center"/></Style>
+  <Style TargetType="ComboBox"><Setter Property="Padding" Value="8"/><Setter Property="Margin" Value="0,4,0,12"/><Setter Property="MinHeight" Value="38"/><Setter Property="VerticalContentAlignment" Value="Center"/></Style>
+  <Style TargetType="DatePicker"><Setter Property="Padding" Value="6"/><Setter Property="Margin" Value="0,4,0,12"/><Setter Property="MinHeight" Value="38"/></Style>
+  <Style TargetType="CheckBox"><Setter Property="Margin" Value="0,4,0,12"/><Setter Property="VerticalContentAlignment" Value="Center"/></Style>
+ </Application.Resources>
+</Application>
