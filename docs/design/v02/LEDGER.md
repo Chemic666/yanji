@@ -15,6 +15,7 @@
 - 正式业务回归：`artifacts/v02-tests-final/v02-final.trx`，59 PASS、0 FAIL、0 SKIP。
 - 原始基线：`artifacts/v02-baseline-5b58b7dbe96b4881a28d3caad345b014`，4 个 V0.1.1 原生窗口。
 - 检查结果来自文件和进程退出码，不从计划推定 PASS。捕获 JSON 的 CAPTURED 只是文件生成；人工视觉检查结论单独写入 VALIDATION.md。
+- 交付时重新核查发现基线 PID 6380 尚存，之前“等待后自行退出”的记载已纠正。确认命令行仅连接本轮隔离基线库，调用该窗口自己的“退出应用”按钮，WaitForExit 确认退出；无强制终止。证据为基线目录 exit-verification.json。
 
 ## 已发现和修正
 

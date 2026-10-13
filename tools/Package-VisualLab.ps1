@@ -27,6 +27,7 @@ foreach($pair in @(@($regular,'normal'),@($empty,'empty'),@($baseline,'baseline'
   $receipt=New-Item -ItemType Directory -Path (Join-Path $evidenceDir.FullName $pair[1])
   Get-ChildItem -LiteralPath $source -File | Where-Object Extension -eq '.json' | Copy-Item -Destination $receipt.FullName
   if(Test-Path (Join-Path $pair[0] 'execution.json')){Copy-Item -LiteralPath (Join-Path $pair[0] 'execution.json') -Destination $receipt.FullName}
+  if(Test-Path (Join-Path $pair[0] 'exit-verification.json')){Copy-Item -LiteralPath (Join-Path $pair[0] 'exit-verification.json') -Destination $receipt.FullName}
 }
 Copy-Item -LiteralPath (Join-Path $repo 'artifacts/v02-tests-final/v02-final.trx') -Destination $evidenceDir.FullName
 Copy-Item -LiteralPath (Join-Path $repo 'docs/design/v02') -Destination (Join-Path $destinationPath 'docs') -Recurse

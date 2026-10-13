@@ -35,6 +35,8 @@
 
 原V0.1.1四张实际窗口：`artifacts/v02-baseline-5b58b7dbe96b4881a28d3caad345b014/screenshots`（具体文件名见该目录）。最新指针只帮助定位，不代替原始文件。
 
+交付核查发现原基线 PID 6380 在首次 WM_CLOSE 请求后仍运行，不能据此宣布退出。已再次确认它只连接上述隔离库，并通过自身明确“退出应用”按钮正常退出，WaitForExit 返回 true；未强制终止。exit-verification.json 保留该核查。关闭请求不等于进程退出。
+
 构建：`tools/Invoke-Build.ps1 -Arguments @('publish','design/YanJi.DesignLab/YanJi.DesignLab.csproj','-c','Release','-r','win-x64','--self-contained','true','-o','releases/YanJi-v0.2-visual-preview-win-x64','-m:1','-nr:false')`。
 
 发布运行：`tools/Invoke-VisualLab.ps1 -Executable <发布 exe> -EvidenceName final-release`；空态另加 `-Empty`。脚本使用隔离GUID数据目录；完成退出，未擅自终止程序。生成的新发布目录中移除了项目引用多带出的 YanJi.exe，保留依赖 YanJi.dll，避免把原版入口误当作样板入口；原V0.1.1发布不变。
