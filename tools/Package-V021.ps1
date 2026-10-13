@@ -14,7 +14,9 @@ New-Item -ItemType Directory $OutputDirectory -Force|Out-Null
 foreach($suffix in @('win-x64','source','evidence','Review')){if(Test-Path "$OutputDirectory/YanJi-v0.2.1-$suffix.zip"){throw 'Preserve existing delivery ZIP.'}}
 foreach($doc in @('V021-DESIGN.md','V021-VALIDATION.md','V021-DELIVERY.md','V021-SKILL-USAGE.md','V02-USER-GUIDE.md')){Copy-Item "$repo/docs/$doc" $release}
 Copy-Item "$repo/THIRD-PARTY-NOTICES.md" $release
-Copy-Item "$repo/releases/YanJi-v0.2.0-win-x64/licenses" "$release/licenses" -Recurse
+$licenseSource="$repo/releases/YanJi-v0.2.0-win-x64/licenses"
+if(!(Test-Path "$release/licenses")){Copy-Item $licenseSource "$release/licenses" -Recurse}
+else{foreach($license in Get-ChildItem $licenseSource -Recurse -File){$relative=[IO.Path]::GetRelativePath($licenseSource,$license.FullName);if((Get-FileHash (Join-Path "$release/licenses" $relative)).Hash -ne (Get-FileHash $license.FullName).Hash){throw 'Preserved license hash mismatch.'}}}
 @'
 研迹 V0.2.1 · Windows x64 自包含
 完整解压后双击 YanJi.exe；无需安装 SDK。
@@ -28,7 +30,7 @@ $zip="$OutputDirectory/YanJi-v0.2.1-win-x64.zip"
 [IO.Compression.ZipFile]::CreateFromDirectory($release,$zip,[IO.Compression.CompressionLevel]::Optimal,$true)
 git -C $repo archive --format=zip --output="$OutputDirectory/YanJi-v0.2.1-source.zip" HEAD
 if($LASTEXITCODE -ne 0){throw 'Source archive failed.'}
-$extract="$repo/artifacts/v021-package-extracted"
+$extract="$repo/artifacts/v021-package-extracted-$($commit.Substring(0,8))"
 if(Test-Path $extract){throw 'Fresh package extraction required.'}
 [IO.Compression.ZipFile]::ExtractToDirectory($zip,$extract)
 $unpacked="$extract/YanJi-v0.2.1-win-x64"
@@ -40,7 +42,7 @@ for($i=1;$i -le 3;$i++){
  $p.Id|Set-Content "$extract/pid-$i.txt"
  if(!$p.WaitForExit(30000)){throw "Owned startup still running PID $($p.Id)"}
  $s=Get-Content "$extract/report-$i/startup.json" -Raw|ConvertFrom-Json
- if($p.ExitCode -ne 0 -or $s.Status -ne 'PASS' -or $s.RuntimeDirectory.TrimEnd('\') -ne $unpacked){throw 'Extracted self-contained startup failed.'}
+ if($p.ExitCode -ne 0 -or $s.Status -ne 'PASS' -or [IO.Path]::GetFullPath($s.RuntimeDirectory).TrimEnd('\') -ne [IO.Path]::GetFullPath($unpacked).TrimEnd('\')){throw 'Extracted self-contained startup failed.'}
  $startups+=$s
 }
 @{Status='PASS';SourceCommit=$commit;ProductVersion=(Get-Item "$unpacked/YanJi.exe").VersionInfo.ProductVersion;VerifiedFiles=$files.Count;Startups=$startups;SharedRuntimeRequired=$false;PhysicalOffline='NOT TESTED'}|ConvertTo-Json -Depth 7|Set-Content "$OutputDirectory/package-validation.json"
