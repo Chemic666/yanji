@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="../YanJi.Core/YanJi.Core.csproj" />
+    <PackageReference Include="Microsoft.Data.Sqlite" />
+  </ItemGroup>
+</Project>

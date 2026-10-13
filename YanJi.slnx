@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/YanJi.Core/YanJi.Core.csproj" />
+    <Project Path="src/YanJi.Data/YanJi.Data.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/YanJi.Tests/YanJi.Tests.csproj" />
+  </Folder>
+</Solution>
