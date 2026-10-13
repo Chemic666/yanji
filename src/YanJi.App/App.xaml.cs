@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
@@ -18,6 +19,7 @@ public partial class App : Application
     public bool Measure {get;private set;}
     public bool PerformanceOnly {get;private set;}
     public bool StartupOnly {get;private set;}
+    public bool V02Visual {get;private set;}
     internal bool ValidationFailed {get;set;}
     internal Stopwatch StartupClock {get;}=Stopwatch.StartNew();
     public uint ShowMessage {get;private set;}
@@ -39,10 +41,17 @@ public partial class App : Application
                 else if(e.Args[i]=="--measure")Measure=true;
                 else if(e.Args[i]=="--performance"&&i+1<e.Args.Length){SmokePath=Path.GetFullPath(e.Args[++i]);PerformanceOnly=true;}
                 else if(e.Args[i]=="--startup-probe"&&i+1<e.Args.Length){SmokePath=Path.GetFullPath(e.Args[++i]);StartupOnly=true;}
+                else if(e.Args[i]=="--v02-visual"&&i+1<e.Args.Length){SmokePath=Path.GetFullPath(e.Args[++i]);V02Visual=true;}
                 else throw new ArgumentException("未知参数。支持 --data-dir <独立数据目录> 与 --smoke <报告目录>。");
             }
             if(SmokePath!=null&&explicitDirectory==null)throw new ArgumentException("自动化验证必须指定独立数据目录。");
             _dataDirectory=Path.GetFullPath(explicitDirectory??Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"YanJi"));
+            if(V02Visual)
+            {
+                var formal=Path.GetFullPath(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"YanJi"));
+                if(string.Equals(_dataDirectory,formal,StringComparison.OrdinalIgnoreCase)||Directory.Exists(_dataDirectory)&&Directory.EnumerateFileSystemEntries(_dataDirectory).Any())throw new ArgumentException("视觉验收必须使用新的独立数据目录。");
+                System.Windows.Media.RenderOptions.ProcessRenderMode=System.Windows.Interop.RenderMode.SoftwareOnly;
+            }
             var identity=Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(_dataDirectory.TrimEnd(Path.DirectorySeparatorChar).ToUpperInvariant())))[..24];
             ShowMessage=RegisterWindowMessage("YanJi.Show."+identity);
             _instance=new Mutex(true,"Local\\YanJi."+identity,out var created);

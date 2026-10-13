@@ -29,33 +29,33 @@
 
 - [x] 核对干净Git、v0.1.1及视觉标签，创建codex/v0.2-quiet-focus。
 - [x] 固定六源提交、审查许可证/Skill内容和可执行入口；官方安装器项目级安装优先Skills。
-- [ ] 保存来源/安装/哈希/加载证据；实际WPF检索并记录采纳/拒绝；Codex发现验证。
+- [x] 保存来源/安装/哈希/加载证据；实际WPF检索并记录采纳/拒绝；Codex发现验证。
 - [x] 原业务基线：59 PASS，artifacts/v02-official-baseline-tests/v02-baseline.trx。
 
 ### Task 2：设计系统与展示契约
 
 Files：Styles.xaml、ThemeService.cs、PresentationConverters.cs、MainViewModel展示属性、纯时长展示辅助及测试。
 
-- [ ] 先写自然紧凑时长、≈与精度边界测试，确认RED；补最小纯展示实现，完整套件GREEN。
-- [ ] 落实语义颜色/字号/原生图标与输入模板，所有交互状态；不动统计聚合。
-- [ ] 新展示投影只消费有效原始毫秒，精确原文保留在Tooltip；记录修订服务不变。
+- [x] 先写自然紧凑时长、≈与精度边界测试，确认RED；补最小纯展示实现，完整套件GREEN。
+- [x] 落实语义颜色/字号/原生图标与输入模板，所有交互状态；不动统计聚合。
+- [x] 新展示投影只消费有效原始毫秒，精确原文保留在Tooltip；记录修订服务不变。
 
 ### Task 3：正式视图与交互
 
 Files：MainWindow.xaml、MainWindow.Presentation.cs、StudyChart.cs、EditorDialog.cs、ConfirmDialog.cs。
 
-- [ ] 优先今日、历程、明细、统计；再计划、薄弱点、设置。
-- [ ] 保留现有handler、命令、named control和测试入口；响应布局重排，新增浮层隔离及状态反馈。
-- [ ] 增强图表真实刻度、提示、命中与中文，保持StudyAnalytics事实。
-- [ ] 原63项WPF回归，新增真实窗口捕获/状态/键盘/图表断言；第一次批量目视。
+- [x] 优先今日、历程、明细、统计；再计划、薄弱点、设置。
+- [x] 保留现有handler、命令、named control和测试入口；响应布局重排，新增浮层隔离及状态反馈。
+- [x] 增强图表真实刻度、提示、命中与中文，保持StudyAnalytics事实。
+- [x] 原63项WPF回归，新增真实窗口捕获/状态/键盘/图表断言；第一次批量目视。
 
 ### Task 4：收敛与可靠性
 
 Files：V02VisualRunner及隔离调用工具、测试证据。
 
-- [ ] 集中修复首次截图和运行问题；第二轮确认，记录PASS/FAIL/NOT TESTED。
-- [ ] 运行核心完整回归、旧V0.1.1数据库兼容、备份校验/恢复、重开持久化。
-- [ ] 真实200%DPI；其他DPI只渲染，不修改系统。物理IME与系统电源实验留NOT TESTED。
+- [x] 集中修复首次截图和运行问题；第二轮确认，记录PASS/FAIL/NOT TESTED。
+- [x] 运行核心完整回归、旧V0.1.1数据库兼容、备份校验/恢复、重开持久化。
+- [x] 真实200%DPI；其他DPI只渲染，不修改系统。物理IME与系统电源实验留NOT TESTED。
 - [ ] 保留性能样本并给出实际指标，不把截图过程当空闲性能。
 
 ### Task 5：独立审查与交付

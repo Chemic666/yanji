@@ -6,6 +6,27 @@ using YanJi.Data;
 
 if(args.Length<2)throw new ArgumentException("Specify --run <new isolated directory> or --child <directory>.");
 var root=Path.GetFullPath(args[1]);
+if(args[0] is "--v02-compat-capture" or "--v02-compat-verify")
+{
+    if(!File.Exists(Path.Combine(root,"owned-v02-upgrade.marker")))throw new ArgumentException("V0.2 compatibility requires an owned fixture marker.");
+    string State(string? file=null)
+    {
+        using var c=new SqliteConnection($"Data Source={file??Path.Combine(root,"data","yanji.sqlite")};Mode=ReadOnly;Pooling=False");c.Open();
+        using var names=c.CreateCommand();names.CommandText="SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name";
+        var tables=new List<string>();using(var r=names.ExecuteReader())while(r.Read())tables.Add(r.GetString(0));
+        var rows=new Dictionary<string,string[]>();foreach(var table in tables){using var cmd=c.CreateCommand();cmd.CommandText="SELECT * FROM \""+table.Replace("\"","\"\"")+"\"";using var r=cmd.ExecuteReader();var items=new List<string>();while(r.Read()){var values=new object[r.FieldCount];r.GetValues(values);items.Add(JsonSerializer.Serialize(values));}rows[table]=items.Order(StringComparer.Ordinal).ToArray();}return JsonSerializer.Serialize(rows);
+    }
+    var baseline=Path.Combine(root,"v011-all-tables.json");
+    if(args[0]=="--v02-compat-capture"){File.WriteAllText(baseline,State());Console.WriteLine("Actual V0.1.1 fixture all-table baseline captured read-only.");return;}
+    var expected=File.ReadAllText(baseline);if(State()!=expected)throw new Exception("V0.2 opening changed old stored facts, audit or settings.");
+    using var db=new YanJiDatabase(Path.Combine(root,"data"));var old=Path.Combine(root,"v011-full.yanjibak");db.ValidateBackup(old);
+    var fresh=Path.Combine(root,"v02-full.yanjibak");db.Backup(fresh);db.ValidateBackup(fresh);
+    var record=db.Records().First(r=>r.Parts.Count>1);var part=record.Parts[0];db.ExcludePart(record.Id,part.Id,record.Version);var after=db.Records().Single(r=>r.Id==record.Id);db.RestorePart(after.Id,part.Id,after.Version);
+    db.RestoreBackup(fresh);if(State()!=expected)throw new Exception("V0.2 full backup restore changed original facts.");
+    var oldSnapshot=Path.Combine(root,"old-backup.sqlite");using(var archive=System.IO.Compression.ZipFile.OpenRead(old))System.IO.Compression.ZipFileExtensions.ExtractToFile(archive.GetEntry("database.sqlite")!,oldSnapshot);
+    var expectedOld=State(oldSnapshot);db.RestoreBackup(old);if(State()!=expectedOld||db.Integrity()!="ok")throw new Exception("V0.1.1 full backup restore changed its own original snapshot facts.");
+    File.WriteAllText(Path.Combine(root,"compatibility.json"),JsonSerializer.Serialize(new{Status="PASS",WriterVersion="0.1.1",ReaderVersion="0.2.0",AllTablesUnchanged=true,OldAndNewBackupsValidatedAndRestored=true,PartRoundtrip=true,Records=db.Records(null,true).Count,TotalMs=db.Records().Sum(r=>r.DurationMs),Integrity=db.Integrity(),Migration="none"},new JsonSerializerOptions{WriteIndented=true}));Console.WriteLine("PASS: all tables unchanged, both backups restored, owned part operations.");return;
+}
 if(args[0] is "--compat-capture" or "--compat-verify" or "--compat-reset")
 {
     if(!File.Exists(Path.Combine(root,"owned-upgrade.marker")))throw new ArgumentException("Compatibility probe requires an explicitly owned fixture marker.");

@@ -22,6 +22,9 @@ public sealed partial class MainViewModel
     private List<StudyRecord> _records=[];
     private Dictionary<string,string> _settings=[];
     [ObservableProperty] private bool darkTheme;
+    [ObservableProperty] private long todayDurationMs;
+    [ObservableProperty] private long weekDurationMs;
+    [ObservableProperty] private long monthDurationMs;
     [ObservableProperty] private string recordSubjectId="";
     [ObservableProperty] private string recordChapterId="";
     [ObservableProperty] private string recordSource="";
@@ -128,14 +131,14 @@ public sealed partial class MainViewModel
             Analysis=StudyAnalytics.Build(_records,AllSubjects,from,to,LocalToday(),string.IsNullOrEmpty(StatsSubjectId)?null:StatsSubjectId);
             StatsTotal=Duration(Analysis.DurationMs);NaturalAverage=Duration((long)Analysis.CalendarAverageMs);LearningAverage=Duration((long)Analysis.LearningAverageMs);StatsDays=Analysis.LearningDays.ToString();StatsSessions=Analysis.Sessions.ToString();
             SubjectPlot=Analysis.Subjects.Select(s=>new PlotPoint(s.SubjectId,s.Name,s.DurationMs,ThemeService.SubjectColor(s.SubjectId),s.SubjectId)).ToList();
-            DailyPlot=DailyPoints(Analysis.Daily);var buckets=TrendPeriod=="month"?Analysis.Months:Analysis.Weeks;
+            DailyPlot=DailyPoints(Analysis.Daily,string.IsNullOrEmpty(StatsSubjectId)?null:StatsSubjectId);var buckets=TrendPeriod=="month"?Analysis.Months:Analysis.Weeks;
             TrendPlot=buckets.Select(b=>new PlotPoint(b.From.ToString("yyyy-MM-dd"),b.From.ToString("MM-dd"),b.DurationMs,ThemeService.SubjectColor(string.IsNullOrEmpty(StatsSubjectId)?"math":StatsSubjectId),SubjectId:string.IsNullOrEmpty(StatsSubjectId)?null:StatsSubjectId,From:b.From,To:b.To)).ToList();
             StatsHeatmap=Heatmap(from,to,string.IsNullOrEmpty(StatsSubjectId)?null:StatsSubjectId);
             ChapterPlot=Analysis.Chapters.Select(c=>new PlotPoint(c.Key,AllChapters.FirstOrDefault(ch=>ch.Id==c.Key)?.Name??c.Key,c.Value,ThemeService.SubjectColor(c.Key))).OrderByDescending(p=>p.Value).ToList();
         }
         catch(ArgumentException e){Status=e.Message;Analysis=null;SubjectPlot=DailyPlot=TrendPlot=StatsHeatmap=ChapterPlot=Array.Empty<PlotPoint>();StatsTotal=NaturalAverage=LearningAverage="—";StatsDays=StatsSessions="—";}
     }
-    private List<PlotPoint> DailyPoints(IEnumerable<DailyBreakdown> daily)=>daily.Select(d=>new PlotPoint(d.Date.ToString("yyyy-MM-dd"),d.Date.ToString("MM-dd"),d.DurationMs,ThemeService.SubjectColor("math"),SubjectId:string.IsNullOrEmpty(StatsSubjectId)?null:StatsSubjectId,From:d.Date,To:d.Date,
+    private List<PlotPoint> DailyPoints(IEnumerable<DailyBreakdown> daily,string? subjectScope=null)=>daily.Select(d=>new PlotPoint(d.Date.ToString("yyyy-MM-dd"),d.Date.ToString("MM-dd"),d.DurationMs,ThemeService.SubjectColor("math"),SubjectId:subjectScope,From:d.Date,To:d.Date,
         Segments:d.Subjects.Select(s=>new PlotPoint(d.Date+"-"+s.Key,(AllSubjects.FirstOrDefault(x=>x.Id==s.Key)?.Name??s.Key)+" · "+d.Date.ToString("yyyy-MM-dd"),s.Value,ThemeService.SubjectColor(s.Key),s.Key,d.Date,d.Date)).ToList())).ToList();
     private List<PlotPoint> Heatmap(DateOnly from,DateOnly to,string? subject)
     {

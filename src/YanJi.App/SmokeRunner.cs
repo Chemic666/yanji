@@ -29,10 +29,13 @@ public static class SmokeRunner
             var vm=window.Model;Assert(!vm.Busy&&vm.Subjects.Count>=4,"WPF startup and SQLite initialization");
             if(((App)Application.Current).StartupOnly)
             {window.UpdateLayout();await window.Dispatcher.InvokeAsync(()=>{},DispatcherPriority.ApplicationIdle);
+                var controls=Descendants(window).OfType<ComboBox>().Select(c=>new{Name=System.Windows.Automation.AutomationProperties.GetName(c),Width=c.ActualWidth,Height=c.ActualHeight,TemplateSource=DependencyPropertyHelper.GetValueSource(c,Control.TemplateProperty).BaseValueSource.ToString(),Toggle=(c.Template.FindName("Toggle",c) as FrameworkElement)?.ActualWidth,ToggleAlignment=(c.Template.FindName("Toggle",c) as FrameworkElement)?.HorizontalAlignment.ToString(),Visuals=Descendants(c).OfType<FrameworkElement>().Select(v=>new{Type=v.GetType().Name,v.Name,v.ActualWidth,v.ActualHeight,Alignment=v.HorizontalAlignment.ToString()}).Take(12)}).Where(c=>c.Width>0);
+                File.WriteAllText(Path.Combine(output,"control-layout.json"),JsonSerializer.Serialize(controls,new JsonSerializerOptions{WriteIndented=true}));
                 File.WriteAllText(Path.Combine(output,"startup.json"),JsonSerializer.Serialize(new{Status="PASS",UiReadyMs=((App)Application.Current).StartupClock.Elapsed.TotalMilliseconds,Runtime=System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription,RuntimeDirectory=System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory(),SQLite=vm.Database.Diagnostics(),ProcessId=Environment.ProcessId}));return;}
             if(((App)Application.Current).PerformanceOnly)
             {await PerformanceRunner.RunAsync(window,output);Assert(true,"Fresh self-contained process performance completed");return;}
             VisualUpgradeRunner.CaptureEmpty(window,output);
+            if(((App)Application.Current).V02Visual)await V02VisualRunner.EmptyAsync(window,output);
             vm.ManualMinutes="37";vm.ManualNote="中文输入验证：高等数学 · 极限";await vm.AddManualCommand.ExecuteAsync(null);
             Assert(vm.Database.Records().Any(r=>r.Note=="中文输入验证：高等数学 · 极限"&&r.DurationMs==2220000),"Manual command with Chinese note persisted");
             await vm.StartCommand.ExecuteAsync(null);Assert(vm.TimerRunning,"Start timer via command");await Task.Delay(1200);await vm.TickAsync();
@@ -79,6 +82,7 @@ public static class SmokeRunner
             Assert(editor.ShowDialog()==true&&editor.Values?["text"]=="中文测试","Actual editor default-save action preserves Chinese text");
             var backup=Path.Combine(output,"smoke.yanjibak");vm.Database.Backup(backup);vm.Database.ValidateBackup(backup);vm.Database.ExportCsv(Path.Combine(output,"smoke.csv"));Assert(File.Exists(backup),"UI process backup and CSV");
             await VisualUpgradeRunner.RunAsync(window,output,Assert);
+            if(((App)Application.Current).V02Visual)await V02VisualRunner.RunAsync(window,output,Assert);
             var dpi=VisualTreeHelper.GetDpi(window);using var process=Process.GetCurrentProcess();
             File.WriteAllText(Path.Combine(output,"environment.json"),JsonSerializer.Serialize(new{Runtime=System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription,RuntimeDirectory=System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory(),OS=Environment.OSVersion.ToString(),ClockSources=WindowsClock.Sources,SQLite=vm.Database.Diagnostics(),DpiX=dpi.PixelsPerInchX,DpiY=dpi.PixelsPerInchY,WorkingSet=process.WorkingSet64,PrivateBytes=process.PrivateMemorySize64,DataDirectory=vm.Database.DirectoryPath},new JsonSerializerOptions{WriteIndented=true}));
             if(((App)Application.Current).Measure)await PerformanceRunner.RunAsync(window,output);

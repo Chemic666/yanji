@@ -20,12 +20,14 @@ public sealed record RecordRow(StudyRecord Record,string Subject,string Chapter,
     public string Color=>ThemeService.SubjectColor(Record.SubjectId);
     public bool Deleted=>Record.Deleted;
     public string ScopedDuration=>Contribution is long ms?DurationText.Format(ms):Duration;
+    public string DisplayDuration=>DurationText.Compact(Contribution??Record.DurationMs);
+    public string DisplayScope=>Contribution is long ms&&ms!=Record.DurationMs?"本页贡献 · 整次 "+DurationText.Compact(Record.DurationMs):Source+" · "+State;
     public string ScopeLabel=>Contribution!=null?"本页贡献 "+ScopedDuration+" · 整次 "+Duration:"整次 "+Duration;
     public string Dates=>string.Join("、",Record.Parts.Select(p=>p.Date).Distinct().Order().Select(d=>d.ToString("yyyy-MM-dd")));
     public string Summary=>Source+" · "+State+" · "+Record.Parts.Count+" 个片段 · "+Dates;
 }
-public sealed record CalendarDay(DateTime Date,string Day,string Duration,bool InMonth,bool Selected,string Status="尚无记录",string Color="#EDF3F5")
-{ public string Label=>Day+"\n"+(Duration.Length>0?Duration:Status=="尚无记录"?"无记录":Status);public string Description=>$"{Date:yyyy-MM-dd} · {Status}"+(Duration.Length>0?" · "+Duration:""); }
+public sealed record CalendarDay(DateTime Date,string Day,string Duration,bool InMonth,bool Selected,string Status="尚无记录",string Color="#EDF3F5",long Milliseconds=0)
+{ public string Label=>Day+"\n"+(Duration.Length>0?Duration:Status=="尚无记录"?"无记录":Status);public string Description=>$"{Date:yyyy-MM-dd} · {Status}"+(Duration.Length>0?" · "+Duration:"");public string DisplayDuration=>Milliseconds>0?DurationText.Compact(Milliseconds):Status=="尚无记录"?"—":Status; }
 public sealed record StatRow(string Label,string Duration,double Width);
 public sealed partial class MainViewModel : ObservableObject
 {
@@ -132,7 +134,8 @@ public sealed partial class MainViewModel : ObservableObject
         ZoneId=Database.Setting("zone","Asia/Shanghai");TimeParts.ResolveZone(ZoneId);
         ExamDate=Database.Setting("exam-date","") is string date&&date.Length>0?"考试日期 "+date:"2028 年入学 · 考试日期待定";
         var today=LocalToday();var week=today.AddDays(-(((int)today.DayOfWeek+6)%7));var month=new DateOnly(today.Year,today.Month,1);
-        TodayTotal=Duration(Database.DailyTotals(today,today).Sum(x=>x.DurationMs));WeekTotal=Duration(Database.DailyTotals(week,today).Sum(x=>x.DurationMs));MonthTotal=Duration(Database.DailyTotals(month,today).Sum(x=>x.DurationMs));
+        TodayDurationMs=Database.DailyTotals(today,today).Sum(x=>x.DurationMs);WeekDurationMs=Database.DailyTotals(week,today).Sum(x=>x.DurationMs);MonthDurationMs=Database.DailyTotals(month,today).Sum(x=>x.DurationMs);
+        TodayTotal=Duration(TodayDurationMs);WeekTotal=Duration(WeekDurationMs);MonthTotal=Duration(MonthDurationMs);
         Replace(TodayRecords,Database.Records(today).OrderByDescending(r=>r.CreatedAt).Take(8).Select(r=>Row(r,today)));RefreshPresentation();LoadDay();UpdateWarning();
     }
     private void LoadDay()
@@ -142,7 +145,7 @@ public sealed partial class MainViewModel : ObservableObject
         {_loadingReflection=true;Reflection=Database.Reflection(date);_reflectionDate=date;_loadingReflection=false;}
         var first=new DateOnly(CalendarMonth.Year,CalendarMonth.Month,1);var start=first.AddDays(-(((int)first.DayOfWeek+6)%7));
         var totals=Database.DailyTotals(start,start.AddDays(41)).ToDictionary(t=>t.Date,t=>t.DurationMs);
-        MonthLabel=CalendarMonth.ToString("yyyy 年 M 月");Replace(Days,Enumerable.Range(0,42).Select(i=>{var d=start.AddDays(i);var ms=totals.GetValueOrDefault(d);return new CalendarDay(d.ToDateTime(TimeOnly.MinValue),d.Day.ToString(),ms>0?Duration(ms):"",d.Month==first.Month,d==date,DayStatus(d,ms),ms>0?ThemeService.SubjectColor("math"):ThemeService.Dark?"#223440":"#EDF3F5");}));RefreshDayPresentation();
+        MonthLabel=CalendarMonth.ToString("yyyy 年 M 月");Replace(Days,Enumerable.Range(0,42).Select(i=>{var d=start.AddDays(i);var ms=totals.GetValueOrDefault(d);return new CalendarDay(d.ToDateTime(TimeOnly.MinValue),d.Day.ToString(),ms>0?Duration(ms):"",d.Month==first.Month,d==date,DayStatus(d,ms),ms>0?ThemeService.SubjectColor("math"):ThemeService.Dark?"#344737":"#E5ECDF",ms);}));RefreshDayPresentation();
     }
     public void RefreshStats()
     {

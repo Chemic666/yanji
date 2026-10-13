@@ -31,6 +31,18 @@ public static class StudyAnalytics
 }
 public static class DurationText
 {
+    /// <summary>Compact display only. The approximation mark declares omitted low digits.</summary>
+    public static string Compact(long milliseconds)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegative(milliseconds);
+        if(milliseconds<60000)return Format(milliseconds);
+        var hours=milliseconds/3600000;
+        var minutes=milliseconds/60000%60;
+        if(hours>0)
+            return (milliseconds%60000>0?"≈ ":"")+hours+" 小时"+(minutes>0?" "+minutes+" 分":"");
+        var seconds=milliseconds%60000/1000;
+        return (milliseconds%1000>0?"≈ ":"")+minutes+" 分"+(seconds>0?" "+seconds+" 秒":"");
+    }
     public static string Format(long milliseconds)
     {
         ArgumentOutOfRangeException.ThrowIfNegative(milliseconds);

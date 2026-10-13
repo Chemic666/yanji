@@ -21,17 +21,19 @@ public partial class MainWindow
     private void Layout_Changed(object sender,SizeChangedEventArgs e)
     {
         if(NavColumn==null||TodayReflection==null)return;var narrow=ActualWidth<1100;
-        NavColumn.Width=new GridLength(narrow?72:208);BrandWord.FontSize=narrow?16:27;BrandHint.Visibility=VersionHint.Visibility=narrow?Visibility.Collapsed:Visibility.Visible;ExitButton.Content=narrow?"退出":"退出应用";ExitButton.Padding=new Thickness(narrow?2:8,8,narrow?2:8,8);ExitButton.Margin=new Thickness(0);
+        NavColumn.Width=new GridLength(narrow?72:184);BrandWord.FontSize=narrow?16:27;BrandHint.Visibility=VersionHint.Visibility=narrow?Visibility.Collapsed:Visibility.Visible;ExitButton.Content=narrow?"退出":"退出应用";ExitButton.Padding=new Thickness(narrow?2:8,8,narrow?2:8,8);ExitButton.Margin=new Thickness(0);
         foreach(var item in NavigationList.Items.OfType<ListBoxItem>())item.Padding=new Thickness(narrow?8:12,11,narrow?4:12,11);
         foreach(var text in VisualChildren(this).OfType<TextBlock>().Where(t=>Equals(t.Tag,"NavLabel")))text.Visibility=narrow?Visibility.Collapsed:Visibility.Visible;
-        MainScroll.Padding=new Thickness(narrow?18:28,24,narrow?18:28,8);
+        MainScroll.Padding=new Thickness(narrow?20:32,28,narrow?20:32,12);
         if(RecordList!=null)RecordList.MaxHeight=Math.Max(200,ActualHeight-300);
         void Columns(ColumnDefinition left,ColumnDefinition gap,ColumnDefinition right,FrameworkElement panel,double ratio)
-        {left.Width=new GridLength(narrow?1:ratio,GridUnitType.Star);gap.Width=new GridLength(narrow?0:16);right.Width=new GridLength(narrow?0:1,GridUnitType.Star);Grid.SetColumn(panel,narrow?0:2);Grid.SetRow(panel,narrow?1:0);}
-        Columns(TodayLeft,TodayGap,TodayRight,TodayReflection,2);Columns(CalendarLeft,CalendarGap,CalendarRight,CalendarDetail,1/1.4);Columns(StatsLeft,StatsGap,StatsRight,StatsDailyCard,1/1.15);
+        {left.Width=new GridLength(narrow?1:ratio,GridUnitType.Star);gap.Width=new GridLength(narrow?0:20);right.Width=new GridLength(narrow?0:1,GridUnitType.Star);Grid.SetColumn(panel,narrow?0:2);Grid.SetRow(panel,narrow?1:0);}
+        Columns(TodayLeft,TodayGap,TodayRight,TodayReflection,1.1);Columns(CalendarLeft,CalendarGap,CalendarRight,CalendarDetail,1/1.35);Columns(StatsLeft,StatsGap,StatsRight,StatsDailyCard,1.4);
+        foreach(var pair in new[]{(AuxGrid2,AuxRight2),(AuxGrid3,AuxRight3),(AuxGrid5,AuxRight5)})
+        {pair.Item1.ColumnDefinitions[0].Width=new GridLength(narrow?1:1.4,GridUnitType.Star);pair.Item1.ColumnDefinitions[1].Width=new GridLength(narrow?0:20);pair.Item1.ColumnDefinitions[2].Width=new GridLength(narrow?0:1,GridUnitType.Star);Grid.SetColumn(pair.Item2,narrow?0:2);Grid.SetRow(pair.Item2,narrow?1:0);}
     }
     private void Window_KeyDown(object sender,KeyEventArgs e)
-    {if(e.Key==Key.Escape&&Model.DrawerOpen){CloseDrawer_Click(this,e);e.Handled=true;}if(e.Key==Key.N&&(Keyboard.Modifiers&ModifierKeys.Control)!=0){QuickAdd_Click(this,e);e.Handled=true;}}
+    {if(e.Key==Key.Escape&&Model.DrawerOpen){CloseDrawer_Click(this,e);e.Handled=true;}else if(!Model.DrawerOpen&&e.Key==Key.N&&(Keyboard.Modifiers&ModifierKeys.Control)!=0){QuickAdd_Click(this,e);e.Handled=true;}}
     private async void QuickAdd_Click(object sender,RoutedEventArgs e)
     {
         if(Model.Subjects.Count==0){Model.Status="请先添加或恢复一个使用中的科目，再补录学习。";return;}
