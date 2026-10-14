@@ -43,6 +43,7 @@ internal static class V022NativeRunner
         vm.OpenRecords(DateOnly.FromDateTime(vm.StatsFrom),day,"math","__unspecified");check(vm.FilteredRecords.All(r=>r.Record.ChapterId==null),"V022 unspecified chapter has independent detail filter");
         vm.StatsFrom=day.AddDays(-29).ToDateTime(TimeOnly.MinValue);vm.StatsSubjectId="";vm.Page=4;w.UpdateLayout();
         check(VisualUpgradeRunner.Descendants(w).OfType<Button>().Count(b=>b.Content is string s&&new[]{"数据概览","科目与章节","学习复盘"}.Contains(s))==3,"V022 three statistics destinations share filters");
+        check(vm.SubjectPlot.Count>0&&vm.SubjectPlot.All(p=>p.From==DateOnly.FromDateTime(vm.StatsFrom)&&p.To==DateOnly.FromDateTime(vm.StatsTo)&&p.Status=="范围内已保存有效学习"),"V022 subject chart tooltip and drill carry explicit saved-record date scope");
         vm.NewPeriodReview();vm.ReviewBody="实际阶段复盘输入";await vm.SavePeriodReviewAsync();var review=vm.PeriodReviews.First(r=>r.Body=="实际阶段复盘输入");
         vm.EditPeriodReview(review);vm.ReviewBody="修正阶段复盘输入";await vm.SavePeriodReviewAsync();check(vm.PeriodReviews.Any(r=>r.Body=="修正阶段复盘输入"&&r.Review.Version==2),"V022 review editor persists new and edited independent text");
         review=vm.PeriodReviews.First(r=>r.Body=="修正阶段复盘输入");await vm.RunAsync(()=>vm.Database.SetPeriodReviewDeleted(review.Review.Id,review.Review.Version,true),"synthetic delete");check(vm.PeriodReviews.All(r=>r.Review.Id!=review.Review.Id),"V022 review delete refresh hides deleted entity");

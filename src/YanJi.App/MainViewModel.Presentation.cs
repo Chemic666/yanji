@@ -132,7 +132,7 @@ public sealed partial class MainViewModel
             var from=DateOnly.FromDateTime(StatsFrom);var to=DateOnly.FromDateTime(StatsTo);
             Analysis=StudyAnalytics.Build(_records,AllSubjects,from,to,LocalToday(),string.IsNullOrEmpty(StatsSubjectId)?null:StatsSubjectId);
             StatsTotal=Duration(Analysis.DurationMs);NaturalAverage=Duration((long)Analysis.CalendarAverageMs);LearningAverage=Duration((long)Analysis.LearningAverageMs);StatsDays=Analysis.LearningDays.ToString();StatsSessions=Analysis.Sessions.ToString();
-            SubjectPlot=Analysis.Subjects.Select(s=>new PlotPoint(s.SubjectId,s.Name,s.DurationMs,ThemeService.SubjectColor(s.SubjectId),s.SubjectId)).ToList();
+            SubjectPlot=Analysis.Subjects.Select(s=>new PlotPoint(s.SubjectId,s.Name,s.DurationMs,ThemeService.SubjectColor(s.SubjectId),s.SubjectId,from,to,Status:"范围内已保存有效学习")).ToList();
             var scope=string.IsNullOrEmpty(StatsSubjectId)?null:StatsSubjectId;
             if(Analysis.Daily.Count<=62){DailyPlot=DailyPoints(Analysis.Daily,scope);ChartGranularity="每日科目投入";}
             else
