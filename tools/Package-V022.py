@@ -32,7 +32,7 @@ def main():
  assert subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()==a.commit
  stage=P('artifacts/v022/package-stage-'+a.commit[:8]);assert not stage.exists();stage.mkdir()
  output=P('releases/v0.2.2-delivery-'+a.commit[:8]);assert not output.exists();output.mkdir()
- capture=P(a.capture);provenance=json.loads((capture/'provenance.json').read_text(encoding='utf-8'));assert a.commit in provenance['Source'];assert json.loads((capture/'result.json').read_text())['Status']=='PASS'
+ capture=P(a.capture);provenance=json.loads((capture/'provenance.json').read_text(encoding='utf-8'));assert a.commit in provenance['Source'];capture_result=json.loads((capture/'result.json').read_text());assert capture_result['Status']=='PASS' or capture_result['Status']=='PASS_WITH_LIMITATIONS' and capture_result.get('NotTested') and all('Windows LockApp' in reason for reason in capture_result['NotTested'])
  images=json.loads((capture/'screenshots.json').read_text());assert len(images)==len(list(capture.glob('*.png')));assert all(sha((capture/i['File']).read_bytes())==i['Sha256'] for i in images)
  runtime=P('releases/YanJi-v0.2.2-win-x64');assert not runtime.exists();shutil.copytree(a.publish,runtime)
  for name in ['V022-DELIVERY.md','V022-DESIGN.md','V022-VALIDATION.md','V022-SKILL-USAGE.md']:shutil.copy2(P('docs')/name,runtime/name)
@@ -43,7 +43,7 @@ def main():
  review=stage/'review';review.mkdir();selected=[i for i in images if '-stats-' in i['File'] and '-lower-' not in i['File'] or i['File'].startswith(('detail-','long-range-','pending-','donut-hover','edge-'))]
  (review/'images').mkdir()
  for item in selected:shutil.copy2(capture/item['File'],review/'images'/item['File'])
- dump(review/'screenshots.json',selected);shutil.copy2(capture/'provenance.json',review/'provenance.json');shutil.copy2(capture/'result.json',review/'batch-result.json')
+ dump(review/'screenshots.json',selected);dump(review/'image-hashes.json',{'SourceCommit':a.commit,'Images':[{'File':i['File'],'Bytes':(capture/i['File']).stat().st_size,'Sha256':i['Sha256']} for i in selected]});shutil.copy2(capture/'provenance.json',review/'provenance.json');shutil.copy2(capture/'result.json',review/'batch-result.json')
  for name in ['V022-DELIVERY.md','V022-DESIGN.md','V022-VALIDATION.md','V022-SKILL-USAGE.md']:shutil.copy2(P('docs')/name,review/name)
  cards=''.join(f'<article><h2>{html.escape(i["File"])}</h2><a href="images/{i["File"]}"><img src="images/{i["File"]}" loading="lazy"></a><p>{i["PixelWidth"]}×{i["PixelHeight"]} · actual DPI {i["DpiX"]} · PID {i["OwnerProcessId"]}</p></article>' for i in selected)
  (review/'index.html').write_text('<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>研迹 V0.2.2 原生审阅</title><style>body{background:#f6f4ee;color:#29352e;font:16px "Microsoft YaHei UI",sans-serif;margin:32px}main{display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:24px}article{background:#fefdf9;padding:16px;border-radius:12px}h2{font-size:14px;overflow-wrap:anywhere}img{width:100%;height:auto}p{font-size:13px}</style><h1>研迹 V0.2.2 原生窗口</h1><p>同一最终发布程序、owned synthetic 数据、实际 DPI 192。此审阅选择矩阵及详情/边界图片；完整批次见 TestEvidence/capture。没有使用旧截图生成器。</p><p>Source '+a.commit+'</p><main>'+cards+'</main></html>',encoding='utf-8')

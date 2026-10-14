@@ -12,6 +12,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 using YanJi.Core;
+using System.Text.Json;
 namespace YanJi.App;
 internal static class V02VisualRunner
 {
@@ -20,7 +21,7 @@ internal static class V02VisualRunner
  {w.UpdateLayout();await w.Dispatcher.InvokeAsync(()=>{},DispatcherPriority.ApplicationIdle);await Task.Delay(180);NativeCapture.Save(w,Path.Combine(output,name+"-native.png"));SmokeRunner.Capture(w,Path.Combine(output,name+"-render.png"));}
  public static async Task EmptyAsync(MainWindow w,string output)
  {var vm=w.Model;foreach(var dark in new[]{false,true}){ThemeService.Apply(dark);for(var page=0;page<7;page++){vm.Page=page;w.MainScroll.ScrollToTop();await Shot(w,output,$"empty-{Names[page]}-{(dark?"dark":"light")}");}}ThemeService.Apply(vm.DarkTheme);vm.Page=0;}
- public static async Task RunAsync(MainWindow w,string output,Action<bool,string> check)
+ public static async Task RunAsync(MainWindow w,string output,Action<bool,string> check,Action<string,string>? notTested=null)
  {
   var vm=w.Model;var today=vm.LocalToday();vm.StatsSubjectId="math";vm.Refresh();
   vm.Page=0;w.UpdateLayout();
@@ -69,16 +70,20 @@ internal static class V02VisualRunner
   vm.StatsView=1;w.UpdateLayout();w.MainScroll.ScrollToTop();Keyboard.Focus(w.TrendChart);w.TrendChart.RaiseEvent(new KeyEventArgs(Keyboard.PrimaryDevice,PresentationSource.FromVisual(w),0,Key.Home){RoutedEvent=Keyboard.KeyDownEvent});
   check(!AutomationProperties.GetHelpText(w.TrendChart).Contains("毫秒")&&AutomationProperties.GetHelpText(w.TrendChart).Contains(DurationText.Format(w.TrendChart.Data![0].Value))&&Application.Current.Windows.Count>0,"V02 chart keyboard provides integer-second duration description");
   w.TrendChart.BringIntoView();w.UpdateLayout();w.Activate();Keyboard.Focus(w.ExitButton);await Task.Delay(80);ToolTipService.SetInitialShowDelay(w.TrendChart,100);
-  var pointer=NativeCapture.MoveToOwned(w.TrendChart,w.TrendChart.FirstHitCenter);
+  NativeCapture.PointerRestore? pointer=null;
   try
   {
+   pointer=NativeCapture.MoveToOwned(w.TrendChart,w.TrendChart.FirstHitCenter);
    await Task.Delay(700);
    var expected=DurationText.Format(w.TrendChart.Data![0].Value);
+   File.WriteAllText(Path.Combine(output,"hover-observation.json"),JsonSerializer.Serialize(new{w.TrendChart.IsMouseOver,w.IsActive,Mouse=Mouse.GetPosition(w.TrendChart),Target=w.TrendChart.FirstHitCenter,ScreenTarget=w.TrendChart.PointToScreen(w.TrendChart.FirstHitCenter),Native=NativeCapture.PointerObservation(),Expected=expected,Tooltip=w.TrendChart.ToolTip?.ToString(),PopupOpen=w.TrendChart.HoverTooltip.IsOpen,Scroll=w.MainScroll.VerticalOffset,w.TrendChart.ActualWidth,w.TrendChart.ActualHeight},new JsonSerializerOptions{WriteIndented=true}));
    check(w.TrendChart.IsMouseOver&&w.TrendChart.ToolTip is string hover&&hover.Contains(expected),"V02 actual owned-window pointer hover displays integer-second presentation");
    var tooltip=w.TrendChart.HoverTooltip;
    check(tooltip.IsOpen&&tooltip.IsVisible&&tooltip.Content is string text&&text.Contains(expected),"V02 actual chart hover opens its native tooltip popup");NativeCapture.SavePopup(tooltip,Path.Combine(output,"chart-hover-exact-native.png"));
   }
-  finally{NativeCapture.RestoreCursor(pointer);ToolTipService.SetInitialShowDelay(w.TrendChart,400);}
+  catch(NativeHoverUnavailableException e)
+  {if(notTested==null)throw;notTested("V02 actual owned-window pointer hover displays integer-second presentation",e.Message);notTested("V02 actual chart hover opens its native tooltip popup",e.Message);File.WriteAllText(Path.Combine(output,"hover-not-tested.json"),JsonSerializer.Serialize(new{Status="NOT TESTED",Reason=e.Message,Native=NativeCapture.PointerObservation()},new JsonSerializerOptions{WriteIndented=true}));}
+  finally{if(pointer!=null)NativeCapture.RestoreCursor(pointer);ToolTipService.SetInitialShowDelay(w.TrendChart,400);}
   vm.StatsSubjectId="math";w.UpdateLayout();check(w.TrendChart.ToolTip==null,"V02 changing chart filter clears stale precision tooltip");vm.StatsSubjectId="";
   vm.Page=5;w.MainScroll.ScrollToTop();w.UpdateLayout();var theme=VisualUpgradeRunner.Descendants(w).OfType<CheckBox>().First(c=>Equals(c.Content,"深色主题"));Keyboard.Focus(theme);theme.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
   check(Keyboard.FocusedElement!=null,"V02 themed settings retain keyboard navigation");

@@ -24,6 +24,7 @@ public static class SmokeRunner
     {
         Directory.CreateDirectory(output);List<object> results=[];
         void Assert(bool success,string name){results.Add(new{Name=name,Status=success?"PASS":"FAIL"});if(!success)throw new InvalidOperationException(name);}
+        void NotTested(string name,string reason)=>results.Add(new{Name=name,Status="NOT TESTED",Details=reason});
         try
         {
             var vm=window.Model;Assert(!vm.Busy&&vm.Subjects.Count>=4,"WPF startup and SQLite initialization");
@@ -84,7 +85,7 @@ public static class SmokeRunner
             var backup=Path.Combine(output,"smoke.yanjibak");vm.Database.Backup(backup);vm.Database.ValidateBackup(backup);vm.Database.ExportCsv(Path.Combine(output,"smoke.csv"));Assert(File.Exists(backup),"UI process backup and CSV");
             await VisualUpgradeRunner.RunAsync(window,output,Assert);
             await V022NativeRunner.RunAsync(window,Assert);
-            if(((App)Application.Current).V02Visual)await V02VisualRunner.RunAsync(window,output,Assert);
+            if(((App)Application.Current).V02Visual)await V02VisualRunner.RunAsync(window,output,Assert,NotTested);
             if(((App)Application.Current).V02Visual)await V021VisualRunner.RunAsync(window,output,Assert);
             var dpi=VisualTreeHelper.GetDpi(window);using var process=Process.GetCurrentProcess();
             File.WriteAllText(Path.Combine(output,"environment.json"),JsonSerializer.Serialize(new{Runtime=System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription,RuntimeDirectory=System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory(),OS=Environment.OSVersion.ToString(),ClockSources=WindowsClock.Sources,SQLite=vm.Database.Diagnostics(),DpiX=dpi.PixelsPerInchX,DpiY=dpi.PixelsPerInchY,WorkingSet=process.WorkingSet64,PrivateBytes=process.PrivateMemorySize64,DataDirectory=vm.Database.DirectoryPath},new JsonSerializerOptions{WriteIndented=true}));

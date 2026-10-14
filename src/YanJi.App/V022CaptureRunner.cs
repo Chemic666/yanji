@@ -17,7 +17,7 @@ internal static class V022CaptureRunner
 {
  public static async Task RunAsync(MainWindow w,string output)
  {
-  var shots=new List<object>();Directory.CreateDirectory(output);
+  var shots=new List<object>();var notTested=new List<string>();Directory.CreateDirectory(output);
   try
   {
    if(Directory.EnumerateFileSystemEntries(output).Any())throw new InvalidOperationException("Fresh V022 capture directory required.");
@@ -67,9 +67,10 @@ internal static class V022CaptureRunner
    vm.DarkTheme=false;w.Width=1200;w.Height=800;vm.Page=4;vm.StatsView=0;vm.StatsFrom=day.AddDays(-730).ToDateTime(TimeOnly.MinValue);w.MainScroll.ScrollToTop();await Shot("long-range-overview");w.MainScroll.ScrollToBottom();await Shot("long-range-heatmap");
    vm.StatsFrom=day.ToDateTime(TimeOnly.MinValue);vm.StatsSubjectId="math";await vm.StartCommand.ExecuteAsync(null);await Task.Delay(1100);await vm.MarkUncertainAsync("synthetic capture: unknown gap excluded");vm.Page=4;vm.StatsView=0;w.MainScroll.ScrollToBottom();await Shot("pending-prefix-rest-heatmap");await vm.ResolveAsync([]);await vm.FinishCommand.ExecuteAsync(null);
    vm.StatsFrom=day.AddDays(-29).ToDateTime(TimeOnly.MinValue);vm.StatsSubjectId="";vm.Page=4;vm.StatsView=0;w.MainScroll.ScrollToTop();w.SubjectDonut.BringIntoView();w.UpdateLayout();w.Activate();await Task.Delay(80);
-   var pointer=NativeCapture.MoveToOwned(w.SubjectDonut,w.SubjectDonut.FirstHitCenter);
-   try{await Task.Delay(350);if(!w.SubjectDonut.HoverTooltip.IsOpen)throw new InvalidOperationException("Actual donut hover was not observed.");await Shot("donut-hover");await PopupShot("donut-hover-popup",w.SubjectDonut.HoverTooltip);}
-   finally{NativeCapture.RestoreCursor(pointer);}
+   NativeCapture.PointerRestore? pointer=null;
+   try{pointer=NativeCapture.MoveToOwned(w.SubjectDonut,w.SubjectDonut.FirstHitCenter);await Task.Delay(350);if(!w.SubjectDonut.HoverTooltip.IsOpen)throw new InvalidOperationException("Actual donut hover was not observed.");await Shot("donut-hover");await PopupShot("donut-hover-popup",w.SubjectDonut.HoverTooltip);}
+   catch(NativeHoverUnavailableException e){notTested.Add("donut-hover and donut-hover-popup: "+e.Message);File.WriteAllText(Path.Combine(output,"hover-not-tested.json"),JsonSerializer.Serialize(new{Status="NOT TESTED",Reason=e.Message,Native=NativeCapture.PointerObservation()},new JsonSerializerOptions{WriteIndented=true}));}
+   finally{if(pointer!=null)NativeCapture.RestoreCursor(pointer);}
    foreach(var raw in new[]{1L,1000000000000L})
    {
     var panel=new System.Windows.Controls.StackPanel{Margin=new Thickness(16)};panel.Children.Add(new NaturalDuration{Milliseconds=raw,FontSize=28,TextWrapping=TextWrapping.Wrap});panel.Children.Add(new StudyChart{Mode="Donut",Data=new[]{new PlotPoint("edge","唯一科目",raw,ThemeService.SubjectColor("math"))}});
@@ -77,7 +78,7 @@ internal static class V022CaptureRunner
    }
    db.Backup(Path.Combine(output,"synthetic.yanjibak"));db.ExportCsv(Path.Combine(output,"raw-records.csv"));File.WriteAllText(Path.Combine(output,"canonical.json"),JsonSerializer.Serialize(db.Records(null,true),new JsonSerializerOptions{WriteIndented=true}));
    File.WriteAllText(Path.Combine(output,"screenshots.json"),JsonSerializer.Serialize(shots,new JsonSerializerOptions{WriteIndented=true}));
-   File.WriteAllText(Path.Combine(output,"result.json"),JsonSerializer.Serialize(new{Status="PASS",Screenshots=shots.Count,Integrity=db.Integrity(),CurrentLocalToday=vm.LocalToday()}));
+   File.WriteAllText(Path.Combine(output,"result.json"),JsonSerializer.Serialize(new{Status=notTested.Count==0?"PASS":"PASS_WITH_LIMITATIONS",Screenshots=shots.Count,NotTested=notTested,Integrity=db.Integrity(),CurrentLocalToday=vm.LocalToday()}));
   }
   catch(Exception e){((App)Application.Current).ValidationFailed=true;File.WriteAllText(Path.Combine(output,"failure.txt"),e.ToString());File.WriteAllText(Path.Combine(output,"screenshots-partial.json"),JsonSerializer.Serialize(shots));}
   finally{w.SmokeClose();}
