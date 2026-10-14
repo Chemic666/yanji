@@ -40,6 +40,20 @@ internal static class V03CaptureRunner
             Directory.CreateDirectory(output);var asm=typeof(App).Assembly;
             Write("provenance.json",new{Synthetic=true,ProcessId=Environment.ProcessId,Source=asm.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion,Executable=Environment.ProcessPath,ExeSha256=Hash(Environment.ProcessPath!),AssemblySha256=Hash(asm.Location),Runtime=System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription,OS=System.Runtime.InteropServices.RuntimeInformation.OSDescription});
             var marker=Path.Combine(vm.Database.DirectoryPath,"v03-isolated.fixture");
+            if(app.V03Recover)
+            {
+                Check(File.Exists(marker)&&File.ReadAllText(marker)=="YanJi V0.3 synthetic validation","Recovery touches only marked isolated data");
+                Check(vm.NeedsReview&&vm.Timer.Focus?.TaskId=="focus-task"&&vm.Timer.DurationMs<60000,"Actual restart preserves system-event review and trusted task time");
+                Write("before-review.json",new{Timer=vm.Timer,RawTotalMs=vm.Database.Records().Sum(r=>r.DurationMs),Action="Scripted synthetic-user choice: keep confirmed only; never automatic confirmation"});await Shot(w,"actual-system-event-review");
+                var trusted=vm.Timer.DurationMs;await vm.ResolveAsync([]);Check(vm.Timer.State==TimerState.Paused&&vm.Timer.DurationMs==trusted,"Explicit isolated review adds zero unknown milliseconds");await vm.PauseResumeCommand.ExecuteAsync(null);
+                var recoveryWatch=Stopwatch.StartNew();while(vm.TimerRunning&&recoveryWatch.Elapsed.TotalSeconds<70)await Task.Delay(250);await Idle();
+                Check(vm.Timer.State==TimerState.Completed&&vm.Timer.DurationMs==60000&&vm.Database.LoadTimer()==null&&vm.BreakActive,"Actual Windows remaining countdown reaches exactly 60 seconds after review");
+                Check(!vm.Database.Tasks().Single(t=>t.Id=="focus-task").Done,"Recovered timer completion still does not finish the task");
+                w.ShowMiniTimer();await Shot(w.MiniTimer!,"actual-recovered-rest");var recoveryTotal=vm.Database.Records().Sum(r=>r.DurationMs);await vm.PauseResumeCommand.ExecuteAsync(null);await Task.Delay(1000);await vm.TickAsync();Check(recoveryTotal==vm.Database.Records().Sum(r=>r.DurationMs),"Recovered rest contributes no study time");
+                var previousId=vm.Timer.SessionId;await vm.StartCommand.ExecuteAsync(null);Check(vm.TimerRunning&&vm.Timer.SessionId!=previousId&&!vm.BreakActive,"Explicit next round starts a new identity after recovery");await Task.Delay(1100);await vm.FinishCommand.ExecuteAsync(null);await vm.CompleteFocusTaskCommand.ExecuteAsync(null);Check(vm.Database.Tasks().Single(t=>t.Id=="focus-task").Done&&!vm.CanCompleteLinkedTask,"Explicit completion is persisted and repeat action disabled");
+                vm.FocusModeIndex=0;await vm.StartTaskCommand.ExecuteAsync(vm.Tasks.First(t=>t.Id=="unassigned"));await Task.Delay(1100);await vm.PauseResumeCommand.ExecuteAsync(null);Check(vm.Timer.State==TimerState.Paused&&vm.Timer.Focus?.TaskId=="unassigned"&&vm.Timer.SubjectId=="math","Recovery fixture leaves a paused linked timer for independent process reopening");
+                var recoveryBackup=Path.Combine(output,"synthetic.yanjibak");vm.Database.Backup(recoveryBackup);vm.Database.ValidateBackup(recoveryBackup);Check(vm.Database.Integrity()=="ok","Final recovery backup validates task metadata and active checkpoint");Write("data-summary.json",new{RawTotalMs=vm.Database.Records().Sum(r=>r.DurationMs),Records=vm.Database.Records().Count,Active=vm.Timer});Write("result.json",new{Status="PASS",Checks=checks.Count,Screenshots=shots.Count,Note="Real naturally occurring time notification; explicit choice scripted only on synthetic data"});return;
+            }
             if(app.V03Reopen)
             {
                 Check(File.Exists(marker)&&File.ReadAllText(marker)=="YanJi V0.3 synthetic validation","Only marked isolated data is reopened");
