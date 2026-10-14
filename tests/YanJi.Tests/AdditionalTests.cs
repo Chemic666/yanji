@@ -79,7 +79,7 @@ public sealed class AdditionalTests
         WithDatabase((db,_)=>
         {
             using var connection=new Microsoft.Data.Sqlite.SqliteConnection($"Data Source={db.DatabasePath};Pooling=False");connection.Open();using var command=connection.CreateCommand();command.CommandText="PRAGMA foreign_keys=ON";command.ExecuteNonQuery();
-            foreach(var sql in new[]{"INSERT INTO sessions VALUES('bad','missing',NULL,0,'',1,0,'2026-10-13T00:00:00Z')","INSERT INTO chapters VALUES('bad','math','chapter',200,0,0)","INSERT INTO parts VALUES('bad','missing','2026-10-13',0,'UTC',0,NULL,NULL)"})
+            foreach(var sql in new[]{"INSERT INTO sessions VALUES('bad','missing',NULL,0,'',1,0,'2026-10-13T00:00:00Z')","INSERT INTO chapters(id,subject,name,progress,mastery,archived) VALUES('bad','math','chapter',200,0,0)","INSERT INTO parts VALUES('bad','missing','2026-10-13',0,'UTC',0,NULL,NULL)"})
             {command.CommandText=sql;var exception=Assert.Throws<Microsoft.Data.Sqlite.SqliteException>(()=>command.ExecuteNonQuery());Assert.Equal(19,exception.SqliteErrorCode);}
             Assert.Empty(db.Records());Assert.Equal("ok",db.Integrity());
         });

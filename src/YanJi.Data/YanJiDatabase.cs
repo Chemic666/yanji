@@ -9,10 +9,11 @@ using YanJi.Core;
 namespace YanJi.Data;
 
 /// <summary>One local writer. Mutations are atomic; statistics query canonical parts.</summary>
-public sealed class YanJiDatabase : IDisposable
+public sealed partial class YanJiDatabase : IDisposable
 {
     private const int ApplicationId = 0x594A4931;
-    private const int SchemaVersion = 1;
+    private const int SchemaVersion = 2;
+    private readonly int _expectedVersion;
     private const string SchemaSql = """
                 CREATE TABLE subjects(id TEXT PRIMARY KEY, name TEXT NOT NULL, archived INTEGER NOT NULL CHECK(archived IN(0,1)));
                 CREATE TABLE chapters(id TEXT PRIMARY KEY, subject TEXT NOT NULL REFERENCES subjects(id), name TEXT NOT NULL,
@@ -38,16 +39,18 @@ public sealed class YanJiDatabase : IDisposable
     public string DatabasePath => Path.Combine(DirectoryPath, "yanji.sqlite");
     private static string Json<T>(T value) => JsonSerializer.Serialize(value);
     private static T Parse<T>(string text) => JsonSerializer.Deserialize<T>(text) ?? throw new InvalidDataException("数据内容为空。");
-    public YanJiDatabase(string directory)
+    public YanJiDatabase(string directory) : this(directory, SchemaVersion) { }
+    private YanJiDatabase(string directory, int expectedVersion)
     {
+        _expectedVersion = expectedVersion;
         DirectoryPath = Path.GetFullPath(directory); Directory.CreateDirectory(DirectoryPath);
         var exists = File.Exists(DatabasePath) && new FileInfo(DatabasePath).Length > 0;
         using var c = Open();
-        if (exists) {CheckIdentity(c);CheckSchema(c);}
+        if (exists) {CheckIdentity(c, expectedVersion);CheckSchema(c);}
         else
         {
             using var tx = c.BeginTransaction();
-            Exec(c, tx, $"PRAGMA application_id={ApplicationId}; PRAGMA user_version={SchemaVersion};");Exec(c, tx, SchemaSql); tx.Commit();
+            Exec(c, tx, $"PRAGMA application_id={ApplicationId}; PRAGMA user_version={SchemaVersion};");Exec(c, tx, SchemaSql); if(expectedVersion==2)ApplySchema2(c,tx); tx.Commit();
         }
         Exec(c, null, "PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL;");
     }
@@ -66,11 +69,11 @@ public sealed class YanJiDatabase : IDisposable
     { using var command = Command(c, tx, sql, parameters); command.ExecuteNonQuery(); }
     private static object? Scalar(SqliteConnection c, SqliteTransaction? tx, string sql, params (string Key, object? Value)[] parameters)
     { using var command = Command(c, tx, sql, parameters); return command.ExecuteScalar(); }
-    private static void CheckIdentity(SqliteConnection c)
+    private static void CheckIdentity(SqliteConnection c, int version = SchemaVersion)
     {
         if (Convert.ToInt32(Scalar(c, null, "PRAGMA application_id"), CultureInfo.InvariantCulture) != ApplicationId ||
-            Convert.ToInt32(Scalar(c, null, "PRAGMA user_version"), CultureInfo.InvariantCulture) != SchemaVersion)
-            throw new InvalidDataException("数据库不属于研迹 V0.1，或版本不兼容；未进行修改。");
+            Convert.ToInt32(Scalar(c, null, "PRAGMA user_version"), CultureInfo.InvariantCulture) != version)
+            throw new InvalidDataException("数据库版本不兼容；旧版数据需经过备份与显式升级，当前未迁移。");
     }
     private static void CheckSchema(SqliteConnection c)
     {
@@ -80,6 +83,9 @@ public sealed class YanJiDatabase : IDisposable
             using var r=cmd.ExecuteReader();List<string> result=[];while(r.Read())result.Add(System.Text.RegularExpressions.Regex.Replace(r.GetString(0),@"\s+"," "));return result;
         }
         using var expected=new SqliteConnection("Data Source=:memory:;Pooling=False");expected.Open();Exec(expected,null,SchemaSql);
+        var version=Convert.ToInt32(Scalar(c,null,"PRAGMA user_version"));
+        if(version==2){using var tx=expected.BeginTransaction();ApplySchema2(expected,tx);tx.Commit();}
+        else if(version!=1)throw new InvalidDataException("数据库Schema版本不兼容。");
         if(!Definitions(c).SequenceEqual(Definitions(expected)))throw new InvalidDataException("数据库表、索引或约束与 V0.1 不兼容。");
     }
     private static void Audit(SqliteConnection c, SqliteTransaction tx, string kind, string id, long version, string reason, string? before, string? after) =>
@@ -97,22 +103,24 @@ public sealed class YanJiDatabase : IDisposable
         lock(_gate) { var before=Subjects(true).Find(x=>x.Id==subject.Id); using var c=Open(); using var tx=c.BeginTransaction();
             Exec(c,tx,"INSERT INTO subjects VALUES($id,$name,$archived) ON CONFLICT(id) DO UPDATE SET name=excluded.name,archived=excluded.archived",
                 ("$id",subject.Id),("$name",subject.Name.Trim()),("$archived",subject.Archived));
+            Exec(c,tx,"INSERT OR IGNORE INTO exam_subjects VALUES('legacy-default',$id)",("$id",subject.Id));
             Audit(c,tx,"subject",subject.Id,0,"科目修改",before==null?null:Json(before),Json(subject)); tx.Commit(); }
     }
     public List<Chapter> Chapters(string? subjectId = null, bool archived = false)
     {
         lock(_gate) { using var c=Open(); using var cmd=Command(c,null,"SELECT id,subject,name,progress,mastery,archived FROM chapters WHERE ($subject IS NULL OR subject=$subject) AND ($all=1 OR archived=0) ORDER BY rowid",("$subject",subjectId),("$all",archived));
-            using var r=cmd.ExecuteReader(); List<Chapter> list=[]; while(r.Read())list.Add(new(r.GetString(0),r.GetString(1),r.GetString(2),r.GetInt32(3),(Mastery)r.GetInt32(4),r.GetBoolean(5)));return list; }
+            using var r=cmd.ExecuteReader(); List<Chapter> list=[]; while(r.Read())list.Add(new(r.GetString(0),r.GetString(1),r.GetString(2),r.GetInt32(3),(Mastery)r.GetInt32(4),r.GetBoolean(5)));r.Close(); if(!archived){var map=CheckKnowledgeData(c).ToDictionary(n=>n.Id);bool Available(Chapter chapter){for(var node=map[chapter.Id];;node=map[node.ParentId!]){if(node.Archived)return false;if(node.ParentId==null)return true;}}list=list.Where(Available).ToList();}return list; }
     }
     public void SaveChapter(Chapter chapter)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(chapter.Name);
-        if(chapter.Progress is <0 or >100 || !Enum.IsDefined(chapter.Mastery))throw new ArgumentException("章节状态无效。");
-        lock(_gate) { var before=Chapters(null,true).Find(x=>x.Id==chapter.Id); using var c=Open(); using var tx=c.BeginTransaction();
-            if(before!=null && before.SubjectId!=chapter.SubjectId)throw new ArgumentException("已有章节不能移动到另一科目。");
-            Exec(c,tx,"INSERT INTO chapters VALUES($id,$subject,$name,$progress,$mastery,$archived) ON CONFLICT(id) DO UPDATE SET name=excluded.name,progress=excluded.progress,mastery=excluded.mastery,archived=excluded.archived",
-                ("$id",chapter.Id),("$subject",chapter.SubjectId),("$name",chapter.Name.Trim()),("$progress",chapter.Progress),("$mastery",(int)chapter.Mastery),("$archived",chapter.Archived));
-            Audit(c,tx,"chapter",chapter.Id,0,"章节修改",before==null?null:Json(before),Json(chapter));tx.Commit(); }
+        lock(_gate)
+        {
+            var old=KnowledgeNodes().Find(n=>n.Id==chapter.Id);
+            var state=old!=null&&old.Progress==chapter.Progress?old.State:chapter.Progress==0?LearningState.NotStarted:chapter.Progress==100?LearningState.Learned:LearningState.Learning;
+            var node=old??new KnowledgeNode(chapter.Id,chapter.SubjectId,chapter.Name,SortOrder:KnowledgeNodes(chapter.SubjectId).Select(n=>n.SortOrder).DefaultIfEmpty(-1).Max()+1);
+            if(node.SubjectId!=chapter.SubjectId)throw new ArgumentException("已有章节不能移动到另一科目。");
+            SaveKnowledgeNodes([node with{Name=chapter.Name,Progress=chapter.Progress,Mastery=chapter.Mastery,Archived=chapter.Archived,State=state}],"章节修改");
+        }
     }
     private static List<StudyRecord> ReadRecords(SqliteConnection c, SqliteTransaction? tx = null)
     {
@@ -298,7 +306,7 @@ public sealed class YanJiDatabase : IDisposable
     public Dictionary<string,string> Diagnostics()
     {lock(_gate){using var c=Open();return new(){["sqlite"]=Convert.ToString(Scalar(c,null,"SELECT sqlite_version()"))!,["journal_mode"]=Convert.ToString(Scalar(c,null,"PRAGMA journal_mode"))!,["foreign_keys"]=Convert.ToString(Scalar(c,null,"PRAGMA foreign_keys"))!,["synchronous"]=Convert.ToString(Scalar(c,null,"PRAGMA synchronous"))!};}}
     private sealed record ReflectionEntry(DateOnly Date,string Text);
-    private sealed record BackupManifest(int Format,int Application,int Schema,string Sha256,long Sessions,long DurationMs,DateTimeOffset CreatedAt);
+    private sealed record BackupManifest(int Format,int Application,int Schema,string Sha256,long Sessions,long DurationMs,DateTimeOffset CreatedAt,long? KnowledgeNodes=null,long? Profiles=null);
     private static string Hash(string path)=>Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(path)));
     private static (long Count,long Duration) Inventory(SqliteConnection c)=>
         (Convert.ToInt64(Scalar(c,null,"SELECT COUNT(*) FROM sessions")),Convert.ToInt64(Scalar(c,null,"SELECT COALESCE(SUM(duration),0) FROM parts")));
@@ -308,8 +316,8 @@ public sealed class YanJiDatabase : IDisposable
             var scratch=Path.Combine(DirectoryPath,"work","backup-"+Guid.NewGuid().ToString("N"));Directory.CreateDirectory(scratch);
             try{var snapshot=Path.Combine(scratch,"database.sqlite");
                 using(var source=Open())using(var target=Open(snapshot)){source.BackupDatabase(target);Exec(target,null,"PRAGMA journal_mode=DELETE;");}
-                using(var c=Open(snapshot,true)){CheckIdentity(c);CheckIntegrity(c);var inventory=Inventory(c);
-                    var manifest=new BackupManifest(1,ApplicationId,SchemaVersion,Hash(snapshot),inventory.Count,inventory.Duration,DateTimeOffset.UtcNow);
+                using(var c=Open(snapshot,true)){CheckIdentity(c,_expectedVersion);CheckIntegrity(c);var inventory=Inventory(c);
+                    var manifest=new BackupManifest(_expectedVersion,ApplicationId,_expectedVersion,Hash(snapshot),inventory.Count,inventory.Duration,DateTimeOffset.UtcNow, _expectedVersion==2?Convert.ToInt64(Scalar(c,null,"SELECT COUNT(*) FROM chapters")):null,_expectedVersion==2?Convert.ToInt64(Scalar(c,null,"SELECT COUNT(*) FROM exam_profiles")):null);
                     var staging=Path.GetFullPath(path)+"."+Guid.NewGuid().ToString("N")+".partial";
                     try
                     {
@@ -340,6 +348,8 @@ public sealed class YanJiDatabase : IDisposable
             ["active_timer"]=["slot","payload"], ["tasks"]=["id","payload"], ["weakpoints"]=["id","payload"],
             ["reflections"]=["id","payload"], ["settings"]=["id","payload"]
         };
+        var schema=Convert.ToInt32(Scalar(c,null,"PRAGMA user_version"));
+        if(schema==2){expected["chapters"]=["id","subject","name","progress","mastery","archived","profile_id","parent_id","node_kind","description","sort_order","learning_state","row_version"];CheckKnowledgeData(c);}
         foreach(var (table,columns) in expected)
         {
             using var cmd=Command(c,null,$"PRAGMA table_info({table})");using var r=cmd.ExecuteReader();List<string> actual=[];
@@ -398,9 +408,10 @@ public sealed class YanJiDatabase : IDisposable
                 if(db.Length>512L*1024*1024||meta.Length>65536)throw new InvalidDataException("备份超过校验大小限制。");
                 BackupManifest manifest;using(var r=new StreamReader(meta.Open()))manifest=Parse<BackupManifest>(r.ReadToEnd());
                 var candidate=Path.Combine(scratch,"database.sqlite");db.ExtractToFile(candidate);
-                if(manifest.Format!=1||manifest.Application!=ApplicationId||manifest.Schema!=SchemaVersion||manifest.Sha256!=Hash(candidate))throw new InvalidDataException("备份版本或校验值无效。");
-                using var c=Open(candidate,true);CheckIdentity(c);CheckIntegrity(c);CheckAllData(c);var inventory=Inventory(c);
+                if(manifest.Format!=manifest.Schema||manifest.Schema is not(1 or 2)||manifest.Application!=ApplicationId||manifest.Sha256!=Hash(candidate))throw new InvalidDataException("备份版本或校验值无效。");
+                using var c=Open(candidate,true);CheckIdentity(c,manifest.Schema);CheckIntegrity(c);CheckAllData(c);var inventory=Inventory(c);
                 if(inventory.Count!=manifest.Sessions||inventory.Duration!=manifest.DurationMs)throw new InvalidDataException("备份记录总量校验失败。");
+                if(manifest.Schema==2&&(manifest.KnowledgeNodes!=Convert.ToInt64(Scalar(c,null,"SELECT COUNT(*) FROM chapters"))||manifest.Profiles!=Convert.ToInt64(Scalar(c,null,"SELECT COUNT(*) FROM exam_profiles"))))throw new InvalidDataException("备份知识目录总量校验失败。");
             }
             finally{Directory.Delete(scratch,true);}
         }
@@ -417,23 +428,24 @@ public sealed class YanJiDatabase : IDisposable
                     if(db.Length>512*1024*1024||meta.Length>65536)throw new InvalidDataException("备份超过 V0.1 校验大小限制。");
                     using(var r=new StreamReader(meta.Open()))manifest=Parse<BackupManifest>(r.ReadToEnd());db.ExtractToFile(candidate);
                 }
-                if(manifest.Format!=1||manifest.Application!=ApplicationId||manifest.Schema!=SchemaVersion||manifest.Sha256!=Hash(candidate))throw new InvalidDataException("备份版本或校验值无效。");
+                if(manifest.Format!=manifest.Schema||manifest.Schema is not(1 or 2)||manifest.Application!=ApplicationId||manifest.Sha256!=Hash(candidate))throw new InvalidDataException("备份版本或校验值无效。");
                 using(var c=Open(candidate,true))
-                {CheckIdentity(c);CheckIntegrity(c);var inventory=Inventory(c);if(inventory.Count!=manifest.Sessions||inventory.Duration!=manifest.DurationMs)throw new InvalidDataException("备份记录总量校验失败。");
+                {CheckIdentity(c,manifest.Schema);CheckIntegrity(c);CheckAllData(c);var inventory=Inventory(c);if(inventory.Count!=manifest.Sessions||inventory.Duration!=manifest.DurationMs)throw new InvalidDataException("备份记录总量校验失败。");
+                if(manifest.Schema==2&&(manifest.KnowledgeNodes!=Convert.ToInt64(Scalar(c,null,"SELECT COUNT(*) FROM chapters"))||manifest.Profiles!=Convert.ToInt64(Scalar(c,null,"SELECT COUNT(*) FROM exam_profiles"))))throw new InvalidDataException("备份知识目录总量校验失败。");
                     var records=ReadRecords(c);foreach(var record in records)ValidateParts(record,true);
                     var known=records.Where(x=>!x.Deleted).SelectMany(x=>x.Parts).Where(p=>p.Kind==PartKind.Interval).OrderBy(p=>p.StartUtcMs).ToList();
                     for(var i=1;i<known.Count;i++)if(TimeParts.Overlaps(known[i-1],known[i]))throw new InvalidDataException("备份包含重叠时间区间。");
                     foreach(var record in records)if(record.ChapterId!=null&&!Equals(Scalar(c,null,"SELECT subject FROM chapters WHERE id=$id",("$id",record.ChapterId)),record.SubjectId))throw new InvalidDataException("备份章节引用无效。");
                 }
+                if(manifest.Schema==1){using var legacy=Open(candidate);using var tx=legacy.BeginTransaction();ApplySchema2(legacy,tx);tx.Commit();CheckIdentity(legacy);CheckAllData(legacy);}
                 var backups=Path.Combine(DirectoryPath,"backups");Directory.CreateDirectory(backups);
                 var stamp=DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmss",CultureInfo.InvariantCulture)+"-"+Guid.NewGuid().ToString("N")[..8];
                 Backup(Path.Combine(backups,"before-restore-"+stamp+".yanjibak"));
-                using(var c=Open())Exec(c,null,"PRAGMA wal_checkpoint(TRUNCATE);");
+                using(var c=Open())CheckpointBeforeReplace(c);
                 var rollback=Path.Combine(backups,"before-restore-"+stamp+".sqlite");
                 RestoreCheckpoint?.Invoke("before-replace");
                 File.Replace(candidate,DatabasePath,rollback,true);
-                RestoreCheckpoint?.Invoke("after-replace");
-                try{using var c=Open();CheckIdentity(c);CheckIntegrity(c);Exec(c,null,"PRAGMA journal_mode=WAL;");}
+                try{RestoreCheckpoint?.Invoke("after-replace");using var c=Open();CheckIdentity(c);CheckIntegrity(c);CheckAllData(c);Exec(c,null,"PRAGMA journal_mode=WAL;");_knowledgeEpoch++;}
                 catch{File.Replace(rollback,DatabasePath,Path.Combine(backups,"failed-restore-"+stamp+".sqlite"),true);throw;}
             }finally{Directory.Delete(scratch,true);}}
     }

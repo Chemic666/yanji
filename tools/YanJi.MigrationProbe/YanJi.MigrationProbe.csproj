@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><OutputType>Exe</OutputType><AssemblyName>YanJi.Probe</AssemblyName></PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/YanJi.Data/YanJi.Data.csproj" />
+    <Compile Include="../../tests/YanJi.Tests/LegacySchemaFixture.cs" Link="LegacySchemaFixture.cs" />
+    <Compile Include="../../tests/YanJi.Tests/M1TestDirectories.cs" Link="M1TestDirectories.cs" />
+  </ItemGroup>
+</Project>
