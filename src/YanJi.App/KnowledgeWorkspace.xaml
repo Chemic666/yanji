@@ -9,10 +9,26 @@
       <Setter Property="Padding" Value="6,6" />
       <Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True" />
       <Setter Property="VirtualizingStackPanel.VirtualizationMode" Value="Recycling" />
+      <Setter Property="ItemsPanel"><Setter.Value><ItemsPanelTemplate><VirtualizingStackPanel /></ItemsPanelTemplate></Setter.Value></Setter>
+      <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="TreeViewItem">
+        <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="18" /><ColumnDefinition /></Grid.ColumnDefinitions><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+          <ToggleButton x:Name="Expand" IsChecked="{Binding IsExpanded,RelativeSource={RelativeSource TemplatedParent},Mode=TwoWay}" IsTabStop="False" Focusable="False" Width="16" Height="22" VerticalAlignment="Top" Margin="0,6,0,0" AutomationProperties.Name="展开或折叠目录">
+            <ToggleButton.Template><ControlTemplate TargetType="ToggleButton"><Border Background="Transparent"><Path x:Name="Arrow" Data="M2,0 L6,4 L2,8" Stroke="{DynamicResource Muted}" StrokeThickness="1.5" HorizontalAlignment="Center" VerticalAlignment="Center"><Path.RenderTransform><RotateTransform Angle="0" CenterX="4" CenterY="4" /></Path.RenderTransform></Path></Border><ControlTemplate.Triggers><Trigger Property="IsChecked" Value="True"><Setter TargetName="Arrow" Property="RenderTransform"><Setter.Value><RotateTransform Angle="90" CenterX="4" CenterY="4" /></Setter.Value></Setter></Trigger></ControlTemplate.Triggers></ControlTemplate></ToggleButton.Template>
+          </ToggleButton>
+          <Border x:Name="HeaderBody" Grid.Column="1" Background="Transparent" CornerRadius="6" Padding="{TemplateBinding Padding}" BorderThickness="1" BorderBrush="Transparent"><ContentPresenter x:Name="PART_Header" ContentSource="Header" HorizontalAlignment="Left" /></Border>
+          <ItemsPresenter x:Name="ChildrenHost" Grid.Row="1" Grid.Column="1" Visibility="Collapsed" />
+        </Grid>
+        <ControlTemplate.Triggers>
+          <Trigger Property="IsExpanded" Value="True"><Setter TargetName="ChildrenHost" Property="Visibility" Value="Visible" /></Trigger>
+          <Trigger Property="HasItems" Value="False"><Setter TargetName="Expand" Property="Visibility" Value="Hidden" /></Trigger>
+          <Trigger SourceName="HeaderBody" Property="IsMouseOver" Value="True"><Setter TargetName="HeaderBody" Property="Background" Value="{DynamicResource Hover}" /></Trigger>
+          <Trigger Property="IsSelected" Value="True"><Setter TargetName="HeaderBody" Property="Background" Value="{DynamicResource SelectionSurface}" /><Setter TargetName="HeaderBody" Property="BorderBrush" Value="{DynamicResource Accent}" /></Trigger>
+        </ControlTemplate.Triggers>
+      </ControlTemplate></Setter.Value></Setter>
     </Style>
     <HierarchicalDataTemplate DataType="{x:Type local:KnowledgeTreeRow}" ItemsSource="{Binding Children}">
       <StackPanel ToolTip="{Binding FullPath}" MaxWidth="220">
-        <TextBlock Text="{Binding Label}" Style="{StaticResource FocusTextBlock}" FontWeight="Medium" TextTrimming="CharacterEllipsis" />
+        <TextBlock Text="{Binding Label}" Foreground="{DynamicResource Ink}" Style="{StaticResource FocusTextBlock}" FontWeight="Medium" TextTrimming="CharacterEllipsis" />
         <TextBlock Text="{Binding Detail}" Style="{StaticResource MutedText}" FontSize="11" Margin="0,3,0,0" />
       </StackPanel>
     </HierarchicalDataTemplate>
@@ -53,10 +69,10 @@
       </Border>
       <Border Grid.Column="2" x:Name="DetailPanel" Style="{StaticResource SectionSurface}" Margin="0" Padding="18">
         <Grid>
-          <Grid.RowDefinitions><RowDefinition /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
-          <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Visibility="{Binding HasSelection,Converter={StaticResource Visible}}">
+          <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+          <DockPanel Grid.Row="0" Margin="0,0,0,8" Visibility="{Binding HasSelection,Converter={StaticResource Visible}}"><Button Content="← 目录" x:Name="BackButton" Click="Back_Click" DockPanel.Dock="Left" Style="{StaticResource QuietButton}" Visibility="Collapsed" /><TextBlock Text="节点详情" Style="{StaticResource Subheading}" /></DockPanel>
+          <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Visibility="{Binding HasSelection,Converter={StaticResource Visible}}">
             <StackPanel IsEnabled="{Binding KnowledgeBusy,Converter={StaticResource Inverse}}">
-              <DockPanel><Button Content="← 目录" x:Name="BackButton" Click="Back_Click" DockPanel.Dock="Left" Style="{StaticResource QuietButton}" Visibility="Collapsed" /><TextBlock Text="节点详情" Style="{StaticResource Subheading}" /></DockPanel>
               <TextBlock Text="{Binding PathLabel}" Style="{StaticResource MutedText}" Margin="0,6,0,12" TextWrapping="Wrap" />
               <TextBox x:Name="NameBox" Text="{Binding NodeName,UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource FocusTextBox}" FontSize="16" TextWrapping="Wrap" MaxHeight="96" AutomationProperties.Name="知识节点名称" />
               <WrapPanel Margin="0,10,0,0">
@@ -79,12 +95,12 @@
               <Expander Header="修改历史" Style="{StaticResource FocusExpander}"><TextBlock Text="{Binding HistoryText}" Style="{StaticResource MutedText}" FontSize="11" TextWrapping="Wrap" /></Expander>
             </StackPanel>
           </ScrollViewer>
-          <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="300">
+          <StackPanel Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="300">
             <StackPanel.Style><Style TargetType="StackPanel"><Setter Property="Visibility" Value="Visible" /><Style.Triggers><DataTrigger Binding="{Binding HasSelection}" Value="True"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers></Style></StackPanel.Style>
             <TextBlock Text="把知识整理成自己的路径" Style="{StaticResource Subheading}" TextAlignment="Center" TextWrapping="Wrap" />
             <TextBlock Text="选择一个章节查看进度；也可以先新增根章节，再逐步细分。" Style="{StaticResource MutedText}" TextAlignment="Center" TextWrapping="Wrap" Margin="0,8,0,0" />
           </StackPanel>
-          <WrapPanel Grid.Row="1" Margin="0,12,0,0" Visibility="{Binding HasSelection,Converter={StaticResource Visible}}" IsEnabled="{Binding KnowledgeBusy,Converter={StaticResource Inverse}}"><Button Content="保存修改" Command="{Binding SaveCommand}" Style="{StaticResource Primary}" /><Button Content="{Binding ArchiveAction}" Click="Archive_Click" Style="{StaticResource QuietButton}" Margin="8,0,0,0" /></WrapPanel>
+          <WrapPanel Grid.Row="2" Margin="0,12,0,0" Visibility="{Binding HasSelection,Converter={StaticResource Visible}}" IsEnabled="{Binding KnowledgeBusy,Converter={StaticResource Inverse}}"><Button Content="保存修改" Command="{Binding SaveCommand}" Style="{StaticResource Primary}" /><Button Content="{Binding ArchiveAction}" Click="Archive_Click" Style="{StaticResource QuietButton}" Margin="8,0,0,0" /></WrapPanel>
         </Grid>
       </Border>
     </Grid>

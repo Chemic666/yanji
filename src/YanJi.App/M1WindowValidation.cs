@@ -78,6 +78,7 @@ internal static class M1WindowValidation
             Check(searchMs.Max()<=200,"10k search measured samples within 200ms excluding debounce");
             Write("result.json", new { Status = failed ? "FAIL" : "PASS", Checks = checks.Count, NotTested = new[] { "physical Chinese IME", "other actual DPI scales", "real power changes", "real user upgrade" } });
             if (failed) { app.ValidationFailed = true; w.SmokeClose(); return; }
+            if (app.M1UiOnly) { w.SmokeClose(); return; }
             Directory.CreateDirectory(Path.Combine(output, "timer"));
             bool stress = true; int iterations = 0;
             async Task Stress()

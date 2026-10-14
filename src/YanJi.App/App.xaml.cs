@@ -29,6 +29,7 @@ public partial class App : Application
     public bool V03Layout {get;private set;}
     public bool V03Recover {get;private set;}
     public bool M1Check {get;private set;}
+    public bool M1UiOnly {get;private set;}
     public bool V031Check {get;private set;}
     public bool V031Probe {get;private set;}
     internal bool ValidationFailed {get;set;}
@@ -60,6 +61,7 @@ public partial class App : Application
                 else if(e.Args[i]=="--v03-reopen"&&i+1<e.Args.Length){SmokePath=Path.GetFullPath(e.Args[++i]);V03Reopen=true;}
                 else if(e.Args[i]=="--v03-layout"&&i+1<e.Args.Length){SmokePath=Path.GetFullPath(e.Args[++i]);V03Layout=true;}
                 else if(e.Args[i]=="--m1-check"&&i+1<e.Args.Length){SmokePath=Path.GetFullPath(e.Args[++i]);M1Check=true;}
+                else if(e.Args[i]=="--m1-ui-check"&&i+1<e.Args.Length){SmokePath=Path.GetFullPath(e.Args[++i]);M1Check=true;M1UiOnly=true;}
                 else if(e.Args[i]=="--v031-probe"&&i+1<e.Args.Length){SmokePath=Path.GetFullPath(e.Args[++i]);V031Probe=true;}
                 else if(e.Args[i]=="--v031-check"&&i+1<e.Args.Length){SmokePath=Path.GetFullPath(e.Args[++i]);V031Check=true;}
                 else if(e.Args[i]=="--v03-recover"&&i+1<e.Args.Length){SmokePath=Path.GetFullPath(e.Args[++i]);V03Recover=true;}
