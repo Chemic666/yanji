@@ -15,7 +15,7 @@ public partial class KnowledgeWorkspace : UserControl
         if (Model != null) return;
         if (Window.GetWindow(this) is not MainWindow owner) return;
         Model = new(owner.Model); DataContext = Model;
-        Model.PropertyChanged += (_, args) => { if (args.PropertyName == nameof(Model.HasSelection) && !Model.HasSelection) { _detail = false; Adapt(); } };
+        Model.PropertyChanged += (_, args) => { if (args.PropertyName == nameof(Model.HasSelection)) { _detail = Model.HasSelection; Adapt(); } };
         await Model.ReloadAsync(); Adapt();
     }
     private void Workspace_SizeChanged(object sender, SizeChangedEventArgs e) => Adapt();
@@ -38,7 +38,7 @@ public partial class KnowledgeWorkspace : UserControl
     private void Back_Click(object sender, RoutedEventArgs e) { _detail = false; Adapt(); DirectoryTree.Focus(); }
     private void Keys(object sender, KeyEventArgs e)
     {
-        if (e.Key == Key.F2 && Model?.HasSelection == true) { _detail = true; Adapt(); NameBox.Focus(); NameBox.SelectAll(); e.Handled = true; }
+        if (e.Key == Key.F2 && Model?.HasSelection == true) { _detail = true; Adapt(); Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Input, new Action(() => { NameBox.Focus(); NameBox.SelectAll(); })); e.Handled = true; }
         if (e.Key == Key.Escape && _detail) { _detail = false; Adapt(); e.Handled = true; }
         if (e.Key == Key.Enter && sender != NameBox && Keyboard.FocusedElement is ListBoxItem && Model?.Selected != null) { _detail = true; Adapt(); e.Handled = true; }
     }

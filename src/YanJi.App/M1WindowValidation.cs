@@ -56,6 +56,7 @@ internal static class M1WindowValidation
             vm.NodeName="恢复前陈旧名称";await vm.SaveCommand.ExecuteAsync(null);await w.RestoreDataAsync(restorePath);
             Check(vm.Selected==null&&vm.Roots.Any(r=>r.Node.Id=="fixture-100"),"full restore invalidates cached selection and reloads knowledge roots");
             vm.Locate("fixture-1");Check(vm.NodeName!="恢复前陈旧名称","restored node edit buffer comes from backup");
+            await Task.Delay(120);w.UpdateLayout();
             var focusMoved = w.KnowledgeView.NameBox.Focus();
             Check(focusMoved, "node editor can receive keyboard focus");
             Check(w.KnowledgeView.NameBox.MoveFocus(new System.Windows.Input.TraversalRequest(System.Windows.Input.FocusNavigationDirection.Next)), "Tab traversal moves from name editor");
