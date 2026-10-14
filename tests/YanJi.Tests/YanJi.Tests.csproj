@@ -8,4 +8,5 @@
     <PackageReference Include="xunit.runner.visualstudio"><PrivateAssets>all</PrivateAssets></PackageReference>
     <Using Include="Xunit" />
   </ItemGroup>
+  <ItemGroup><None Include="../../resources/knowledge-packages/**/*.json" Link="knowledge-packages/%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" /></ItemGroup>
 </Project>

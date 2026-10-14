@@ -1,42 +1,22 @@
 <UserControl x:Class="YanJi.App.KnowledgeWorkspace" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="clr-namespace:YanJi.App" Loaded="Workspace_Loaded" SizeChanged="Workspace_SizeChanged">
   <UserControl.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries><ResourceDictionary Source="KnowledgeTreeStyles.xaml" /></ResourceDictionary.MergedDictionaries>
     <BooleanToVisibilityConverter x:Key="Visible" />
     <local:InverseBooleanConverter x:Key="Inverse" />
-    <Style TargetType="TreeViewItem">
-      <Setter Property="IsExpanded" Value="{Binding Expanded,Mode=TwoWay}" />
-      <Setter Property="IsSelected" Value="{Binding Selected,Mode=TwoWay}" />
-      <Setter Property="Foreground" Value="{DynamicResource Ink}" />
-      <Setter Property="Padding" Value="6,6" />
-      <Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True" />
-      <Setter Property="VirtualizingStackPanel.VirtualizationMode" Value="Recycling" />
-      <Setter Property="ItemsPanel"><Setter.Value><ItemsPanelTemplate><VirtualizingStackPanel /></ItemsPanelTemplate></Setter.Value></Setter>
-      <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="TreeViewItem">
-        <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="18" /><ColumnDefinition /></Grid.ColumnDefinitions><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
-          <ToggleButton x:Name="Expand" IsChecked="{Binding IsExpanded,RelativeSource={RelativeSource TemplatedParent},Mode=TwoWay}" IsTabStop="False" Focusable="False" Width="16" Height="22" VerticalAlignment="Top" Margin="0,6,0,0" AutomationProperties.Name="展开或折叠目录">
-            <ToggleButton.Template><ControlTemplate TargetType="ToggleButton"><Border Background="Transparent"><Path x:Name="Arrow" Data="M2,0 L6,4 L2,8" Stroke="{DynamicResource Muted}" StrokeThickness="1.5" HorizontalAlignment="Center" VerticalAlignment="Center"><Path.RenderTransform><RotateTransform Angle="0" CenterX="4" CenterY="4" /></Path.RenderTransform></Path></Border><ControlTemplate.Triggers><Trigger Property="IsChecked" Value="True"><Setter TargetName="Arrow" Property="RenderTransform"><Setter.Value><RotateTransform Angle="90" CenterX="4" CenterY="4" /></Setter.Value></Setter></Trigger></ControlTemplate.Triggers></ControlTemplate></ToggleButton.Template>
-          </ToggleButton>
-          <Border x:Name="HeaderBody" Grid.Column="1" Background="Transparent" CornerRadius="6" Padding="{TemplateBinding Padding}" BorderThickness="1" BorderBrush="Transparent"><ContentPresenter x:Name="PART_Header" ContentSource="Header" HorizontalAlignment="Left" /></Border>
-          <ItemsPresenter x:Name="ChildrenHost" Grid.Row="1" Grid.Column="1" Visibility="Collapsed" />
-        </Grid>
-        <ControlTemplate.Triggers>
-          <Trigger Property="IsExpanded" Value="True"><Setter TargetName="ChildrenHost" Property="Visibility" Value="Visible" /></Trigger>
-          <Trigger Property="HasItems" Value="False"><Setter TargetName="Expand" Property="Visibility" Value="Hidden" /></Trigger>
-          <Trigger SourceName="HeaderBody" Property="IsMouseOver" Value="True"><Setter TargetName="HeaderBody" Property="Background" Value="{DynamicResource Hover}" /></Trigger>
-          <Trigger Property="IsSelected" Value="True"><Setter TargetName="HeaderBody" Property="Background" Value="{DynamicResource SelectionSurface}" /><Setter TargetName="HeaderBody" Property="BorderBrush" Value="{DynamicResource Accent}" /></Trigger>
-        </ControlTemplate.Triggers>
-      </ControlTemplate></Setter.Value></Setter>
-    </Style>
     <HierarchicalDataTemplate DataType="{x:Type local:KnowledgeTreeRow}" ItemsSource="{Binding Children}">
       <StackPanel ToolTip="{Binding FullPath}" MaxWidth="220">
         <TextBlock Text="{Binding Label}" Foreground="{DynamicResource Ink}" Style="{StaticResource FocusTextBlock}" FontWeight="Medium" TextTrimming="CharacterEllipsis" />
         <TextBlock Text="{Binding Detail}" Style="{StaticResource MutedText}" FontSize="11" Margin="0,3,0,0" />
       </StackPanel>
     </HierarchicalDataTemplate>
+    </ResourceDictionary>
   </UserControl.Resources>
   <Grid>
     <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
     <DockPanel Margin="0,0,0,16">
       <WrapPanel DockPanel.Dock="Right">
+        <Button Content="知识包" Click="Packages_Click" Style="{StaticResource QuietButton}" />
         <Button Content="科目设置" Click="Subjects_Click" Style="{StaticResource QuietButton}" />
         <Button Content="学习任务" Click="Tasks_Click" Style="{StaticResource QuietButton}" />
       </WrapPanel>

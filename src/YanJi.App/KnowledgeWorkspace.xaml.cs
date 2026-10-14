@@ -51,4 +51,6 @@ public partial class KnowledgeWorkspace : UserControl
     }
     private async void Subjects_Click(object sender, RoutedEventArgs e) { ((MainWindow)Window.GetWindow(this)).ShowLegacyProgress(); if(Model!=null) await Model.ReloadAsync(); }
     private async void Tasks_Click(object sender, RoutedEventArgs e) { ((MainWindow)Window.GetWindow(this)).ShowLegacyProgress(); if(Model!=null) await Model.ReloadAsync(); }
+    private async void Packages_Click(object sender,RoutedEventArgs e)
+    {var owner=(MainWindow)Window.GetWindow(this);new KnowledgePackageWindow(owner).ShowDialog();if(Model!=null)await Model.ReloadAsync();}
 }

@@ -1,0 +1,30 @@
+{
+  "PackageId": "org.yanji.reference.blank",
+  "PackageVersion": "1.0.0",
+  "SchemaVersion": 1,
+  "Name": "自定义 · 空白知识包",
+  "Description": "YanJi 原创参考知识目录；不是官方考试大纲。安装不产生节点；自行在知识目录添加内容。来源仅供追溯，不附教材、试题或讲义内容。",
+  "Maintainer": "YanJi 参考目录维护",
+  "ExamKey": "cn-postgraduate",
+  "AdmissionYears": [],
+  "Sources": [
+    {
+      "Id": "yanji-original",
+      "Title": "YanJi 原创空白模板",
+      "Url": null
+    }
+  ],
+  "License": {
+    "Id": "CC0-1.0",
+    "Text": "本包原创目录结构与元数据采用 CC0-1.0；外部来源的内容与许可不包含在授权中，未复制其正文或题目。"
+  },
+  "Subjects": [
+    {
+      "Key": "custom",
+      "Name": "custom",
+      "Variant": null
+    }
+  ],
+  "Nodes": [],
+  "ContentHash": "5DA8E8FA79316D23137EC20A101BF833238E3314A5F5867F11947187A780F998"
+}

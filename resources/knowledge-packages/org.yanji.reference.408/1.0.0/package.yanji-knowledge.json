@@ -1,0 +1,1356 @@
+{
+  "PackageId": "org.yanji.reference.408",
+  "PackageVersion": "1.0.0",
+  "SchemaVersion": 1,
+  "Name": "408 · 四科参考知识目录",
+  "Description": "YanJi 原创参考知识目录；不是官方考试大纲。覆盖四科常见主干主题，可用于安排和记录学习；不保证与2028或任一年度考试大纲逐项一致。来源仅供追溯，不附教材、试题或讲义内容。",
+  "Maintainer": "YanJi 参考目录维护",
+  "ExamKey": "cn-postgraduate",
+  "AdmissionYears": [],
+  "Sources": [
+    {
+      "Id": "neea-index",
+      "Title": "教育考试院大纲索引：仅作历史考试范围入口",
+      "Url": "https://yankao.neea.edu.cn/html1/category/1509/6235-2.htm"
+    },
+    {
+      "Id": "mit-algorithms",
+      "Title": "MIT 6.006 基础算法课程：主题参考",
+      "Url": "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/pages/syllabus/"
+    },
+    {
+      "Id": "cmu-systems",
+      "Title": "CMU 15-213 系统课程：主题参考",
+      "Url": "https://www.cs.cmu.edu/~213/schedule.html"
+    },
+    {
+      "Id": "mit-os",
+      "Title": "MIT 6.1810 操作系统课程：主题参考",
+      "Url": "https://pdos.csail.mit.edu/6.1810/2025/schedule.html"
+    },
+    {
+      "Id": "stanford-network",
+      "Title": "Stanford CS144 网络课程：主题参考",
+      "Url": "https://cs144.github.io/"
+    }
+  ],
+  "License": {
+    "Id": "CC0-1.0",
+    "Text": "本包原创目录结构与元数据采用 CC0-1.0；外部来源的内容与许可不包含在授权中，未复制其正文或题目。"
+  },
+  "Subjects": [
+    {
+      "Key": "408",
+      "Name": "408",
+      "Variant": null
+    }
+  ],
+  "Nodes": [
+    {
+      "Id": "408.r0",
+      "SubjectKey": "408",
+      "ParentId": null,
+      "Kind": "Chapter",
+      "Name": "数据结构",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "408.r0.c0",
+      "SubjectKey": "408",
+      "ParentId": "408.r0",
+      "Kind": "Chapter",
+      "Name": "算法分析",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "408.r0.c0.p0",
+      "SubjectKey": "408",
+      "ParentId": "408.r0.c0",
+      "Kind": "KnowledgePoint",
+      "Name": "时间复杂度",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "408.r0.c0.p1",
+      "SubjectKey": "408",
+      "ParentId": "408.r0.c0",
+      "Kind": "KnowledgePoint",
+      "Name": "空间复杂度",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "408.r0.c0.p2",
+      "SubjectKey": "408",
+      "ParentId": "408.r0.c0",
+      "Kind": "KnowledgePoint",
+      "Name": "递归与迭代",
+      "Description": "",
+      "Order": 2
+    },
+    {
+      "Id": "408.r0.c1",
+      "SubjectKey": "408",
+      "ParentId": "408.r0",
+      "Kind": "Chapter",
+      "Name": "线性表",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "408.r0.c1.p0",
+      "SubjectKey": "408",
+      "ParentId": "408.r0.c1",
+      "Kind": "KnowledgePoint",
+      "Name": "顺序存储",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "408.r0.c1.p1",
+      "SubjectKey": "408",
+      "ParentId": "408.r0.c1",
+      "Kind": "KnowledgePoint",
+      "Name": "单链表与双链表",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "408.r0.c1.p2",
+      "SubjectKey": "408",
+      "ParentId": "408.r0.c1",
+      "Kind": "KnowledgePoint",
+      "Name": "循环链表",
+      "Description": "",
+      "Order": 2
+    },
+    {
+      "Id": "408.r0.c1.p3",
+      "SubjectKey": "408",
+      "ParentId": "408.r0.c1",
+      "Kind": "KnowledgePoint",
+      "Name": "线性表操作与应用",
+      "Description": "",
+      "Order": 3
+    },
+    {
+      "Id": "408.r0.c2",
+      "SubjectKey": "408",
+      "ParentId": "408.r0",
+      "Kind": "Chapter",
+      "Name": "栈、队列与数组",
+      "Description": "",
+      "Order": 2
+    },
+    {
+      "Id": "408.r0.c2.p0",
+      "SubjectKey": "408",
+      "ParentId": "408.r0.c2",
+      "Kind": "KnowledgePoint",
+      "Name": "顺序栈与链栈",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "408.r0.c2.p1",
+      "SubjectKey": "408",
+      "ParentId": "408.r0.c2",
+      "Kind": "KnowledgePoint",
+      "Name": "队列与循环队列",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "408.r0.c2.p2",
+      "SubjectKey": "408",
+      "ParentId": "408.r0.c2",
+      "Kind": "KnowledgePoint",
+      "Name": "表达式求值",
+      "Description": "",
+      "Order": 2
+    },
+    {
+      "Id": "408.r0.c2.p3",
+      "SubjectKey": "408",
+      "ParentId": "408.r0.c2",
+      "Kind": "KnowledgePoint",
+      "Name": "矩阵压缩存储",
+      "Description": "",
+      "Order": 3
+    },
+    {
+      "Id": "408.r0.c3",
+      "SubjectKey": "408",
+      "ParentId": "408.r0",
+      "Kind": "Chapter",
+      "Name": "树与二叉树",
+      "Description": "",
+      "Order": 3
+    },
+    {
+      "Id": "408.r0.c3.p0",
+      "SubjectKey": "408",
+      "ParentId": "408.r0.c3",
+      "Kind": "KnowledgePoint",
+      "Name": "树的表示",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "408.r0.c3.p1",
+      "SubjectKey": "408",
+      "ParentId": "408.r0.c3",
+      "Kind": "KnowledgePoint",
+      "Name": "二叉树遍历",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "408.r0.c3.p2",
+      "SubjectKey": "408",
+      "ParentId": "408.r0.c3",
+      "Kind": "KnowledgePoint",
+      "Name": "线索二叉树",
+      "Description": "",
+      "Order": 2
+    },
+    {
+      "Id": "408.r0.c3.p3",
+      "SubjectKey": "408",
+      "ParentId": "408.r0.c3",
+      "Kind": "KnowledgePoint",
+      "Name": "树与森林转换",
+      "Description": "",
+      "Order": 3
+    },
+    {
+      "Id": "408.r0.c3.p4",
+      "SubjectKey": "408",
+      "ParentId": "408.r0.c3",
+      "Kind": "KnowledgePoint",
+      "Name": "哈夫曼树",
+      "Description": "",
+      "Order": 4
+    },
+    {
+      "Id": "408.r0.c4",
+      "SubjectKey": "408",
+      "ParentId": "408.r0",
+      "Kind": "Chapter",
+      "Name": "图",
+      "Description": "",
+      "Order": 4
+    },
+    {
+      "Id": "408.r0.c4.p0",
+      "SubjectKey": "408",
+      "ParentId": "408.r0.c4",
+      "Kind": "KnowledgePoint",
+      "Name": "邻接矩阵与邻接表",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "408.r0.c4.p1",
+      "SubjectKey": "408",
+      "ParentId": "408.r0.c4",
+      "Kind": "KnowledgePoint",
+      "Name": "深度与广度优先遍历",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "408.r0.c4.p2",
+      "SubjectKey": "408",
+      "ParentId": "408.r0.c4",
+      "Kind": "KnowledgePoint",
+      "Name": "最小生成树",
+      "Description": "",
+      "Order": 2
+    },
+    {
+      "Id": "408.r0.c4.p3",
+      "SubjectKey": "408",
+      "ParentId": "408.r0.c4",
+      "Kind": "KnowledgePoint",
+      "Name": "最短路径",
+      "Description": "",
+      "Order": 3
+    },
+    {
+      "Id": "408.r0.c4.p4",
+      "SubjectKey": "408",
+      "ParentId": "408.r0.c4",
+      "Kind": "KnowledgePoint",
+      "Name": "拓扑排序与关键路径",
+      "Description": "",
+      "Order": 4
+    },
+    {
+      "Id": "408.r0.c5",
+      "SubjectKey": "408",
+      "ParentId": "408.r0",
+      "Kind": "Chapter",
+      "Name": "查找",
+      "Description": "",
+      "Order": 5
+    },
+    {
+      "Id": "408.r0.c5.p0",
+      "SubjectKey": "408",
+      "ParentId": "408.r0.c5",
+      "Kind": "KnowledgePoint",
+      "Name": "顺序与折半查找",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "408.r0.c5.p1",
+      "SubjectKey": "408",
+      "ParentId": "408.r0.c5",
+      "Kind": "KnowledgePoint",
+      "Name": "二叉搜索树",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "408.r0.c5.p2",
+      "SubjectKey": "408",
+      "ParentId": "408.r0.c5",
+      "Kind": "KnowledgePoint",
+      "Name": "平衡树",
+      "Description": "",
+      "Order": 2
+    },
+    {
+      "Id": "408.r0.c5.p3",
+      "SubjectKey": "408",
+      "ParentId": "408.r0.c5",
+      "Kind": "KnowledgePoint",
+      "Name": "B树与B+树",
+      "Description": "",
+      "Order": 3
+    },
+    {
+      "Id": "408.r0.c5.p4",
+      "SubjectKey": "408",
+      "ParentId": "408.r0.c5",
+      "Kind": "KnowledgePoint",
+      "Name": "散列表",
+      "Description": "",
+      "Order": 4
+    },
+    {
+      "Id": "408.r0.c6",
+      "SubjectKey": "408",
+      "ParentId": "408.r0",
+      "Kind": "Chapter",
+      "Name": "排序",
+      "Description": "",
+      "Order": 6
+    },
+    {
+      "Id": "408.r0.c6.p0",
+      "SubjectKey": "408",
+      "ParentId": "408.r0.c6",
+      "Kind": "KnowledgePoint",
+      "Name": "插入与希尔排序",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "408.r0.c6.p1",
+      "SubjectKey": "408",
+      "ParentId": "408.r0.c6",
+      "Kind": "KnowledgePoint",
+      "Name": "交换排序",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "408.r0.c6.p2",
+      "SubjectKey": "408",
+      "ParentId": "408.r0.c6",
+      "Kind": "KnowledgePoint",
+      "Name": "选择与堆排序",
+      "Description": "",
+      "Order": 2
+    },
+    {
+      "Id": "408.r0.c6.p3",
+      "SubjectKey": "408",
+      "ParentId": "408.r0.c6",
+      "Kind": "KnowledgePoint",
+      "Name": "归并排序",
+      "Description": "",
+      "Order": 3
+    },
+    {
+      "Id": "408.r0.c6.p4",
+      "SubjectKey": "408",
+      "ParentId": "408.r0.c6",
+      "Kind": "KnowledgePoint",
+      "Name": "基数排序",
+      "Description": "",
+      "Order": 4
+    },
+    {
+      "Id": "408.r0.c6.p5",
+      "SubjectKey": "408",
+      "ParentId": "408.r0.c6",
+      "Kind": "KnowledgePoint",
+      "Name": "排序稳定性与性能",
+      "Description": "",
+      "Order": 5
+    },
+    {
+      "Id": "408.r1",
+      "SubjectKey": "408",
+      "ParentId": null,
+      "Kind": "Chapter",
+      "Name": "计算机组成原理",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "408.r1.c0",
+      "SubjectKey": "408",
+      "ParentId": "408.r1",
+      "Kind": "Chapter",
+      "Name": "系统层次与性能",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "408.r1.c0.p0",
+      "SubjectKey": "408",
+      "ParentId": "408.r1.c0",
+      "Kind": "KnowledgePoint",
+      "Name": "硬件与软件层次",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "408.r1.c0.p1",
+      "SubjectKey": "408",
+      "ParentId": "408.r1.c0",
+      "Kind": "KnowledgePoint",
+      "Name": "指令执行基本过程",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "408.r1.c0.p2",
+      "SubjectKey": "408",
+      "ParentId": "408.r1.c0",
+      "Kind": "KnowledgePoint",
+      "Name": "性能指标",
+      "Description": "",
+      "Order": 2
+    },
+    {
+      "Id": "408.r1.c1",
+      "SubjectKey": "408",
+      "ParentId": "408.r1",
+      "Kind": "Chapter",
+      "Name": "数据表示与运算",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "408.r1.c1.p0",
+      "SubjectKey": "408",
+      "ParentId": "408.r1.c1",
+      "Kind": "KnowledgePoint",
+      "Name": "进制与编码",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "408.r1.c1.p1",
+      "SubjectKey": "408",
+      "ParentId": "408.r1.c1",
+      "Kind": "KnowledgePoint",
+      "Name": "定点数与补码",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "408.r1.c1.p2",
+      "SubjectKey": "408",
+      "ParentId": "408.r1.c1",
+      "Kind": "KnowledgePoint",
+      "Name": "浮点数",
+      "Description": "",
+      "Order": 2
+    },
+    {
+      "Id": "408.r1.c1.p3",
+      "SubjectKey": "408",
+      "ParentId": "408.r1.c1",
+      "Kind": "KnowledgePoint",
+      "Name": "算术运算与溢出",
+      "Description": "",
+      "Order": 3
+    },
+    {
+      "Id": "408.r1.c1.p4",
+      "SubjectKey": "408",
+      "ParentId": "408.r1.c1",
+      "Kind": "KnowledgePoint",
+      "Name": "逻辑运算",
+      "Description": "",
+      "Order": 4
+    },
+    {
+      "Id": "408.r1.c2",
+      "SubjectKey": "408",
+      "ParentId": "408.r1",
+      "Kind": "Chapter",
+      "Name": "存储系统",
+      "Description": "",
+      "Order": 2
+    },
+    {
+      "Id": "408.r1.c2.p0",
+      "SubjectKey": "408",
+      "ParentId": "408.r1.c2",
+      "Kind": "KnowledgePoint",
+      "Name": "存储器层次",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "408.r1.c2.p1",
+      "SubjectKey": "408",
+      "ParentId": "408.r1.c2",
+      "Kind": "KnowledgePoint",
+      "Name": "主存组织与扩展",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "408.r1.c2.p2",
+      "SubjectKey": "408",
+      "ParentId": "408.r1.c2",
+      "Kind": "KnowledgePoint",
+      "Name": "高速缓存",
+      "Description": "",
+      "Order": 2
+    },
+    {
+      "Id": "408.r1.c2.p3",
+      "SubjectKey": "408",
+      "ParentId": "408.r1.c2",
+      "Kind": "KnowledgePoint",
+      "Name": "映射与替换策略",
+      "Description": "",
+      "Order": 3
+    },
+    {
+      "Id": "408.r1.c2.p4",
+      "SubjectKey": "408",
+      "ParentId": "408.r1.c2",
+      "Kind": "KnowledgePoint",
+      "Name": "虚拟存储基础",
+      "Description": "",
+      "Order": 4
+    },
+    {
+      "Id": "408.r1.c3",
+      "SubjectKey": "408",
+      "ParentId": "408.r1",
+      "Kind": "Chapter",
+      "Name": "指令系统",
+      "Description": "",
+      "Order": 3
+    },
+    {
+      "Id": "408.r1.c3.p0",
+      "SubjectKey": "408",
+      "ParentId": "408.r1.c3",
+      "Kind": "KnowledgePoint",
+      "Name": "指令格式",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "408.r1.c3.p1",
+      "SubjectKey": "408",
+      "ParentId": "408.r1.c3",
+      "Kind": "KnowledgePoint",
+      "Name": "寻址方式",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "408.r1.c3.p2",
+      "SubjectKey": "408",
+      "ParentId": "408.r1.c3",
+      "Kind": "KnowledgePoint",
+      "Name": "指令功能",
+      "Description": "",
+      "Order": 2
+    },
+    {
+      "Id": "408.r1.c3.p3",
+      "SubjectKey": "408",
+      "ParentId": "408.r1.c3",
+      "Kind": "KnowledgePoint",
+      "Name": "RISC与CISC",
+      "Description": "",
+      "Order": 3
+    },
+    {
+      "Id": "408.r1.c4",
+      "SubjectKey": "408",
+      "ParentId": "408.r1",
+      "Kind": "Chapter",
+      "Name": "处理器",
+      "Description": "",
+      "Order": 4
+    },
+    {
+      "Id": "408.r1.c4.p0",
+      "SubjectKey": "408",
+      "ParentId": "408.r1.c4",
+      "Kind": "KnowledgePoint",
+      "Name": "数据通路",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "408.r1.c4.p1",
+      "SubjectKey": "408",
+      "ParentId": "408.r1.c4",
+      "Kind": "KnowledgePoint",
+      "Name": "控制器",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "408.r1.c4.p2",
+      "SubjectKey": "408",
+      "ParentId": "408.r1.c4",
+      "Kind": "KnowledgePoint",
+      "Name": "指令周期",
+      "Description": "",
+      "Order": 2
+    },
+    {
+      "Id": "408.r1.c4.p3",
+      "SubjectKey": "408",
+      "ParentId": "408.r1.c4",
+      "Kind": "KnowledgePoint",
+      "Name": "中断响应",
+      "Description": "",
+      "Order": 3
+    },
+    {
+      "Id": "408.r1.c4.p4",
+      "SubjectKey": "408",
+      "ParentId": "408.r1.c4",
+      "Kind": "KnowledgePoint",
+      "Name": "流水线与相关",
+      "Description": "",
+      "Order": 4
+    },
+    {
+      "Id": "408.r1.c5",
+      "SubjectKey": "408",
+      "ParentId": "408.r1",
+      "Kind": "Chapter",
+      "Name": "总线",
+      "Description": "",
+      "Order": 5
+    },
+    {
+      "Id": "408.r1.c5.p0",
+      "SubjectKey": "408",
+      "ParentId": "408.r1.c5",
+      "Kind": "KnowledgePoint",
+      "Name": "总线结构",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "408.r1.c5.p1",
+      "SubjectKey": "408",
+      "ParentId": "408.r1.c5",
+      "Kind": "KnowledgePoint",
+      "Name": "仲裁",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "408.r1.c5.p2",
+      "SubjectKey": "408",
+      "ParentId": "408.r1.c5",
+      "Kind": "KnowledgePoint",
+      "Name": "传输与时序",
+      "Description": "",
+      "Order": 2
+    },
+    {
+      "Id": "408.r1.c6",
+      "SubjectKey": "408",
+      "ParentId": "408.r1",
+      "Kind": "Chapter",
+      "Name": "输入输出",
+      "Description": "",
+      "Order": 6
+    },
+    {
+      "Id": "408.r1.c6.p0",
+      "SubjectKey": "408",
+      "ParentId": "408.r1.c6",
+      "Kind": "KnowledgePoint",
+      "Name": "设备与接口",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "408.r1.c6.p1",
+      "SubjectKey": "408",
+      "ParentId": "408.r1.c6",
+      "Kind": "KnowledgePoint",
+      "Name": "程序查询",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "408.r1.c6.p2",
+      "SubjectKey": "408",
+      "ParentId": "408.r1.c6",
+      "Kind": "KnowledgePoint",
+      "Name": "中断方式",
+      "Description": "",
+      "Order": 2
+    },
+    {
+      "Id": "408.r1.c6.p3",
+      "SubjectKey": "408",
+      "ParentId": "408.r1.c6",
+      "Kind": "KnowledgePoint",
+      "Name": "DMA方式",
+      "Description": "",
+      "Order": 3
+    },
+    {
+      "Id": "408.r2",
+      "SubjectKey": "408",
+      "ParentId": null,
+      "Kind": "Chapter",
+      "Name": "操作系统",
+      "Description": "",
+      "Order": 2
+    },
+    {
+      "Id": "408.r2.c0",
+      "SubjectKey": "408",
+      "ParentId": "408.r2",
+      "Kind": "Chapter",
+      "Name": "操作系统基础",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "408.r2.c0.p0",
+      "SubjectKey": "408",
+      "ParentId": "408.r2.c0",
+      "Kind": "KnowledgePoint",
+      "Name": "内核与用户态",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "408.r2.c0.p1",
+      "SubjectKey": "408",
+      "ParentId": "408.r2.c0",
+      "Kind": "KnowledgePoint",
+      "Name": "中断、异常与系统调用",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "408.r2.c0.p2",
+      "SubjectKey": "408",
+      "ParentId": "408.r2.c0",
+      "Kind": "KnowledgePoint",
+      "Name": "系统结构",
+      "Description": "",
+      "Order": 2
+    },
+    {
+      "Id": "408.r2.c1",
+      "SubjectKey": "408",
+      "ParentId": "408.r2",
+      "Kind": "Chapter",
+      "Name": "进程与线程",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "408.r2.c1.p0",
+      "SubjectKey": "408",
+      "ParentId": "408.r2.c1",
+      "Kind": "KnowledgePoint",
+      "Name": "进程状态",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "408.r2.c1.p1",
+      "SubjectKey": "408",
+      "ParentId": "408.r2.c1",
+      "Kind": "KnowledgePoint",
+      "Name": "线程模型",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "408.r2.c1.p2",
+      "SubjectKey": "408",
+      "ParentId": "408.r2.c1",
+      "Kind": "KnowledgePoint",
+      "Name": "上下文切换",
+      "Description": "",
+      "Order": 2
+    },
+    {
+      "Id": "408.r2.c1.p3",
+      "SubjectKey": "408",
+      "ParentId": "408.r2.c1",
+      "Kind": "KnowledgePoint",
+      "Name": "处理机调度",
+      "Description": "",
+      "Order": 3
+    },
+    {
+      "Id": "408.r2.c2",
+      "SubjectKey": "408",
+      "ParentId": "408.r2",
+      "Kind": "Chapter",
+      "Name": "同步与死锁",
+      "Description": "",
+      "Order": 2
+    },
+    {
+      "Id": "408.r2.c2.p0",
+      "SubjectKey": "408",
+      "ParentId": "408.r2.c2",
+      "Kind": "KnowledgePoint",
+      "Name": "互斥与临界区",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "408.r2.c2.p1",
+      "SubjectKey": "408",
+      "ParentId": "408.r2.c2",
+      "Kind": "KnowledgePoint",
+      "Name": "信号量",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "408.r2.c2.p2",
+      "SubjectKey": "408",
+      "ParentId": "408.r2.c2",
+      "Kind": "KnowledgePoint",
+      "Name": "经典同步问题",
+      "Description": "",
+      "Order": 2
+    },
+    {
+      "Id": "408.r2.c2.p3",
+      "SubjectKey": "408",
+      "ParentId": "408.r2.c2",
+      "Kind": "KnowledgePoint",
+      "Name": "死锁条件",
+      "Description": "",
+      "Order": 3
+    },
+    {
+      "Id": "408.r2.c2.p4",
+      "SubjectKey": "408",
+      "ParentId": "408.r2.c2",
+      "Kind": "KnowledgePoint",
+      "Name": "预防、避免与检测",
+      "Description": "",
+      "Order": 4
+    },
+    {
+      "Id": "408.r2.c3",
+      "SubjectKey": "408",
+      "ParentId": "408.r2",
+      "Kind": "Chapter",
+      "Name": "内存管理",
+      "Description": "",
+      "Order": 3
+    },
+    {
+      "Id": "408.r2.c3.p0",
+      "SubjectKey": "408",
+      "ParentId": "408.r2.c3",
+      "Kind": "KnowledgePoint",
+      "Name": "连续分配",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "408.r2.c3.p1",
+      "SubjectKey": "408",
+      "ParentId": "408.r2.c3",
+      "Kind": "KnowledgePoint",
+      "Name": "分页与分段",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "408.r2.c3.p2",
+      "SubjectKey": "408",
+      "ParentId": "408.r2.c3",
+      "Kind": "KnowledgePoint",
+      "Name": "地址转换",
+      "Description": "",
+      "Order": 2
+    },
+    {
+      "Id": "408.r2.c3.p3",
+      "SubjectKey": "408",
+      "ParentId": "408.r2.c3",
+      "Kind": "KnowledgePoint",
+      "Name": "虚拟内存",
+      "Description": "",
+      "Order": 3
+    },
+    {
+      "Id": "408.r2.c3.p4",
+      "SubjectKey": "408",
+      "ParentId": "408.r2.c3",
+      "Kind": "KnowledgePoint",
+      "Name": "页面置换",
+      "Description": "",
+      "Order": 4
+    },
+    {
+      "Id": "408.r2.c3.p5",
+      "SubjectKey": "408",
+      "ParentId": "408.r2.c3",
+      "Kind": "KnowledgePoint",
+      "Name": "工作集与抖动",
+      "Description": "",
+      "Order": 5
+    },
+    {
+      "Id": "408.r2.c4",
+      "SubjectKey": "408",
+      "ParentId": "408.r2",
+      "Kind": "Chapter",
+      "Name": "文件系统",
+      "Description": "",
+      "Order": 4
+    },
+    {
+      "Id": "408.r2.c4.p0",
+      "SubjectKey": "408",
+      "ParentId": "408.r2.c4",
+      "Kind": "KnowledgePoint",
+      "Name": "文件与目录",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "408.r2.c4.p1",
+      "SubjectKey": "408",
+      "ParentId": "408.r2.c4",
+      "Kind": "KnowledgePoint",
+      "Name": "文件分配",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "408.r2.c4.p2",
+      "SubjectKey": "408",
+      "ParentId": "408.r2.c4",
+      "Kind": "KnowledgePoint",
+      "Name": "空闲空间管理",
+      "Description": "",
+      "Order": 2
+    },
+    {
+      "Id": "408.r2.c4.p3",
+      "SubjectKey": "408",
+      "ParentId": "408.r2.c4",
+      "Kind": "KnowledgePoint",
+      "Name": "文件系统结构",
+      "Description": "",
+      "Order": 3
+    },
+    {
+      "Id": "408.r2.c4.p4",
+      "SubjectKey": "408",
+      "ParentId": "408.r2.c4",
+      "Kind": "KnowledgePoint",
+      "Name": "保护与共享",
+      "Description": "",
+      "Order": 4
+    },
+    {
+      "Id": "408.r2.c5",
+      "SubjectKey": "408",
+      "ParentId": "408.r2",
+      "Kind": "Chapter",
+      "Name": "输入输出管理",
+      "Description": "",
+      "Order": 5
+    },
+    {
+      "Id": "408.r2.c5.p0",
+      "SubjectKey": "408",
+      "ParentId": "408.r2.c5",
+      "Kind": "KnowledgePoint",
+      "Name": "设备控制",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "408.r2.c5.p1",
+      "SubjectKey": "408",
+      "ParentId": "408.r2.c5",
+      "Kind": "KnowledgePoint",
+      "Name": "缓冲",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "408.r2.c5.p2",
+      "SubjectKey": "408",
+      "ParentId": "408.r2.c5",
+      "Kind": "KnowledgePoint",
+      "Name": "设备分配",
+      "Description": "",
+      "Order": 2
+    },
+    {
+      "Id": "408.r2.c5.p3",
+      "SubjectKey": "408",
+      "ParentId": "408.r2.c5",
+      "Kind": "KnowledgePoint",
+      "Name": "磁盘调度",
+      "Description": "",
+      "Order": 3
+    },
+    {
+      "Id": "408.r3",
+      "SubjectKey": "408",
+      "ParentId": null,
+      "Kind": "Chapter",
+      "Name": "计算机网络",
+      "Description": "",
+      "Order": 3
+    },
+    {
+      "Id": "408.r3.c0",
+      "SubjectKey": "408",
+      "ParentId": "408.r3",
+      "Kind": "Chapter",
+      "Name": "网络体系",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "408.r3.c0.p0",
+      "SubjectKey": "408",
+      "ParentId": "408.r3.c0",
+      "Kind": "KnowledgePoint",
+      "Name": "分层与协议",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "408.r3.c0.p1",
+      "SubjectKey": "408",
+      "ParentId": "408.r3.c0",
+      "Kind": "KnowledgePoint",
+      "Name": "交换方式",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "408.r3.c0.p2",
+      "SubjectKey": "408",
+      "ParentId": "408.r3.c0",
+      "Kind": "KnowledgePoint",
+      "Name": "时延、吞吐与带宽",
+      "Description": "",
+      "Order": 2
+    },
+    {
+      "Id": "408.r3.c1",
+      "SubjectKey": "408",
+      "ParentId": "408.r3",
+      "Kind": "Chapter",
+      "Name": "物理层",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "408.r3.c1.p0",
+      "SubjectKey": "408",
+      "ParentId": "408.r3.c1",
+      "Kind": "KnowledgePoint",
+      "Name": "信号与编码",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "408.r3.c1.p1",
+      "SubjectKey": "408",
+      "ParentId": "408.r3.c1",
+      "Kind": "KnowledgePoint",
+      "Name": "传输介质",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "408.r3.c1.p2",
+      "SubjectKey": "408",
+      "ParentId": "408.r3.c1",
+      "Kind": "KnowledgePoint",
+      "Name": "复用",
+      "Description": "",
+      "Order": 2
+    },
+    {
+      "Id": "408.r3.c1.p3",
+      "SubjectKey": "408",
+      "ParentId": "408.r3.c1",
+      "Kind": "KnowledgePoint",
+      "Name": "信道容量",
+      "Description": "",
+      "Order": 3
+    },
+    {
+      "Id": "408.r3.c2",
+      "SubjectKey": "408",
+      "ParentId": "408.r3",
+      "Kind": "Chapter",
+      "Name": "数据链路层",
+      "Description": "",
+      "Order": 2
+    },
+    {
+      "Id": "408.r3.c2.p0",
+      "SubjectKey": "408",
+      "ParentId": "408.r3.c2",
+      "Kind": "KnowledgePoint",
+      "Name": "成帧与差错检测",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "408.r3.c2.p1",
+      "SubjectKey": "408",
+      "ParentId": "408.r3.c2",
+      "Kind": "KnowledgePoint",
+      "Name": "流量控制",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "408.r3.c2.p2",
+      "SubjectKey": "408",
+      "ParentId": "408.r3.c2",
+      "Kind": "KnowledgePoint",
+      "Name": "可靠传输",
+      "Description": "",
+      "Order": 2
+    },
+    {
+      "Id": "408.r3.c2.p3",
+      "SubjectKey": "408",
+      "ParentId": "408.r3.c2",
+      "Kind": "KnowledgePoint",
+      "Name": "介质访问控制",
+      "Description": "",
+      "Order": 3
+    },
+    {
+      "Id": "408.r3.c2.p4",
+      "SubjectKey": "408",
+      "ParentId": "408.r3.c2",
+      "Kind": "KnowledgePoint",
+      "Name": "以太网与交换机",
+      "Description": "",
+      "Order": 4
+    },
+    {
+      "Id": "408.r3.c3",
+      "SubjectKey": "408",
+      "ParentId": "408.r3",
+      "Kind": "Chapter",
+      "Name": "网络层",
+      "Description": "",
+      "Order": 3
+    },
+    {
+      "Id": "408.r3.c3.p0",
+      "SubjectKey": "408",
+      "ParentId": "408.r3.c3",
+      "Kind": "KnowledgePoint",
+      "Name": "IPv4与子网",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "408.r3.c3.p1",
+      "SubjectKey": "408",
+      "ParentId": "408.r3.c3",
+      "Kind": "KnowledgePoint",
+      "Name": "转发与路由",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "408.r3.c3.p2",
+      "SubjectKey": "408",
+      "ParentId": "408.r3.c3",
+      "Kind": "KnowledgePoint",
+      "Name": "路由协议",
+      "Description": "",
+      "Order": 2
+    },
+    {
+      "Id": "408.r3.c3.p3",
+      "SubjectKey": "408",
+      "ParentId": "408.r3.c3",
+      "Kind": "KnowledgePoint",
+      "Name": "ARP与ICMP",
+      "Description": "",
+      "Order": 3
+    },
+    {
+      "Id": "408.r3.c3.p4",
+      "SubjectKey": "408",
+      "ParentId": "408.r3.c3",
+      "Kind": "KnowledgePoint",
+      "Name": "IPv6基础",
+      "Description": "",
+      "Order": 4
+    },
+    {
+      "Id": "408.r3.c4",
+      "SubjectKey": "408",
+      "ParentId": "408.r3",
+      "Kind": "Chapter",
+      "Name": "传输层",
+      "Description": "",
+      "Order": 4
+    },
+    {
+      "Id": "408.r3.c4.p0",
+      "SubjectKey": "408",
+      "ParentId": "408.r3.c4",
+      "Kind": "KnowledgePoint",
+      "Name": "端口与多路复用",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "408.r3.c4.p1",
+      "SubjectKey": "408",
+      "ParentId": "408.r3.c4",
+      "Kind": "KnowledgePoint",
+      "Name": "UDP",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "408.r3.c4.p2",
+      "SubjectKey": "408",
+      "ParentId": "408.r3.c4",
+      "Kind": "KnowledgePoint",
+      "Name": "TCP连接管理",
+      "Description": "",
+      "Order": 2
+    },
+    {
+      "Id": "408.r3.c4.p3",
+      "SubjectKey": "408",
+      "ParentId": "408.r3.c4",
+      "Kind": "KnowledgePoint",
+      "Name": "可靠传输与滑动窗口",
+      "Description": "",
+      "Order": 3
+    },
+    {
+      "Id": "408.r3.c4.p4",
+      "SubjectKey": "408",
+      "ParentId": "408.r3.c4",
+      "Kind": "KnowledgePoint",
+      "Name": "拥塞控制",
+      "Description": "",
+      "Order": 4
+    },
+    {
+      "Id": "408.r3.c5",
+      "SubjectKey": "408",
+      "ParentId": "408.r3",
+      "Kind": "Chapter",
+      "Name": "应用层",
+      "Description": "",
+      "Order": 5
+    },
+    {
+      "Id": "408.r3.c5.p0",
+      "SubjectKey": "408",
+      "ParentId": "408.r3.c5",
+      "Kind": "KnowledgePoint",
+      "Name": "DNS",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "408.r3.c5.p1",
+      "SubjectKey": "408",
+      "ParentId": "408.r3.c5",
+      "Kind": "KnowledgePoint",
+      "Name": "HTTP",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "408.r3.c5.p2",
+      "SubjectKey": "408",
+      "ParentId": "408.r3.c5",
+      "Kind": "KnowledgePoint",
+      "Name": "电子邮件",
+      "Description": "",
+      "Order": 2
+    },
+    {
+      "Id": "408.r3.c5.p3",
+      "SubjectKey": "408",
+      "ParentId": "408.r3.c5",
+      "Kind": "KnowledgePoint",
+      "Name": "文件传输",
+      "Description": "",
+      "Order": 3
+    },
+    {
+      "Id": "408.r3.c5.p4",
+      "SubjectKey": "408",
+      "ParentId": "408.r3.c5",
+      "Kind": "KnowledgePoint",
+      "Name": "应用协议比较",
+      "Description": "",
+      "Order": 4
+    }
+  ],
+  "ContentHash": "B5FF41058BF3846BB9882A3727BB670723E9717AD6FC87F634201305BB22A53E"
+}

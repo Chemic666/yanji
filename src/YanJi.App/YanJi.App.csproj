@@ -7,4 +7,6 @@
   </PropertyGroup>
   <ItemGroup><ProjectReference Include="../YanJi.Data/YanJi.Data.csproj" /><PackageReference Include="CommunityToolkit.Mvvm" /></ItemGroup>
   <ItemGroup><None Include="../../tools/Launch-M1.cmd" Link="Launch-M1.cmd" CopyToPublishDirectory="PreserveNewest" /></ItemGroup>
+  <ItemGroup><None Include="../../tools/Launch-M2.cmd" Link="Launch-M2.cmd" CopyToPublishDirectory="PreserveNewest" /></ItemGroup>
+  <ItemGroup><None Include="../../resources/knowledge-packages/**/*.json" Link="knowledge-packages/%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" /></ItemGroup>
 </Project>

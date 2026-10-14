@@ -60,8 +60,7 @@ public sealed partial class YanJiDatabase
                 throw new InvalidDataException("考试档案无效。");
             if (!r.IsDBNull(4)) DateOnly.ParseExact(r.GetString(4), "yyyy-MM-dd", CultureInfo.InvariantCulture);
         }
-        if (!Equals(Scalar(c, null, "SELECT script_digest FROM schema_migrations WHERE target_version=2"),
-            Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(Migration2Sql)))))
+        if (!MigrationDigestMatches(Migration2Sql, Scalar(c, null, "SELECT script_digest FROM schema_migrations WHERE target_version=2")))
             throw new InvalidDataException("迁移登记无效。");
         return nodes;
     }
@@ -106,14 +105,7 @@ public sealed partial class YanJiDatabase
             Exec(c, tx, "PRAGMA defer_foreign_keys=ON");
             foreach (var n in saved)
             {
-                Exec(c, tx, """
-                    INSERT INTO chapters(id,subject,name,progress,mastery,archived,profile_id,parent_id,node_kind,description,sort_order,learning_state,row_version)
-                    VALUES($id,$s,$name,$progress,$mastery,$archived,$profile,$parent,$kind,$description,$order,$state,$version)
-                    ON CONFLICT(id) DO UPDATE SET name=excluded.name,progress=excluded.progress,mastery=excluded.mastery,archived=excluded.archived,
-                        parent_id=excluded.parent_id,node_kind=excluded.node_kind,description=excluded.description,sort_order=excluded.sort_order,learning_state=excluded.learning_state,row_version=excluded.row_version
-                    """, ("$id", n.Id), ("$s", n.SubjectId), ("$name", n.Name), ("$progress", n.Progress), ("$mastery", (int)n.Mastery),
-                    ("$archived", n.Archived), ("$profile", n.ProfileId), ("$parent", n.ParentId), ("$kind", (int)n.Kind), ("$description", n.Description),
-                    ("$order", n.SortOrder), ("$state", (int)n.State), ("$version", n.Version));
+                WriteKnowledgeNode(c, tx, n);
                 Audit(c, tx, "knowledge-node", n.Id, n.Version, reason, before.TryGetValue(n.Id, out var old) ? Json(old) : null, Json(n));
             }
             tx.Commit(); return saved;

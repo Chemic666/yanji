@@ -52,6 +52,13 @@ public sealed partial class YanJiDatabase
         using(var cmd=Command(c,null,"SELECT payload FROM weakpoints"))using(var r=cmd.ExecuteReader())while(r.Read()){var weak=Parse<WeakPoint>(r.GetString(0));if(weak.ChapterId!=null)used.Add(weak.ChapterId);}
         return used;
     }
+    private static PackagePreview WithReferenceCounts(SqliteConnection c,PackagePreview preview)
+    {
+        Dictionary<string,int> counts=[];
+        using(var cmd=Command(c,null,"SELECT chapter,COUNT(*) FROM sessions WHERE chapter IS NOT NULL GROUP BY chapter"))using(var r=cmd.ExecuteReader())while(r.Read())counts[r.GetString(0)]=r.GetInt32(1);
+        using(var cmd=Command(c,null,"SELECT payload FROM weakpoints"))using(var r=cmd.ExecuteReader())while(r.Read()){var weak=Parse<WeakPoint>(r.GetString(0));if(weak.ChapterId!=null)counts[weak.ChapterId]=counts.GetValueOrDefault(weak.ChapterId)+1;}
+        return preview with{Changes=preview.Changes.Select(change=>change with{HistoricalReferences=counts.GetValueOrDefault(change.After.Id)}).ToList()};
+    }
     private static KnowledgeNode TemplateNode(PackageNode source,string profile,IReadOnlyDictionary<string,string> targets,IReadOnlyDictionary<string,PackageBinding> bindings)
         =>new(bindings[source.Id].NodeId,targets[source.SubjectKey],source.Name,source.ParentId==null?null:bindings[source.ParentId].NodeId,source.Kind,source.Order,Description:source.Description,ProfileId:profile);
     private static KnowledgeNode MergeNode(KnowledgeNode baseline,KnowledgeNode local,KnowledgeNode incoming,string sourceId,List<PackageConflict> conflicts,IReadOnlyDictionary<string,PackageChoice>? choices,bool rollback=false)
@@ -138,7 +145,7 @@ public sealed partial class YanJiDatabase
                 if(!protectedIds.Contains(local.Id)&&!local.Archived)changes.Add(new(local,local with{Archived=true},"上游移除：归档"));
                 else conflicts.Add(new(b.SourceId+":Removal",local.Name,"Removal","模板节点","保留历史/本地内容","上游移除；保留并解绑"));
             }
-            return FinalPreview(payload,profileId,targets,token,id,null,changes,conflicts,bindings.Values.ToList(),nodes);
+            return WithReferenceCounts(c,FinalPreview(payload,profileId,targets,token,id,null,changes,conflicts,bindings.Values.ToList(),nodes));
         }
     }
     private static PackagePreview FinalPreview(string payload,string profile,IReadOnlyDictionary<string,string> targets,string token,string id,string? rollback,List<PackageNodeChange> changes,List<PackageConflict> conflicts,List<PackageBinding> bindings,List<KnowledgeNode> nodes)
@@ -154,7 +161,6 @@ public sealed partial class YanJiDatabase
             using var c=Open();var install=ReadInstalls(c).SingleOrDefault(i=>i.Id==installId)??throw new InvalidDataException("未找到已安装知识包。");
             var operation=PackageHistory(installId).FirstOrDefault(o=>!o.RolledBack&&o.Kind!="rollback")??throw new InvalidOperationException("没有可回滚的目录操作。");
             if(operation.ToVersion!=install.Version)throw new InvalidOperationException("当前版本与可回滚操作不一致。");
-            if(operation.BeforePayload==null)throw new InvalidOperationException("首次安装不提供卸载式回滚；可归档目录，学习数据始终保留。");
             var nodes=ReadKnowledgeNodes(c);var map=nodes.ToDictionary(n=>n.Id);var used=UsedNodes(c);List<PackageNodeChange> changes=[];List<PackageConflict> conflicts=[];
             var bindings=ReadBindings(c,installId).ToDictionary(b=>b.SourceId);var beforeBinding=operation.BeforeBindings.ToDictionary(b=>b.SourceId);
             var added=operation.Changes.Where(ch=>ch.Before==null).Select(ch=>ch.After.Id).ToHashSet();var protectedIds=new HashSet<string>(used);
@@ -177,7 +183,9 @@ public sealed partial class YanJiDatabase
                 }
             }
             foreach(var b in beforeBinding.Values)bindings[b.SourceId]=b;
-            return FinalPreview(operation.BeforePayload,install.ProfileId,install.Targets,PackageToken(c),installId,operation.Id,changes,conflicts,bindings.Values.ToList(),nodes);
+            // Undo of the initial directory installation keeps version/source history and tombstones.
+            // Importing identical content is still a no-op: it must not silently resurrect archived nodes.
+            return WithReferenceCounts(c,FinalPreview(operation.BeforePayload??operation.AfterPayload,install.ProfileId,install.Targets,PackageToken(c),installId,operation.Id,changes,conflicts,bindings.Values.ToList(),nodes));
         }
     }
     public PackageApplyResult ApplyPackage(PackagePreview preview,IReadOnlyDictionary<string,PackageChoice>? choices=null)

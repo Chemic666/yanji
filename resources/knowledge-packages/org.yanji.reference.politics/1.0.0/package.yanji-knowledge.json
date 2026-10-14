@@ -1,0 +1,130 @@
+{
+  "PackageId": "org.yanji.reference.politics",
+  "PackageVersion": "1.0.0",
+  "SchemaVersion": 1,
+  "Name": "政治 · 基础参考目录",
+  "Description": "YanJi 原创参考知识目录；不是官方考试大纲。基础占位参考，当前政策和当年考试范围由用户依据合法材料维护；未宣称完整。来源仅供追溯，不附教材、试题或讲义内容。",
+  "Maintainer": "YanJi 参考目录维护",
+  "ExamKey": "cn-postgraduate",
+  "AdmissionYears": [],
+  "Sources": [
+    {
+      "Id": "neea-politics",
+      "Title": "教育考试院2017历史大纲入口；非当前年度说明",
+      "Url": "https://yankao.neea.edu.cn/html1/report/16103/1369-1.htm"
+    }
+  ],
+  "License": {
+    "Id": "CC0-1.0",
+    "Text": "本包原创目录结构与元数据采用 CC0-1.0；外部来源的内容与许可不包含在授权中，未复制其正文或题目。"
+  },
+  "Subjects": [
+    {
+      "Key": "politics",
+      "Name": "politics",
+      "Variant": null
+    }
+  ],
+  "Nodes": [
+    {
+      "Id": "politics.r0",
+      "SubjectKey": "politics",
+      "ParentId": null,
+      "Kind": "Chapter",
+      "Name": "基础学习框架",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "politics.r0.c0",
+      "SubjectKey": "politics",
+      "ParentId": "politics.r0",
+      "Kind": "Chapter",
+      "Name": "理论与历史",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "politics.r0.c0.p0",
+      "SubjectKey": "politics",
+      "ParentId": "politics.r0.c0",
+      "Kind": "KnowledgePoint",
+      "Name": "马克思主义基本原理",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "politics.r0.c0.p1",
+      "SubjectKey": "politics",
+      "ParentId": "politics.r0.c0",
+      "Kind": "KnowledgePoint",
+      "Name": "中国近现代史",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "politics.r0.c0.p2",
+      "SubjectKey": "politics",
+      "ParentId": "politics.r0.c0",
+      "Kind": "KnowledgePoint",
+      "Name": "中国化时代化理论学习",
+      "Description": "",
+      "Order": 2
+    },
+    {
+      "Id": "politics.r0.c1",
+      "SubjectKey": "politics",
+      "ParentId": "politics.r0",
+      "Kind": "Chapter",
+      "Name": "法治与修养",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "politics.r0.c1.p0",
+      "SubjectKey": "politics",
+      "ParentId": "politics.r0.c1",
+      "Kind": "KnowledgePoint",
+      "Name": "思想道德",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "politics.r0.c1.p1",
+      "SubjectKey": "politics",
+      "ParentId": "politics.r0.c1",
+      "Kind": "KnowledgePoint",
+      "Name": "法治基础",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "politics.r0.c2",
+      "SubjectKey": "politics",
+      "ParentId": "politics.r0",
+      "Kind": "Chapter",
+      "Name": "时事与政策",
+      "Description": "",
+      "Order": 2
+    },
+    {
+      "Id": "politics.r0.c2.p0",
+      "SubjectKey": "politics",
+      "ParentId": "politics.r0.c2",
+      "Kind": "KnowledgePoint",
+      "Name": "自行维护年度材料",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "politics.r0.c2.p1",
+      "SubjectKey": "politics",
+      "ParentId": "politics.r0.c2",
+      "Kind": "KnowledgePoint",
+      "Name": "阶段整理与复习",
+      "Description": "",
+      "Order": 1
+    }
+  ],
+  "ContentHash": "8C965DFC48D7E4FAA270A9DF36FF63959D6A4028195DA81CC7B94FC13B322903"
+}
