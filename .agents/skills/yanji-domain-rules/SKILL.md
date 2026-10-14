@@ -17,4 +17,6 @@ Read owning source and approved scope before changes; verify these schema-1 anch
 
 Use synthetic artifacts directories, never the real LocalAppData/YanJi database. Select checks for changed invariants; no old full UI matrix without a new concern. Real power changes/restarts need human authorization. Distinguish simulation, real HWND, real input and NOT TESTED. Retain failed and interrupted evidence.
 
+For WPF view or ViewModel work, read `docs/skills/dotnet-wpf.instructions.md` as reference guidance; reuse current MVVM and style resources. Its Copilot applyTo metadata is not a Codex trigger.
+
 For review report affected invariants, owning transaction/state path, minimum meaningful checks and uncertainty. Do not introduce a new timer, database or command framework to follow this skill.

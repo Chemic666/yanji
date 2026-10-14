@@ -255,7 +255,7 @@
                       <TextBlock DockPanel.Dock="Right" Text="{Binding TimerStateText}" Style="{StaticResource MutedText}" MaxWidth="200" />
                       <TextBlock Text="专注这一段" Style="{StaticResource Subheading}" />
                     </DockPanel>
-                    <TextBlock Text="{Binding FocusTaskLabel}" TextWrapping="Wrap" Style="{StaticResource FocusTextBlock}" Margin="0,0,0,8" />
+                    <TextBlock Text="{Binding FocusTaskLabel}" TextWrapping="Wrap" MaxHeight="44" TextTrimming="CharacterEllipsis" ToolTip="{Binding FocusTaskLabel}" Style="{StaticResource FocusTextBlock}" Margin="0,0,0,8" />
                     <WrapPanel IsEnabled="{Binding CanStartFocus}" Visibility="{Binding FocusSetupVisible,Converter={StaticResource BoolVisibility}}" Margin="0,0,0,6">
                       <ComboBox x:Name="FocusModeSelector" SelectedIndex="{Binding FocusModeIndex}" Width="130" Style="{StaticResource FocusComboBox}" AutomationProperties.Name="专注模式">
                         <ComboBoxItem Content="自由计时" /><ComboBoxItem Content="倒计时" /><ComboBoxItem Content="番茄钟" />
@@ -321,7 +321,7 @@
                       <ItemsControl.ItemTemplate><DataTemplate>
                         <DockPanel Margin="0,6">
                           <Button DockPanel.Dock="Right" Content="开始 →" Command="{Binding DataContext.StartTaskCommand,RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}" IsEnabled="{Binding DataContext.CanStartFocus,RelativeSource={RelativeSource AncestorType=Window}}" Style="{StaticResource QuietButton}" />
-                          <TextBlock Text="{Binding Title}" TextWrapping="Wrap" VerticalAlignment="Center" Style="{StaticResource FocusTextBlock}" ToolTip="{Binding Title}" />
+                          <TextBlock Text="{Binding Title}" TextWrapping="Wrap" MaxHeight="44" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Style="{StaticResource FocusTextBlock}" ToolTip="{Binding Title}" />
                         </DockPanel>
                       </DataTemplate></ItemsControl.ItemTemplate>
                     </ItemsControl></ScrollViewer>

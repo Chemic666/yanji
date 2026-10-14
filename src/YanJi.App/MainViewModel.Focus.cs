@@ -31,6 +31,7 @@ public sealed partial class MainViewModel
     public ObservableCollection<LearningTask> TodayTasks {get;}=[];
     partial void OnFocusModeIndexChanged(int value)
     {if(!TimerActive)FocusMinutes=value==2?"25":"45";UpdateFocus();}
+    partial void OnFocusMinutesChanged(string value)=>UpdateFocus();
     partial void OnBusyChanged(bool value)=>UpdateFocus();
     private void LoadFocusPreferences()
     {
@@ -57,7 +58,7 @@ public sealed partial class MainViewModel
         ConfiguredTimed=FocusModeIndex!=0;ConfiguredPomodoro=FocusModeIndex==2;HasLinkedTask=focus?.TaskId!=null||FocusTask!=null;HasFocusGoal=focus is {Mode:not FocusMode.Free};
         var linkedId=focus?.TaskId??FocusTask?.Id;CanCompleteLinkedTask=!Busy&&linkedId!=null&&Tasks.Any(t=>t.Id==linkedId&&!t.Done);
         FocusTaskLabel=s.IsActive&&focus?.TaskId!=null?"任务 · "+focus.TaskTitle:FocusTask!=null?"任务 · "+FocusTask.Title:"自由开始 · 也可从今日待办开始";
-        FocusRemainingText=focus is {Mode:not FocusMode.Free}?"剩余 "+Duration(Math.Max(0,focus.TargetMs-s.DurationMs))+" · 目标 "+Duration(focus.TargetMs):"自由计时 · 按实际有效时长保存";
+        FocusRemainingText=focus is {Mode:not FocusMode.Free}?"剩余 "+Duration(Math.Max(0,focus.TargetMs-s.DurationMs))+" · 目标 "+Duration(focus.TargetMs):!s.IsActive&&FocusModeIndex!=0?"目标 "+FocusMinutes+" 分钟 · 开始后仅扣减有效学习时间":"自由计时 · 按实际有效时长保存";
         FocusProgress=focus is {TargetMs:>0}?Math.Clamp(s.DurationMs/(double)focus.TargetMs*100,0,100):0;
         if(BreakActive&&_break!=null){TimerText=DurationText.Timer(_break.RemainingMs);TimerStateText=_break.RemainingMs==0?"休息结束 · 主动开始下一轮":_break.Running?"休息中 · 不计入学习时长":"休息已暂停 · 不计入学习时长";FocusRemainingText="休息剩余 "+Duration(_break.RemainingMs);}
         CanStartFocus=!Busy&&!s.IsActive;CanPauseFocus=!Busy&&!NeedsReview&&(s.IsActive||BreakActive&&_break?.RemainingMs>0);
