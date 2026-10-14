@@ -36,8 +36,15 @@ public partial class MainWindow
         foreach(var pair in new[]{(AuxGrid2,AuxRight2),(AuxGrid3,AuxRight3),(AuxGrid5,AuxRight5)})
         {var stack=content<740;pair.Item1.ColumnDefinitions[0].Width=new GridLength(stack?1:1.6,GridUnitType.Star);pair.Item1.ColumnDefinitions[1].Width=new GridLength(stack?0:16);pair.Item1.ColumnDefinitions[2].Width=new GridLength(stack?0:1,GridUnitType.Star);Grid.SetColumn(pair.Item2,stack?0:2);Grid.SetRow(pair.Item2,stack?1:0);}
     }
-    private void Window_KeyDown(object sender,KeyEventArgs e)
-    {if(e.Key==Key.Escape&&Model.DrawerOpen){CloseDrawer_Click(this,e);e.Handled=true;}else if(!Model.DrawerOpen&&e.Key==Key.N&&(Keyboard.Modifiers&ModifierKeys.Control)!=0){QuickAdd_Click(this,e);e.Handled=true;}}
+    private async void Window_KeyDown(object sender,KeyEventArgs e)
+    {
+        if(e.Key==Key.Escape&&Model.DrawerOpen){CloseDrawer_Click(this,e);e.Handled=true;return;}
+        if(Model.DrawerOpen||Keyboard.Modifiers!=ModifierKeys.Control)return;
+        if(e.Key==Key.M){e.Handled=true;ShowMiniTimer();return;}
+        if(e.Key is Key.N or Key.L){QuickAdd_Click(this,e);e.Handled=true;return;}
+        if(e.OriginalSource is System.Windows.Controls.Primitives.TextBoxBase||e.OriginalSource is ComboBox)return;
+        if(e.Key==Key.Enter){e.Handled=true;await Model.StartCommand.ExecuteAsync(null);}else if(e.Key==Key.Space){e.Handled=true;await Model.PauseResumeCommand.ExecuteAsync(null);}
+    }
     private async void QuickAdd_Click(object sender,RoutedEventArgs e)
     {
         if(Model.Subjects.Count==0){Model.Status="请先添加或恢复一个使用中的科目，再补录学习。";return;}

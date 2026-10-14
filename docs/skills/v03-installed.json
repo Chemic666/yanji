@@ -1,0 +1,129 @@
+[
+  {
+    "Name": "run-tests",
+    "Source": {
+      "CommitAt": "2026-10-13T18:58:35Z",
+      "DefaultBranch": "main",
+      "PushedAt": "2026-10-13T22:50:37Z",
+      "Archived": false,
+      "Repo": "dotnet/skills",
+      "License": "MIT",
+      "Sha": "9de888b8ce55da34e76a113bd7b2d463d6b3e1e6"
+    },
+    "Path": "D:\\Projects\\yanji\\.agents\\skills\\run-tests",
+    "Files": [
+      {
+        "Path": "SKILL.md",
+        "Bytes": 15571,
+        "Sha256": "7b9698bb5c1f172ca35695dc3b614957c2cb8badf7b230a4b8118d173650fe2b"
+      }
+    ],
+    "AutoLoadedInDesktopSession": false,
+    "GuidanceRead": true,
+    "ToolsExecuted": false
+  },
+  {
+    "Name": "coverage-analysis",
+    "Source": {
+      "CommitAt": "2026-10-13T18:58:35Z",
+      "DefaultBranch": "main",
+      "PushedAt": "2026-10-13T22:50:37Z",
+      "Archived": false,
+      "Repo": "dotnet/skills",
+      "License": "MIT",
+      "Sha": "9de888b8ce55da34e76a113bd7b2d463d6b3e1e6"
+    },
+    "Path": "D:\\Projects\\yanji\\.agents\\skills\\coverage-analysis",
+    "Files": [
+      {
+        "Path": "SKILL.md",
+        "Bytes": 11347,
+        "Sha256": "ce960ce57da398846d219bd4e952fd9ad6b9772f3b17d544d9fb59bfd41603f4"
+      },
+      {
+        "Path": "references/guidelines.md",
+        "Bytes": 2634,
+        "Sha256": "1482e2cd12389047c7f1aa6e1c4420967aafc430b25156d9246b1147fedfe071"
+      },
+      {
+        "Path": "references/output-format.md",
+        "Bytes": 4220,
+        "Sha256": "6731a634c278988f9b9c0c83defb3dfe8574176b9ad34a74ce9207069db8ce75"
+      },
+      {
+        "Path": "references/report-generation.md",
+        "Bytes": 2089,
+        "Sha256": "f2583a688de77f950bc18446913531f603ca528839b35c3c394a77981eafd7bb"
+      },
+      {
+        "Path": "references/setup-discovery.md",
+        "Bytes": 15329,
+        "Sha256": "f3fadd68d68b67baa3c3c05d947a30a654223a157e9fd97edbe96aa8e266f9c6"
+      },
+      {
+        "Path": "scripts/Compute-CrapScores.ps1",
+        "Bytes": 4451,
+        "Sha256": "4bb24fea35e692cdf593781667989d1fb28c7327a76c7460eab4f6bc34813d21"
+      },
+      {
+        "Path": "scripts/CoverageData.ps1",
+        "Bytes": 14719,
+        "Sha256": "2ec0e439cd68bf3f291d45ca2da246090fb7b93f1e02141ef93fe177d208550f"
+      },
+      {
+        "Path": "scripts/Extract-MethodCoverage.ps1",
+        "Bytes": 3636,
+        "Sha256": "ed9f4e3d2dd4b99fcded11154f7b8600fbb8ba7a7128146a2d280a75eb933e33"
+      }
+    ],
+    "AutoLoadedInDesktopSession": false,
+    "GuidanceRead": true,
+    "ToolsExecuted": false
+  },
+  {
+    "Name": "breakdown-feature-prd",
+    "Source": {
+      "CommitAt": "2026-10-14T00:57:11Z",
+      "DefaultBranch": "main",
+      "PushedAt": "2026-10-14T00:57:41Z",
+      "Archived": false,
+      "Repo": "github/awesome-copilot",
+      "License": "MIT",
+      "Sha": "f25421d3f1b8b3bb217f78a7c0567cf7ec117cd8"
+    },
+    "Path": "D:\\Projects\\yanji\\.agents\\skills\\breakdown-feature-prd",
+    "Files": [
+      {
+        "Path": "SKILL.md",
+        "Bytes": 2479,
+        "Sha256": "68cfda19baafdea722b58adfa63b67f8cc00d704f64dee40fa6b975b6fadc151"
+      }
+    ],
+    "AutoLoadedInDesktopSession": false,
+    "GuidanceRead": true,
+    "ToolsExecuted": false
+  },
+  {
+    "Name": "winui-ui-testing",
+    "Source": {
+      "CommitAt": "2026-10-14T05:07:15Z",
+      "DefaultBranch": "main",
+      "PushedAt": "2026-10-14T05:36:08Z",
+      "Archived": false,
+      "Repo": "microsoft/winappCli",
+      "License": "MIT",
+      "Sha": "d399e3151db3a6e549ca4ac9d9cbeefa21260ed8"
+    },
+    "Path": "D:\\Projects\\yanji\\.agents\\skills\\winui-ui-testing",
+    "Files": [
+      {
+        "Path": "SKILL.md",
+        "Bytes": 22337,
+        "Sha256": "943f1129d9bcc18f2ef6d76a2dcc76abaa7eda7f5a49e4af5c1b46406f8bc116"
+      }
+    ],
+    "AutoLoadedInDesktopSession": false,
+    "GuidanceRead": true,
+    "ToolsExecuted": false
+  }
+]

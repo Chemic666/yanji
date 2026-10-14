@@ -5,13 +5,25 @@ public enum SessionSource { Manual, Timer }
 public enum TimerState { Idle, Running, Paused, NeedsReview, Completed }
 public enum Mastery { Unknown, Weak, Reviewing, Mastered }
 public enum WeakPointState { Open, Reviewing, Verified }
+public enum FocusMode { Free, Countdown, Pomodoro }
+/// <summary>Intent and task association, never a second duration fact.</summary>
+public sealed record FocusContext(FocusMode Mode, long TargetMs, long BreakMs = 300000,
+    string? TaskId = null, string TaskTitle = "")
+{
+    public void Validate()
+    {
+        if (!Enum.IsDefined(Mode) || (Mode == FocusMode.Free ? TargetMs != 0 : TargetMs is <= 0 or > 86400000)
+            || BreakMs is < 1000 or > 3600000 || (TaskId != null && string.IsNullOrWhiteSpace(TaskId)))
+            throw new ArgumentException("专注设置无效。");
+    }
+}
 
 public sealed record StudyPart(string Id, DateOnly Date, long DurationMs, string ZoneId,
     PartKind Kind, long? StartUtcMs = null, long? EndUtcMs = null);
 
 public sealed record StudyRecord(string Id, string SubjectId, string? ChapterId, SessionSource Source,
     string Note, List<StudyPart> Parts, long Version = 0, bool Deleted = false,
-    DateTimeOffset? CreatedAt = null)
+    DateTimeOffset? CreatedAt = null, FocusContext? Focus = null)
 {
     public long DurationMs => Parts.Sum(x => x.DurationMs);
 }
@@ -34,7 +46,7 @@ public sealed record PeriodReview(string Id,DateOnly From,DateOnly To,string? Su
     long Version=0,bool Deleted=false,DateTimeOffset? CreatedAt=null,DateTimeOffset? UpdatedAt=null,int Format=1);
 public sealed record TimerSnapshot(string SessionId, string SubjectId, string? ChapterId, string Note,
     string ZoneId, TimerState State, List<StudyPart> Parts, ClockSample? LastSample,
-    long? TrustedEndUtcMs, string? ReviewReason = null, long Version = 0)
+    long? TrustedEndUtcMs, string? ReviewReason = null, long Version = 0, FocusContext? Focus = null)
 {
     public long DurationMs => Parts.Sum(x => x.DurationMs);
     public bool IsActive => State is TimerState.Running or TimerState.Paused or TimerState.NeedsReview;

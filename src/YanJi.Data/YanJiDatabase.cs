@@ -117,8 +117,8 @@ public sealed class YanJiDatabase : IDisposable
     private static List<StudyRecord> ReadRecords(SqliteConnection c, SqliteTransaction? tx = null)
     {
         List<StudyRecord> records=[];
-        using(var cmd=Command(c,tx,"SELECT id,subject,chapter,source,note,version,deleted,created FROM sessions ORDER BY created DESC,rowid DESC"))
-        using(var r=cmd.ExecuteReader()) while(r.Read()) records.Add(new(r.GetString(0),r.GetString(1),r.IsDBNull(2)?null:r.GetString(2),(SessionSource)r.GetInt32(3),r.GetString(4),[],r.GetInt64(5),r.GetBoolean(6),DateTimeOffset.Parse(r.GetString(7),CultureInfo.InvariantCulture)));
+        using(var cmd=Command(c,tx,"SELECT s.id,s.subject,s.chapter,s.source,s.note,s.version,s.deleted,s.created,f.payload FROM sessions s LEFT JOIN settings f ON f.id='focus-session:'||s.id ORDER BY s.created DESC,s.rowid DESC"))
+        using(var r=cmd.ExecuteReader()) while(r.Read()) records.Add(new(r.GetString(0),r.GetString(1),r.IsDBNull(2)?null:r.GetString(2),(SessionSource)r.GetInt32(3),r.GetString(4),[],r.GetInt64(5),r.GetBoolean(6),DateTimeOffset.Parse(r.GetString(7),CultureInfo.InvariantCulture),r.IsDBNull(8)?null:Parse<FocusContext>(Parse<string>(r.GetString(8)))));
         var map=records.ToDictionary(x=>x.Id);
         using(var cmd=Command(c,tx,"SELECT id,session,date,duration,zone,kind,start,end FROM parts ORDER BY date,start,rowid"))
         using(var r=cmd.ExecuteReader())while(r.Read())map[r.GetString(1)].Parts.Add(new(r.GetString(0),DateOnly.ParseExact(r.GetString(2),"yyyy-MM-dd",CultureInfo.InvariantCulture),r.GetInt64(3),r.GetString(4),(PartKind)r.GetInt32(5),r.IsDBNull(6)?null:r.GetInt64(6),r.IsDBNull(7)?null:r.GetInt64(7)));
@@ -128,6 +128,8 @@ public sealed class YanJiDatabase : IDisposable
     { lock(_gate) {using var c=Open();return ReadRecords(c).Where(x=>(includeDeleted||!x.Deleted)&&(date==null||x.Parts.Any(p=>p.Date==date))).ToList();} }
     private static void ValidateParts(StudyRecord record, bool allowEmpty)
     {
+        record.Focus?.Validate();
+        if(record.Focus!=null&&record.Source!=SessionSource.Timer)throw new ArgumentException("专注关联仅用于计时记录。");
         if(!Enum.IsDefined(record.Source)||string.IsNullOrWhiteSpace(record.Id)||(!allowEmpty&&record.Parts.Count==0))throw new ArgumentException("学习记录无效。");
         if(record.Parts.Select(p=>p.Id).Distinct().Count()!=record.Parts.Count)throw new ArgumentException("学习片段标识重复。");
         foreach(var p in record.Parts)
@@ -148,6 +150,7 @@ public sealed class YanJiDatabase : IDisposable
     private static void ValidateRecord(SqliteConnection c, SqliteTransaction tx, StudyRecord record, bool allowEmpty=false)
     {
         ValidateParts(record,allowEmpty);
+        if(record.Focus?.TaskId is string task&&Scalar(c,tx,"SELECT id FROM tasks WHERE id=$id",("$id",task))==null)throw new ArgumentException("关联任务不存在。");
         if(Scalar(c,tx,"SELECT id FROM subjects WHERE id=$id",("$id",record.SubjectId))==null)throw new ArgumentException("科目不存在。");
         if(record.ChapterId!=null && !Equals(Scalar(c,tx,"SELECT subject FROM chapters WHERE id=$id",("$id",record.ChapterId)),record.SubjectId))throw new ArgumentException("章节不属于所选科目。");
         if(record.Deleted)return;
@@ -162,12 +165,14 @@ public sealed class YanJiDatabase : IDisposable
         Exec(c,tx,"DELETE FROM parts WHERE session=$id",("$id",record.Id));
         foreach(var p in record.Parts)Exec(c,tx,"INSERT INTO parts VALUES($id,$session,$date,$duration,$zone,$kind,$start,$end)",
             ("$id",p.Id),("$session",record.Id),("$date",p.Date.ToString("yyyy-MM-dd",CultureInfo.InvariantCulture)),("$duration",p.DurationMs),("$zone",p.ZoneId),("$kind",(int)p.Kind),("$start",p.StartUtcMs),("$end",p.EndUtcMs));
+        if(record.Focus!=null)Exec(c,tx,"INSERT INTO settings VALUES($id,$payload) ON CONFLICT(id) DO UPDATE SET payload=excluded.payload",("$id","focus-session:"+record.Id),("$payload",Json(Json(record.Focus))));
     }
     public StudyRecord SaveRecord(StudyRecord record, string reason)
     {
         lock(_gate) {using var c=Open();using var tx=c.BeginTransaction();
             if(Scalar(c,tx,"SELECT payload FROM active_timer") is string active && Parse<TimerSnapshot>(active).SessionId==record.Id)throw new InvalidOperationException("活动计时记录请先结束再修正。");
             var before=ReadRecords(c,tx).Find(x=>x.Id==record.Id);
+            if(before!=null&&before.Focus!=record.Focus)throw new ArgumentException("历史修正须保留原计时模式与任务关联。");
             if(before!=null && record.Version==0 && before.Version==1 && Equivalent(before,record))return before;
             if((before?.Version??0)!=record.Version)throw new InvalidOperationException("记录已变化，请刷新后再修改。");
             ValidateRecord(c,tx,record);var after=record with {Version=record.Version+1,CreatedAt=before?.CreatedAt??DateTimeOffset.UtcNow};
@@ -221,13 +226,14 @@ public sealed class YanJiDatabase : IDisposable
         lock(_gate){using var c=Open();using var tx=c.BeginTransaction();var active=Scalar(c,tx,"SELECT payload FROM active_timer") as string;
             if(active!=null&&Parse<TimerSnapshot>(active).SessionId!=snapshot.SessionId)throw new InvalidOperationException("已有另一活动计时。");
             var before=ReadRecords(c,tx).Find(x=>x.Id==snapshot.SessionId);
+            if(before!=null&&before.Focus!=snapshot.Focus)throw new ArgumentException("活动计时的模式与任务关联不能被替换。");
             if(active!=null)
             {var saved=Parse<TimerSnapshot>(active);if(Json(saved)==Json(snapshot with{Version=saved.Version}))return saved;}
             if(before!=null && active==null)
-            {if(snapshot.State==TimerState.Completed&&Equivalent(before,new(snapshot.SessionId,snapshot.SubjectId,snapshot.ChapterId,SessionSource.Timer,snapshot.Note,snapshot.Parts)))return snapshot with{Version=before.Version};
+            {if(snapshot.State==TimerState.Completed&&Equivalent(before,new(snapshot.SessionId,snapshot.SubjectId,snapshot.ChapterId,SessionSource.Timer,snapshot.Note,snapshot.Parts,Focus:snapshot.Focus)))return snapshot with{Version=before.Version};
                 throw new InvalidOperationException("该计时已结束，不能重新覆盖。");}
             if((before?.Version??0)!=snapshot.Version)throw new InvalidOperationException("计时检查点版本过期。");
-            var record=new StudyRecord(snapshot.SessionId,snapshot.SubjectId,snapshot.ChapterId,SessionSource.Timer,snapshot.Note,[..snapshot.Parts],(before?.Version??0)+1,false,before?.CreatedAt??DateTimeOffset.UtcNow);
+            var record=new StudyRecord(snapshot.SessionId,snapshot.SubjectId,snapshot.ChapterId,SessionSource.Timer,snapshot.Note,[..snapshot.Parts],(before?.Version??0)+1,false,before?.CreatedAt??DateTimeOffset.UtcNow,snapshot.Focus);
             ValidateRecord(c,tx,record,true);WriteRecord(c,tx,record);
             if(reason!=null)Audit(c,tx,"session",record.Id,record.Version,reason,before==null?null:Json(before),Json(record));
             if(snapshot.IsActive)Exec(c,tx,"INSERT INTO active_timer VALUES(1,$payload) ON CONFLICT(slot) DO UPDATE SET payload=excluded.payload",("$payload",Json(snapshot with{Version=record.Version})));
@@ -357,7 +363,7 @@ public sealed class YanJiDatabase : IDisposable
                 if(table=="weakpoints"){var item=Parse<WeakPoint>(payload);if(item.Id!=id||string.IsNullOrWhiteSpace(item.Title)||!Enum.IsDefined(item.State)||item.SubjectId!=null&&Scalar(c,null,"SELECT id FROM subjects WHERE id=$id",("$id",item.SubjectId))==null||item.ChapterId!=null&&!Equals(Scalar(c,null,"SELECT subject FROM chapters WHERE id=$id",("$id",item.ChapterId)),item.SubjectId))throw new InvalidDataException("薄弱点内容无效。");}
                 if(table=="reflections"&&Parse<ReflectionEntry>(payload).Date.ToString("yyyy-MM-dd",CultureInfo.InvariantCulture)!=id)throw new InvalidDataException("感想日期无效。");
                 if(table=="settings")
-                {var value=Parse<string>(payload);if(id.StartsWith(ReviewPrefix,StringComparison.Ordinal)){var item=Parse<PeriodReview>(value);ValidateReview(item,id[ReviewPrefix.Length..],true);if(item.SubjectId!=null&&Scalar(c,null,"SELECT id FROM subjects WHERE id=$id",("$id",item.SubjectId))==null)throw new InvalidDataException("复盘科目无效。");}if(id=="zone")TimeParts.ResolveZone(value);
+                {var value=Parse<string>(payload);if(id.StartsWith("focus-session:",StringComparison.Ordinal)){var focus=Parse<FocusContext>(value);focus.Validate();var record=records.Find(x=>x.Id==id[14..]);if(record==null||record.Source!=SessionSource.Timer||record.Focus!=focus||focus.TaskId is string task&&Scalar(c,null,"SELECT id FROM tasks WHERE id=$id",("$id",task))==null)throw new InvalidDataException("专注关联无效。");}if(id.StartsWith(ReviewPrefix,StringComparison.Ordinal)){var item=Parse<PeriodReview>(value);ValidateReview(item,id[ReviewPrefix.Length..],true);if(item.SubjectId!=null&&Scalar(c,null,"SELECT id FROM subjects WHERE id=$id",("$id",item.SubjectId))==null)throw new InvalidDataException("复盘科目无效。");}if(id=="zone")TimeParts.ResolveZone(value);
                     if(id=="exam-date"&&value.Length>0)DateOnly.ParseExact(value,"yyyy-MM-dd",CultureInfo.InvariantCulture);
                     if(id=="checkpoint-seconds"&&(!int.TryParse(value,out var seconds)||seconds<2||seconds>60))throw new InvalidDataException("检查点偏好无效。");}
             }
@@ -367,7 +373,7 @@ public sealed class YanJiDatabase : IDisposable
         if(Scalar(c,null,"SELECT payload FROM active_timer") is string timerJson)
         {
             var timer=Parse<TimerSnapshot>(timerJson);TimeParts.ResolveZone(timer.ZoneId);var current=records.Find(x=>x.Id==timer.SessionId);
-            if(!timer.IsActive||current==null||current.Deleted||current.Source!=SessionSource.Timer||current.Version!=timer.Version||current.SubjectId!=timer.SubjectId||current.ChapterId!=timer.ChapterId||current.Note!=timer.Note||Json(current.Parts.OrderBy(p=>p.Id))!=Json(timer.Parts.OrderBy(p=>p.Id))||timer.LastSample==null||timer.TrustedEndUtcMs==null)
+            if(!timer.IsActive||current==null||current.Deleted||current.Source!=SessionSource.Timer||current.Version!=timer.Version||current.SubjectId!=timer.SubjectId||current.ChapterId!=timer.ChapterId||current.Note!=timer.Note||current.Focus!=timer.Focus||Json(current.Parts.OrderBy(p=>p.Id))!=Json(timer.Parts.OrderBy(p=>p.Id))||timer.LastSample==null||timer.TrustedEndUtcMs==null)
                 throw new InvalidDataException("活动计时与学习记录不一致。");
         }
     }

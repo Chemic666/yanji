@@ -5,13 +5,14 @@ public sealed class TimerMachine
     private TimerSnapshot _snapshot = new("", "", null, "", "Asia/Shanghai", TimerState.Idle, [], null, null);
     public TimerSnapshot Snapshot => _snapshot with { Parts = [.. _snapshot.Parts] };
     public void ConfirmSaved(long version) => _snapshot = _snapshot with { Version = version };
-    public void Start(string subjectId, string? chapterId, string note, string zoneId, ClockSample now)
+    public void Start(string subjectId, string? chapterId, string note, string zoneId, ClockSample now, FocusContext? focus = null)
     {
         if (_snapshot.IsActive) throw new InvalidOperationException("已有活动计时。");
         ArgumentException.ThrowIfNullOrWhiteSpace(subjectId);
         TimeParts.ResolveZone(zoneId);
+        focus?.Validate();
         _snapshot = new(Guid.NewGuid().ToString("N"), subjectId, chapterId, note, zoneId,
-            TimerState.Running, [], now, now.Utc.ToUnixTimeMilliseconds());
+            TimerState.Running, [], now, now.Utc.ToUnixTimeMilliseconds(), Focus: focus);
     }
     public void Advance(ClockSample now)
     {
@@ -23,6 +24,8 @@ public sealed class TimerMachine
         if (now.ProcessToken != previous.ProcessToken || awake < 0 || boot < 0 ||
             Math.Abs(boot - awake) > 1000 || Math.Abs(wall - awake) > 2000)
         { MarkUncertain("系统时间或电源状态变化，未确认的间隙未计入。"); return; }
+        if (_snapshot.Focus is { Mode: not FocusMode.Free } focus)
+            awake = Math.Min(awake, Math.Max(0, focus.TargetMs - _snapshot.DurationMs));
         if (awake > 0)
         {
             var start = _snapshot.TrustedEndUtcMs!.Value;
@@ -37,6 +40,8 @@ public sealed class TimerMachine
             _snapshot = _snapshot with { TrustedEndUtcMs = checked(start + awake) };
         }
         _snapshot = _snapshot with { LastSample = now };
+        if (_snapshot.Focus is { Mode: not FocusMode.Free } goal && _snapshot.DurationMs >= goal.TargetMs)
+            _snapshot = _snapshot with { State = TimerState.Completed };
     }
     public void Pause(ClockSample now)
     {
@@ -72,6 +77,7 @@ public sealed class TimerMachine
     public void Restore(TimerSnapshot checkpoint, ClockSample now)
     {
         if (_snapshot.IsActive) throw new InvalidOperationException("已有活动计时。");
+        checkpoint.Focus?.Validate();
         _snapshot = checkpoint with { Parts = [.. checkpoint.Parts], LastSample = now };
         if (checkpoint.State == TimerState.Running) MarkUncertain("上次运行未正常结束；仅恢复已保存的学习部分，请核对未保存时间。");
     }

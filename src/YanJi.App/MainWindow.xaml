@@ -139,7 +139,7 @@
         </StackPanel>
         <StackPanel DockPanel.Dock="Bottom">
           <Button Content="退出应用" Click="Exit_Click" x:Name="ExitButton" Style="{StaticResource QuietButton}" />
-          <TextBlock Text="V0.2.3 · 本地离线" FontSize="11" Foreground="{DynamicResource Muted}" x:Name="VersionHint" Margin="10,8,0,0" Style="{StaticResource FocusTextBlock}" />
+          <TextBlock Text="V0.3.0 · 本地离线" FontSize="11" Foreground="{DynamicResource Muted}" x:Name="VersionHint" Margin="10,8,0,0" Style="{StaticResource FocusTextBlock}" />
         </StackPanel>
         <ListBox x:Name="NavigationList" SelectedIndex="{Binding Page}" BorderThickness="0" Background="Transparent" SelectionChanged="Navigation_Changed" ItemContainerStyle="{StaticResource NavigationItem}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
           <ListBoxItem ToolTip="今日学习">
@@ -255,8 +255,32 @@
                       <TextBlock DockPanel.Dock="Right" Text="{Binding TimerStateText}" Style="{StaticResource MutedText}" MaxWidth="200" />
                       <TextBlock Text="专注这一段" Style="{StaticResource Subheading}" />
                     </DockPanel>
+                    <TextBlock Text="{Binding FocusTaskLabel}" TextWrapping="Wrap" Style="{StaticResource FocusTextBlock}" Margin="0,0,0,8" />
+                    <WrapPanel IsEnabled="{Binding CanStartFocus}" Visibility="{Binding FocusSetupVisible,Converter={StaticResource BoolVisibility}}" Margin="0,0,0,6">
+                      <ComboBox x:Name="FocusModeSelector" SelectedIndex="{Binding FocusModeIndex}" Width="130" Style="{StaticResource FocusComboBox}" AutomationProperties.Name="专注模式">
+                        <ComboBoxItem Content="自由计时" /><ComboBoxItem Content="倒计时" /><ComboBoxItem Content="番茄钟" />
+                      </ComboBox>
+                      <TextBox Text="{Binding FocusMinutes,UpdateSourceTrigger=PropertyChanged}" Width="55" Visibility="{Binding ConfiguredTimed,Converter={StaticResource BoolVisibility}}" Style="{StaticResource FocusTextBox}" AutomationProperties.Name="专注分钟" ToolTip="限时模式专注 1～720 分钟；自由计时忽略此项" />
+                      <TextBlock Text="分" Visibility="{Binding ConfiguredTimed,Converter={StaticResource BoolVisibility}}" Style="{StaticResource MutedText}" VerticalAlignment="Center" Margin="4,0" />
+                      <TextBox Text="{Binding BreakMinutes,UpdateSourceTrigger=PropertyChanged}" Width="45" Visibility="{Binding ConfiguredPomodoro,Converter={StaticResource BoolVisibility}}" Style="{StaticResource FocusTextBox}" AutomationProperties.Name="番茄休息分钟" ToolTip="番茄结束后休息 1～60 分钟，不计入学习" />
+                      <TextBlock Text="分休息" Visibility="{Binding ConfiguredPomodoro,Converter={StaticResource BoolVisibility}}" Style="{StaticResource MutedText}" VerticalAlignment="Center" />
+                    </WrapPanel>
+                    <TextBlock Text="{Binding FocusSubjectLabel}" Style="{StaticResource MutedText}" Margin="0,2,0,6" />
                     <TextBlock Text="{Binding TimerText}" FontFamily="Segoe UI Variable Display, Segoe UI" Typography.NumeralAlignment="Tabular" FontSize="44" Foreground="{DynamicResource Accent}" Margin="0,0,0,8" Style="{StaticResource FocusTextBlock}" />
-                    <Grid x:Name="TimerFields" IsEnabled="{Binding TimerActive,Converter={StaticResource Inverse}}"><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+                    <TextBlock Text="{Binding FocusRemainingText}" Style="{StaticResource MutedText}" TextWrapping="Wrap" Margin="0,0,0,8" />
+                    <ProgressBar Visibility="{Binding HasFocusGoal,Converter={StaticResource BoolVisibility}}" Value="{Binding FocusProgress}" Maximum="100" Height="3" Foreground="{DynamicResource Accent}" Background="{DynamicResource Soft}" Margin="0,0,0,8" AutomationProperties.Name="目标有效时长进度" />
+                    <WrapPanel Margin="0,8,0,0">
+                      <Button Content="{Binding FocusStartLabel}" Style="{StaticResource Primary}" Command="{Binding StartCommand}" IsEnabled="{Binding CanStartFocus}" MinWidth="100" AutomationProperties.AutomationId="FocusStart" />
+                      <Button Content="暂停 / 继续" Command="{Binding PauseResumeCommand}" IsEnabled="{Binding CanPauseFocus}" Style="{StaticResource FocusButton}" AutomationProperties.AutomationId="FocusPause" />
+                      <Button Content="结束" Command="{Binding FinishCommand}" IsEnabled="{Binding TimerActive}" Style="{StaticResource FocusButton}" />
+                      <Button Content="迷你窗" Click="ShowMini_Click" Style="{StaticResource QuietButton}" ToolTip="Ctrl+M，迷你窗与主窗共享同一计时" />
+                    </WrapPanel>
+                    <WrapPanel>
+                      <Button Content="跳过休息" Command="{Binding SkipBreakCommand}" Visibility="{Binding BreakActive,Converter={StaticResource BoolVisibility}}" Style="{StaticResource QuietButton}" />
+                      <Button Visibility="{Binding HasLinkedTask,Converter={StaticResource BoolVisibility}}" Content="解除任务关联" Command="{Binding ClearFocusTaskCommand}" IsEnabled="{Binding CanStartFocus}" Style="{StaticResource QuietButton}" />
+                      <Button Visibility="{Binding HasLinkedTask,Converter={StaticResource BoolVisibility}}" Content="标记任务完成" Command="{Binding CompleteFocusTaskCommand}" Style="{StaticResource QuietButton}" />
+                    </WrapPanel>
+                    <Grid x:Name="TimerFields" Visibility="{Binding FocusSetupVisible,Converter={StaticResource BoolVisibility}}" IsEnabled="{Binding TimerActive,Converter={StaticResource Inverse}}"><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
                       <Grid.ColumnDefinitions>
                         <ColumnDefinition />
                         <ColumnDefinition Width="12" />
@@ -272,14 +296,10 @@
 <ComboBox ItemsSource="{Binding TimerChapters}" DisplayMemberPath="Name" SelectedItem="{Binding TimerChapter}" ToolTip="主要章节，可选" AutomationProperties.Name="主要章节，可选" Style="{StaticResource FocusComboBox}" HorizontalContentAlignment="Stretch" />
                       </StackPanel>
                     </Grid>
-                    <Expander Header="添加这一段的备注" Style="{StaticResource FocusExpander}">
+                    <Expander Visibility="{Binding FocusSetupVisible,Converter={StaticResource BoolVisibility}}" Header="添加这一段的备注" Style="{StaticResource FocusExpander}">
                       <TextBox Text="{Binding TimerNote,UpdateSourceTrigger=PropertyChanged}" ToolTip="这一段学什么？备注可选" AutomationProperties.Name="这一段学什么？备注可选" IsEnabled="{Binding TimerActive,Converter={StaticResource Inverse}}" Style="{StaticResource FocusTextBox}" />
                     </Expander>
-                    <WrapPanel Margin="0,8,0,0">
-                      <Button Content="开始" Style="{StaticResource Primary}" Command="{Binding StartCommand}" IsEnabled="{Binding TimerActive,Converter={StaticResource Inverse}}" MinWidth="100" />
-                      <Button Content="暂停 / 继续" Command="{Binding PauseResumeCommand}" IsEnabled="{Binding TimerActive}" Style="{StaticResource FocusButton}" />
-                      <Button Content="结束" Command="{Binding FinishCommand}" IsEnabled="{Binding TimerActive}" Style="{StaticResource FocusButton}" />
-                    </WrapPanel>
+
                   </StackPanel>
                 </Border>
                 <Border Style="{StaticResource SectionSurface}">
@@ -294,6 +314,20 @@
                 </Border>
               </StackPanel>
               <StackPanel x:Name="TodayReflection" Grid.Column="2">
+                <Border Style="{StaticResource DenseSurface}">
+                  <StackPanel>
+                    <DockPanel><Button Content="新增任务" DockPanel.Dock="Right" Click="AddTask_Click" Style="{StaticResource QuietButton}" /><TextBlock Text="今日待办 · 直接开始" Style="{StaticResource Subheading}" /></DockPanel>
+                    <ScrollViewer MaxHeight="200" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"><ItemsControl ItemsSource="{Binding TodayTasks}">
+                      <ItemsControl.ItemTemplate><DataTemplate>
+                        <DockPanel Margin="0,6">
+                          <Button DockPanel.Dock="Right" Content="开始 →" Command="{Binding DataContext.StartTaskCommand,RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}" IsEnabled="{Binding DataContext.CanStartFocus,RelativeSource={RelativeSource AncestorType=Window}}" Style="{StaticResource QuietButton}" />
+                          <TextBlock Text="{Binding Title}" TextWrapping="Wrap" VerticalAlignment="Center" Style="{StaticResource FocusTextBlock}" ToolTip="{Binding Title}" />
+                        </DockPanel>
+                      </DataTemplate></ItemsControl.ItemTemplate>
+                    </ItemsControl></ScrollViewer>
+                    <ContentControl Content="选一件小任务，从这里开始。" ContentTemplate="{StaticResource EmptyState}" Visibility="{Binding TodayTasks.Count,Converter={StaticResource Empty}}" />
+                  </StackPanel>
+                </Border>
                 <Border Style="{StaticResource DenseSurface}">
                   <StackPanel>
                     <DockPanel>
@@ -513,6 +547,7 @@
                           <Border BorderBrush="{DynamicResource Line}" BorderThickness="0,0,0,1" Padding="0,8">
                             <DockPanel>
                               <Button DockPanel.Dock="Right" Content="编辑" Tag="{Binding}" Click="EditTask_Click" Style="{StaticResource QuietButton}" />
+                              <Button DockPanel.Dock="Right" Content="开始" Command="{Binding DataContext.StartTaskCommand,RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}" IsEnabled="{Binding DataContext.CanStartFocus,RelativeSource={RelativeSource AncestorType=Window}}" Style="{StaticResource QuietButton}" />
                               <CheckBox IsChecked="{Binding Done,Mode=OneWay}" Tag="{Binding}" Click="TaskDone_Click" Style="{StaticResource FocusCheckBox}">
                                 <StackPanel>
                                   <TextBlock Text="{Binding Title}" Style="{StaticResource FocusTextBlock}" />

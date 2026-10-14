@@ -24,7 +24,7 @@ public sealed record RecordRow(StudyRecord Record,string Subject,string Chapter,
     public string DisplayScope=>Contribution is long ms&&ms!=Record.DurationMs?"本页贡献 · 整次 "+DurationText.Compact(Record.DurationMs):Source+" · "+State;
     public string ScopeLabel=>Contribution!=null?"本页贡献 "+ScopedDuration+" · 整次 "+Duration:"整次 "+Duration;
     public string Dates=>string.Join("、",Record.Parts.Select(p=>p.Date).Distinct().Order().Select(d=>d.ToString("yyyy-MM-dd")));
-    public string Summary=>Source+" · "+State+" · "+Record.Parts.Count+" 个片段 · "+Dates;
+    public string Summary=>Source+" · "+State+" · "+Record.Parts.Count+" 个片段 · "+Dates+(Record.Focus is {} f?" · "+(f.Mode==FocusMode.Pomodoro?"番茄钟":f.Mode==FocusMode.Countdown?"倒计时":"自由计时")+(f.TaskId!=null?" · 任务 "+f.TaskTitle:""):"");
 }
 public sealed record CalendarDay(DateTime Date,string Day,string Duration,bool InMonth,bool Selected,string Status="尚无记录",string Color="#EDF3F5",long Milliseconds=0)
 { public bool IsPending=>Status.Contains("待核对");public string Label=>Day+"\n"+(Duration.Length>0?Duration:Status=="尚无记录"?"无记录":Status);public string Description=>$"{Date:yyyy-MM-dd} · {Status}"+(Duration.Length>0?" · "+Duration:"");public string DisplayDuration=>Milliseconds>0?DurationText.Compact(Milliseconds):Status=="尚无记录"?"—":Status; }
@@ -98,7 +98,7 @@ public sealed partial class MainViewModel : ObservableObject
             Database.AutoBackup();
         },"本地数据已加载");
         ManualDate=SelectedDate=CalendarMonth=LocalToday().ToDateTime(TimeOnly.MinValue);
-        StatsTo=ManualDate;StatsFrom=ManualDate.AddDays(-29);Refresh();UpdateTimer();
+        StatsTo=ManualDate;StatsFrom=ManualDate.AddDays(-29);Refresh();LoadFocusPreferences();UpdateTimer();
     }
     public DateOnly LocalToday()=>DateOnly.FromDateTime(TimeZoneInfo.ConvertTime(DateTimeOffset.UtcNow,TimeParts.ResolveZone(ZoneId)).DateTime);
     public static string Duration(long milliseconds)=>DurationText.Format(milliseconds);
@@ -130,7 +130,7 @@ public sealed partial class MainViewModel : ObservableObject
         if(active)TimerNote=snapshot.Note;
         ManualSubject=Subjects.FirstOrDefault(s=>s.Id==manualId)??Subjects.FirstOrDefault();
         LoadChapters(ManualChapters,ManualSubject?.Id);ManualChapter=ManualChapters.FirstOrDefault(c=>c.Id==manualChapterId)??ManualChapters.FirstOrDefault();
-        Replace(Tasks,Database.Tasks());Replace(WeakPoints,Database.WeakPoints());
+        Replace(Tasks,Database.Tasks());Replace(WeakPoints,Database.WeakPoints());RefreshFocusTasks();
         ZoneId=Database.Setting("zone","Asia/Shanghai");TimeParts.ResolveZone(ZoneId);
         ExamDate=Database.Setting("exam-date","") is string date&&date.Length>0?"考试日期 "+date:"2028 年入学 · 考试日期待定";
         var today=LocalToday();var week=today.AddDays(-(((int)today.DayOfWeek+6)%7));var month=new DateOnly(today.Year,today.Month,1);
@@ -161,25 +161,28 @@ public sealed partial class MainViewModel : ObservableObject
     private async Task PersistTimerAsync(string? reason=null)
     {
         var snapshot=_timer.Snapshot;
+        var justCompleted=snapshot.State==TimerState.Completed&&_durable?.IsActive==true;
         try{var clock=Stopwatch.StartNew();var saved=await Task.Run(()=>Database.SaveTimer(snapshot,reason));TimerSaveCount++;TimerSaveTotalMilliseconds+=clock.Elapsed.TotalMilliseconds;_timer.ConfirmSaved(saved.Version);_durable=saved;_lastCheckpoint=DateTimeOffset.UtcNow;_timerRetryAt=DateTimeOffset.MinValue;}
         catch
         {
             _timer=new();if(_durable?.IsActive==true){_timer.Restore(_durable,WindowsClock.Sample());_timer.MarkUncertain("保存失败；仅保留上次成功检查点，请核对未保存时间。");}
             throw;
         }
+        if(justCompleted)OnFocusSaved(snapshot);
     }
     public async Task TickAsync()
     {
         if(Busy)return;
+        if(BreakActive)_break?.Advance(WindowsClock.Sample());
         if(_reflectionDirty&&DateTimeOffset.UtcNow>=_reflectionRetryAt)await SaveReflectionAsync();
         if(Busy)return;
         var before=_timer.Snapshot.State;_timer.Advance(WindowsClock.Sample());UpdateTimer();
-        if(!TimerActive)return;
+        if(!TimerActive&&_durable?.IsActive!=true)return;
         if(DateTimeOffset.UtcNow<_timerRetryAt)return;
         var interval=int.TryParse(Database.Setting("checkpoint-seconds","15"),out var number)?Math.Clamp(number,2,60):15;
         if(TimerRunning&&(DateTimeOffset.UtcNow-_lastCheckpoint).TotalSeconds>=interval || _durable?.State!=_timer.Snapshot.State)
         {
-            Busy=true;try{await PersistTimerAsync(before==TimerState.Running&&NeedsReview?"异常待核对":null);Refresh();}
+            Busy=true;try{await PersistTimerAsync(_timer.Snapshot.State==TimerState.Completed?"专注目标完成":before==TimerState.Running&&NeedsReview?"异常待核对":null);Refresh();}
             catch(Exception e){_timerRetryAt=DateTimeOffset.UtcNow.AddSeconds(30);Status="计时保存失败："+e.Message;Error?.Invoke(Status);}finally{Busy=false;UpdateTimer();}
         }
     }
@@ -189,15 +192,18 @@ public sealed partial class MainViewModel : ObservableObject
         TimerText=DurationText.Timer(s.DurationMs);
         TimerStateText=s.State switch{TimerState.Running=>"正在学习 · 暂停时长不计入",TimerState.Paused=>"已暂停 · 可以继续或结束保存",TimerState.NeedsReview=>"待核对 · 未确认时间未计入",TimerState.Completed=>"已保存 · 下一段学习随时开始",_=>"选一个科目，从此刻开始"};ReviewReason=s.ReviewReason??"";
         ReviewEvidence=s.TrustedEndUtcMs is long end?$"最后确认到 {TimeZoneInfo.ConvertTime(DateTimeOffset.FromUnixTimeMilliseconds(end),TimeParts.ResolveZone(s.ZoneId)):yyyy-MM-dd HH:mm:ss}（{s.ZoneId}）。已确认 {Duration(s.DurationMs)}。":"";
+        UpdateFocus();
     }
     [RelayCommand] private async Task StartAsync()
     {
         if(Busy||TimerSubject==null||TimerActive)return;Busy=true;
-        try{_timer.Start(TimerSubject.Id,ChapterId(TimerChapter),TimerNote,ZoneId,WindowsClock.Sample());await PersistTimerAsync("开始计时");Status="计时已开始；关闭窗口会进入托盘。";}
+        try{var focus=CreateFocus();_timer.Start(TimerSubject.Id,ChapterId(TimerChapter),TimerNote,ZoneId,WindowsClock.Sample(),focus);await PersistTimerAsync("开始计时");BreakActive=false;_break=null;Status="专注已开始；关闭窗口会进入托盘。";
+            try{Database.SaveSetting("focus-mode",FocusModeIndex.ToString());Database.SaveSetting("focus-minutes",FocusMinutes);Database.SaveSetting("break-minutes",BreakMinutes);}catch{Status="计时已开始，偏好未能保存。";}}
         catch(Exception e){Status=e.Message;Error?.Invoke(Status);}finally{Busy=false;UpdateTimer();}
     }
     [RelayCommand] private async Task PauseResumeAsync()
     {
+        if(!Busy&&!TimerActive&&await PauseBreakAsync())return;
         if(Busy||!TimerActive||NeedsReview)return;Busy=true;
         try{if(TimerRunning)_timer.Pause(WindowsClock.Sample());else _timer.Resume(WindowsClock.Sample());await PersistTimerAsync(TimerRunning?"暂停":"继续");Status="计时状态已保存";}
         catch(Exception e){Status=e.Message;Error?.Invoke(Status);}finally{Busy=false;UpdateTimer();}
@@ -223,7 +229,7 @@ public sealed partial class MainViewModel : ObservableObject
     public async Task MarkUncertainAsync(string reason)
     {
         // Called on the UI dispatcher. Freeze immediately, even if a checkpoint write is in flight.
-        _timer.MarkUncertain(reason);UpdateTimer();
+        if(BreakActive)_break?.Pause(WindowsClock.Sample());_timer.MarkUncertain(reason);UpdateTimer();
         if(Busy)return;Busy=true;try{if(TimerActive)await PersistTimerAsync("系统事件待核对");Refresh();}catch(Exception e){Status=e.Message;}finally{Busy=false;UpdateTimer();}
     }
     public async Task ResolveAsync(IEnumerable<StudyPart> extra)
