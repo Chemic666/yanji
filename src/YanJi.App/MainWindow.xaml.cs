@@ -19,6 +19,8 @@ namespace YanJi.App;
 public partial class MainWindow : Window
 {
     public MainViewModel Model {get;}
+    internal int ValidationTickCount {get;private set;}
+    internal bool ValidationTickEnabled=>_tick.IsEnabled;
     private readonly DispatcherTimer _tick=new(){Interval=TimeSpan.FromSeconds(1)};
     private readonly Forms.NotifyIcon _tray;
     private bool _exiting;
@@ -34,10 +36,10 @@ public partial class MainWindow : Window
         var menu=new Forms.ContextMenuStrip();menu.Items.Add("打开研迹",null,(_,_)=>Dispatcher.Invoke(ShowFromTray));menu.Items.Add("退出应用",null,async(_,_)=>await Dispatcher.InvokeAsync(RequestExitAsync).Task.Unwrap());
         _tray=new Forms.NotifyIcon{Text="研迹 YanJi",Icon=System.Drawing.SystemIcons.Application,ContextMenuStrip=menu,Visible=true};
         _tray.DoubleClick+=(_,_)=>Dispatcher.Invoke(ShowFromTray);
-        _tick.Tick+=async(_,_)=>{try{await Model.TickAsync();_tray.Text="研迹 · "+(Model.NeedsReview?"待核对":Model.BreakActive?"休息":Model.TimerRunning?"学习":Model.TimerActive?"暂停":"就绪")+" · "+Model.TimerText;}catch(Exception e){Model.Status="自动保存未完成："+e.Message;}};
+        _tick.Tick+=async(_,_)=>{if(((App)Application.Current).V031Probe||((App)Application.Current).V031Check)ValidationTickCount++;try{await Model.TickAsync();_tray.Text="研迹 · "+(Model.NeedsReview?"待核对":Model.BreakActive?"休息":Model.TimerRunning?"学习":Model.TimerActive?"暂停":"就绪")+" · "+Model.TimerText;}catch(Exception e){Model.Status="自动保存未完成："+e.Message;}};
         Model.Error+=text=>{var smoke=((App)Application.Current).SmokePath;if(smoke!=null){Directory.CreateDirectory(smoke);File.AppendAllText(Path.Combine(smoke,"operation-errors.txt"),text+"\n");}else MessageBox.Show(this,text,"研迹",MessageBoxButton.OK,MessageBoxImage.Information);};
         SourceInitialized+=(_,_)=>{var handle=new WindowInteropHelper(this).Handle;_source=HwndSource.FromHwnd(handle);_source.AddHook(HandleMessage);WTSRegisterSessionNotification(handle,0);((App)Application.Current).RecordWindow(handle);};
-        Loaded+=async(_,_)=>{await Model.InitializeAsync();_tick.Start();if(((App)Application.Current).V03Capture||((App)Application.Current).V03Reopen||((App)Application.Current).V03Layout||((App)Application.Current).V03Recover)await V03CaptureRunner.RunAsync(this,((App)Application.Current).SmokePath!);else if(((App)Application.Current).V023Capture)await V023CaptureRunner.RunAsync(this,((App)Application.Current).SmokePath!);else if(((App)Application.Current).V022Capture)await V022CaptureRunner.RunAsync(this,((App)Application.Current).SmokePath!);else if(((App)Application.Current).V021Capture)await V021CaptureRunner.RunAsync(this,((App)Application.Current).SmokePath!,((App)Application.Current).V021Fixture!);else if(((App)Application.Current).SmokePath!=null)await SmokeRunner.RunAsync(this,((App)Application.Current).SmokePath!);};
+        Loaded+=async(_,_)=>{await Model.InitializeAsync();_tick.Start();if(((App)Application.Current).V031Probe||((App)Application.Current).V031Check)await TimerDisplayValidation.RunAsync(this,((App)Application.Current).SmokePath!,((App)Application.Current).V031Probe);else if(((App)Application.Current).V03Capture||((App)Application.Current).V03Reopen||((App)Application.Current).V03Layout||((App)Application.Current).V03Recover)await V03CaptureRunner.RunAsync(this,((App)Application.Current).SmokePath!);else if(((App)Application.Current).V023Capture)await V023CaptureRunner.RunAsync(this,((App)Application.Current).SmokePath!);else if(((App)Application.Current).V022Capture)await V022CaptureRunner.RunAsync(this,((App)Application.Current).SmokePath!);else if(((App)Application.Current).V021Capture)await V021CaptureRunner.RunAsync(this,((App)Application.Current).SmokePath!,((App)Application.Current).V021Fixture!);else if(((App)Application.Current).SmokePath!=null)await SmokeRunner.RunAsync(this,((App)Application.Current).SmokePath!);};
         Closing+=OnClosing;
         Closed+=(_,_)=>{CloseMiniTimer();ThemeService.Changed-=RefreshChartThemes;_tick.Stop();if(_source!=null){WTSUnRegisterSessionNotification(_source.Handle);_source.RemoveHook(HandleMessage);}_tray.Dispose();Model.Database.Dispose();Application.Current.Shutdown();};
     }
@@ -186,3 +188,4 @@ public partial class MainWindow : Window
     private async void Integrity_Click(object sender,RoutedEventArgs e)=>await Model.RunAsync(()=>{if(Model.Database.Integrity()!="ok")throw new InvalidDataException("数据库检查失败。");},"数据库完整性检查通过",false);
     public void SmokeClose(){_exiting=true;Close();}
 }
+

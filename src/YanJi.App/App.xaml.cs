@@ -28,6 +28,8 @@ public partial class App : Application
     public bool V03Reopen {get;private set;}
     public bool V03Layout {get;private set;}
     public bool V03Recover {get;private set;}
+    public bool V031Check {get;private set;}
+    public bool V031Probe {get;private set;}
     internal bool ValidationFailed {get;set;}
     internal Stopwatch StartupClock {get;}=Stopwatch.StartNew();
     public uint ShowMessage {get;private set;}
@@ -56,6 +58,8 @@ public partial class App : Application
                 else if(e.Args[i]=="--v03-capture"&&i+1<e.Args.Length){SmokePath=Path.GetFullPath(e.Args[++i]);V03Capture=true;}
                 else if(e.Args[i]=="--v03-reopen"&&i+1<e.Args.Length){SmokePath=Path.GetFullPath(e.Args[++i]);V03Reopen=true;}
                 else if(e.Args[i]=="--v03-layout"&&i+1<e.Args.Length){SmokePath=Path.GetFullPath(e.Args[++i]);V03Layout=true;}
+                else if(e.Args[i]=="--v031-probe"&&i+1<e.Args.Length){SmokePath=Path.GetFullPath(e.Args[++i]);V031Probe=true;}
+                else if(e.Args[i]=="--v031-check"&&i+1<e.Args.Length){SmokePath=Path.GetFullPath(e.Args[++i]);V031Check=true;}
                 else if(e.Args[i]=="--v03-recover"&&i+1<e.Args.Length){SmokePath=Path.GetFullPath(e.Args[++i]);V03Recover=true;}
                 else if(e.Args[i]=="--v02-visual"&&i+1<e.Args.Length){SmokePath=Path.GetFullPath(e.Args[++i]);V02Visual=true;}
                 else throw new ArgumentException("未知参数。支持 --data-dir <独立数据目录> 与 --smoke <报告目录>。");
@@ -63,8 +67,8 @@ public partial class App : Application
             if(SmokePath!=null&&explicitDirectory==null)throw new ArgumentException("自动化验证必须指定独立数据目录。");
             _dataDirectory=Path.GetFullPath(explicitDirectory??Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"YanJi"));
             if(V021Capture && (V021Fixture==null||SmokePath==null||!SmokePath.StartsWith(Path.GetFullPath("artifacts")+Path.DirectorySeparatorChar,StringComparison.OrdinalIgnoreCase)||!_dataDirectory.StartsWith(Path.GetFullPath("artifacts")+Path.DirectorySeparatorChar,StringComparison.OrdinalIgnoreCase)))throw new ArgumentException("V021 capture requires fixture and fresh project artifacts data/output.");
-            if((V022Capture||V023Capture||V03Capture||V03Reopen||V03Layout||V03Recover)&&(!SmokePath!.StartsWith(Path.GetFullPath("artifacts")+Path.DirectorySeparatorChar,StringComparison.OrdinalIgnoreCase)||!_dataDirectory.StartsWith(Path.GetFullPath("artifacts")+Path.DirectorySeparatorChar,StringComparison.OrdinalIgnoreCase)))throw new ArgumentException("Capture requires owned project artifacts.");
-            if(V02Visual||V021Capture||V022Capture||V023Capture||V03Capture||V03Layout)
+            if((V022Capture||V023Capture||V03Capture||V03Reopen||V03Layout||V03Recover||V031Probe||V031Check)&&(!SmokePath!.StartsWith(Path.GetFullPath("artifacts")+Path.DirectorySeparatorChar,StringComparison.OrdinalIgnoreCase)||!_dataDirectory.StartsWith(Path.GetFullPath("artifacts")+Path.DirectorySeparatorChar,StringComparison.OrdinalIgnoreCase)))throw new ArgumentException("Capture requires owned project artifacts.");
+            if(V02Visual||V021Capture||V022Capture||V023Capture||V03Capture||V03Layout||V031Probe||V031Check)
             {
                 var formal=Path.GetFullPath(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"YanJi"));
                 if(string.Equals(_dataDirectory,formal,StringComparison.OrdinalIgnoreCase)||Directory.Exists(_dataDirectory)&&Directory.EnumerateFileSystemEntries(_dataDirectory).Any())throw new ArgumentException("视觉验收必须使用新的独立数据目录。");
@@ -101,3 +105,4 @@ public partial class App : Application
     protected override void OnExit(ExitEventArgs e)
     {if(ValidationFailed)e.ApplicationExitCode=1;if(_instance!=null){try{_instance.ReleaseMutex();}catch(ApplicationException){} _instance.Dispose();}base.OnExit(e);}
 }
+
