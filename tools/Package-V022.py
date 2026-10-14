@@ -10,16 +10,22 @@ def zipdir(root,out):
  with zipfile.ZipFile(out,'w',zipfile.ZIP_DEFLATED,compresslevel=6) as z:
   for p in sorted(root.rglob('*')):
    if p.is_file():z.write(p,p.relative_to(root).as_posix())
-def source_expected(commit):
+def source_expected(commit,destination=None):
  entries=[]
  raw=subprocess.check_output(['git','ls-tree','-r','-z',commit])
  for row in raw.split(b'\0'):
   if row:
    meta,path=row.split(b'\t',1);mode,kind,oid=meta.split();assert kind==b'blob';entries.append((path.decode('utf-8'),oid))
- output=subprocess.check_output(['git','cat-file','--batch'],input=b'\n'.join(oid for _,oid in entries)+b'\n');at=0;result={}
+ output=subprocess.check_output(['git','cat-file','--batch'],input=b'\n'.join(oid for _,oid in entries)+b'\n');at=0;result={};contents={}
  for name,oid in entries:
   end=output.index(b'\n',at);header=output[at:end].split();assert header[0]==oid and header[1]==b'blob';size=int(header[2]);at=end+1;data=output[at:at+size];at+=size+1
   result[name]={'Bytes':size,'Sha256':sha(data)}
+  contents[name]=data
+ if destination is not None:
+  # git archive on Windows applies checkout EOL conversion, including explicit PS1 CRLF.
+  # Source delivery is canonical commit content, so write original blobs without filters.
+  with zipfile.ZipFile(destination,'w',zipfile.ZIP_DEFLATED,compresslevel=6) as z:
+   for name,data in contents.items():z.writestr(name,data)
  return result
 def main():
  ap=argparse.ArgumentParser();ap.add_argument('--commit',required=True);ap.add_argument('--publish',required=True);ap.add_argument('--capture',required=True);ap.add_argument('--native',required=True);ap.add_argument('--trx',required=True);a=ap.parse_args()
@@ -51,7 +57,7 @@ def main():
  packages={}
  for kind,folder in [('win-x64',runtime),('Review',review),('TestEvidence',evidence)]:
   name='YanJi-v0.2.2-'+kind+'.zip';zipdir(folder,output/name);packages[name]={p.relative_to(folder).as_posix():{'Bytes':p.stat().st_size,'Sha256':sha(p.read_bytes())} for p in folder.rglob('*') if p.is_file()}
- source=output/'YanJi-v0.2.2-source.zip';subprocess.check_call(['git','archive','--format=zip','--output='+str(source),a.commit]);packages[source.name]=source_expected(a.commit)
+ source=output/'YanJi-v0.2.2-source.zip';packages[source.name]=source_expected(a.commit,source)
  dump(output/'ZIP-EXPECTED.json',{'SourceCommit':a.commit,'CaptureProvenance':provenance,'Packages':packages})
  print(output)
 if __name__=='__main__':main()
