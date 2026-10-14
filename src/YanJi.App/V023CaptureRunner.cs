@@ -25,6 +25,13 @@ internal static class V023CaptureRunner
             Write("provenance.json",new{Synthetic=true,Anchor=day,ProcessId=Environment.ProcessId,Executable=Environment.ProcessPath,ExeSha256=Hash(Environment.ProcessPath!),Source=asm.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion,AssemblySha256=Hash(asm.Location)});
             await V023NativeRunner.RunAsync(w,(success,name)=>{checks.Add(new{Name=name,Status=success?"PASS":"FAIL"});if(!success)throw new InvalidOperationException(name);});
             Write("native-checks.json",checks);
+            async Task Reveal(FrameworkElement element)
+            {
+                w.UpdateLayout();await Task.Delay(120);w.UpdateLayout();
+                var position=element.TranslatePoint(new Point(0,0),w.MainScroll);
+                w.MainScroll.ScrollToVerticalOffset(w.MainScroll.VerticalOffset+position.Y-45);
+                w.UpdateLayout();await Task.Delay(100);
+            }
             async Task Shot(string name,FrameworkElement? popup=null)
             {
                 w.UpdateLayout();await Task.Delay(100);var file=name+".png";var path=Path.Combine(output,file);var element=popup??w;
@@ -40,19 +47,19 @@ internal static class V023CaptureRunner
             vm.Database.SaveTask(new("review023-task","复习概念边界",day,false,"math"));vm.Database.SaveWeakPoint(new("review023-weak","概念适用条件","需核对实际错因","概念","math",null,WeakPointState.Open,day));
             vm.Refresh();vm.Page=4;vm.StatsFrom=day.AddDays(-29).ToDateTime(TimeOnly.MinValue);vm.StatsTo=day.ToDateTime(TimeOnly.MinValue);
             Write("reconciliation.json",vm.Analysis!);
-            foreach(var dark in new[]{false,true}){vm.DarkTheme=dark;w.Width=1200;w.Height=800;vm.StatsView=0;w.MainScroll.ScrollToTop();w.SubjectDonut.BringIntoView();await Shot("overview-"+(dark?"dark":"light"));}
-            foreach(var dark in new[]{false,true}){vm.DarkTheme=dark;w.Width=900;w.Height=600;vm.StatsFrom=day.ToDateTime(TimeOnly.MinValue);w.StatsHeatmapChart.BringIntoView();await Shot("single-day-"+(dark?"dark":"light"));}
-            vm.DarkTheme=false;vm.StatsFrom=day.AddDays(-6).ToDateTime(TimeOnly.MinValue);w.StatsHeatmapChart.BringIntoView();await Shot("week-light");
-            vm.DarkTheme=true;w.Width=1200;w.Height=800;vm.StatsFrom=day.AddDays(-13).ToDateTime(TimeOnly.MinValue);w.StatsHeatmapChart.BringIntoView();await Shot("fortnight-dark");
+            foreach(var dark in new[]{false,true}){vm.DarkTheme=dark;w.Width=1200;w.Height=800;vm.StatsView=0;w.MainScroll.ScrollToTop();await Reveal(w.SubjectDonut);await Shot("overview-"+(dark?"dark":"light"));}
+            foreach(var dark in new[]{false,true}){vm.DarkTheme=dark;w.Width=900;w.Height=600;vm.StatsFrom=day.ToDateTime(TimeOnly.MinValue);await Reveal(w.StatsHeatmapChart);await Shot("single-day-"+(dark?"dark":"light"));}
+            vm.DarkTheme=false;vm.StatsFrom=day.AddDays(-6).ToDateTime(TimeOnly.MinValue);await Reveal(w.StatsHeatmapChart);await Shot("week-light");
+            vm.DarkTheme=true;w.Width=1200;w.Height=800;vm.StatsFrom=day.AddDays(-13).ToDateTime(TimeOnly.MinValue);await Reveal(w.StatsHeatmapChart);await Shot("fortnight-dark");
             vm.StatsFrom=day.AddDays(-29).ToDateTime(TimeOnly.MinValue);vm.StatsView=2;
             foreach(var dark in new[]{false,true}){vm.DarkTheme=dark;w.Width=dark?900:1200;w.Height=dark?600:800;w.MainScroll.ScrollToTop();await Shot("review-"+(dark?"dark":"light"));}
             vm.Database.SaveSubject(new("tiny-only","极短时长"));vm.Database.SaveRecord(new("only-one-ms","tiny-only",null,SessionSource.Manual,"真实非零",[new("only-one-ms-p",day,1,"UTC",PartKind.DurationOnly)]),"isolated tiny");vm.Refresh();vm.StatsSubjectId="tiny-only";vm.StatsFrom=day.ToDateTime(TimeOnly.MinValue);vm.StatsView=0;
-            foreach(var dark in new[]{false,true}){vm.DarkTheme=dark;w.Width=900;w.Height=600;w.SubjectDonut.BringIntoView();await Shot("tiny-"+(dark?"dark":"light"));}
+            foreach(var dark in new[]{false,true}){vm.DarkTheme=dark;w.Width=900;w.Height=600;await Reveal(w.SubjectDonut);await Shot("tiny-"+(dark?"dark":"light"));}
             NativeCapture.PointerRestore? pointer=null;
             try{pointer=NativeCapture.MoveToOwned(w.SubjectDonut,w.SubjectDonut.FirstHitCenter);await Task.Delay(200);if(!w.SubjectDonut.HoverTooltip.IsOpen)throw new InvalidOperationException("Actual hover not observed");await Shot("tiny-hover-popup",w.SubjectDonut.HoverTooltip);}
             catch(NativeHoverUnavailableException e){notTested.Add(e.Message);}
             finally{if(pointer!=null)NativeCapture.RestoreCursor(pointer);}
-            vm.StatsTo=day.AddDays(3).ToDateTime(TimeOnly.MinValue);vm.StatsFrom=vm.StatsTo;vm.DarkTheme=false;w.StatsHeatmapChart.BringIntoView();await Shot("empty-single-day");
+            vm.StatsTo=day.AddDays(3).ToDateTime(TimeOnly.MinValue);vm.StatsFrom=vm.StatsTo;vm.DarkTheme=false;await Reveal(w.StatsHeatmapChart);await Shot("empty-single-day");
             Write("screenshots.json",shots);Write("result.json",new{Status=notTested.Count==0?"PASS":"PASS_WITH_LIMITATIONS",Screenshots=shots.Count,Checks=checks.Count,NotTested=notTested,Integrity=vm.Database.Integrity()});
         }
         catch(Exception e){((App)Application.Current).ValidationFailed=true;File.WriteAllText(Path.Combine(output,"failure.txt"),e.ToString());File.WriteAllText(Path.Combine(output,"native-checks.json"),JsonSerializer.Serialize(checks));File.WriteAllText(Path.Combine(output,"screenshots-partial.json"),JsonSerializer.Serialize(shots));}
