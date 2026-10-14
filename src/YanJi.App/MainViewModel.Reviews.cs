@@ -17,6 +17,8 @@ public sealed partial class MainViewModel
     [ObservableProperty] private string reviewEditorLabel="新阶段复盘 · 保存时使用上方范围与科目";
     [ObservableProperty] private bool showDeletedReviews;
     [ObservableProperty] private string reviewTaskSummary="";
+    [ObservableProperty] private string reviewFactSummary="";
+    [ObservableProperty] private string reviewSnapshotSummary="";
     private PeriodReview? _editingReview;
     public ObservableCollection<ReviewRow> PeriodReviews {get;}=[];
     public ObservableCollection<WeakRow> ReviewWeakPoints {get;}=[];
@@ -39,6 +41,8 @@ public sealed partial class MainViewModel
         Replace(ReviewWeakPoints,weak.Select(w=>new WeakRow(w,AllSubjects.FirstOrDefault(s=>s.Id==w.SubjectId)?.Name??"未指定科目",AllChapters.FirstOrDefault(c=>c.Id==w.ChapterId)?.Name??"未指定章节",WeakName(w.State),w.ReviewDate is DateOnly d?$"计划复习 {d:yyyy-MM-dd}"+(d<=LocalToday()&&w.State!=WeakPointState.Verified?" · 待复习":""):"未安排复习","")));
         var tasks=Tasks.Where(t=>string.IsNullOrEmpty(subject)||t.SubjectId==subject).ToList();Replace(ReviewTasks,tasks.Select(t=>new ReviewTaskRow(t,AllSubjects.FirstOrDefault(s=>s.Id==t.SubjectId)?.Name??"未指定科目")));
         ReviewTaskSummary=$"当前任务 {tasks.Count} 项 · 已完成状态 {tasks.Count(t=>t.Done)} 项；无完成日期，不表示本期完成量";
+        ReviewFactSummary=Analysis is null?"请先选择有效日期范围":$"本期已保存学习 {Duration(Analysis.DurationMs)} · {Analysis.LearningDays} 个学习日 · {Analysis.Sessions} 次记录";
+        ReviewSnapshotSummary=$"当前快照：{weak.Count(w=>w.ReviewDate is DateOnly d&&d<=LocalToday()&&w.State!=WeakPointState.Verified)} 项到期待复习薄弱点 · {tasks.Count(t=>!t.Done)} 项未完成任务；不表示本期变化。";
         Replace(ReviewReflections,Database.Reflections().Where(r=>r.Key>=from&&r.Key<=to&&r.Value.Length>0).OrderBy(r=>r.Key).Select(r=>new ReflectionRow(r.Key,r.Value)));
     }
 }

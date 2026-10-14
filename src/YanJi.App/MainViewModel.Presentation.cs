@@ -41,6 +41,7 @@ public sealed partial class MainViewModel
     [ObservableProperty] private string learningAverage="0 秒";
     [ObservableProperty] private string statsDays="0";
     [ObservableProperty] private string statsSessions="0";
+    [ObservableProperty] private string subjectDisplayNote="";
     [ObservableProperty] private string dayTotal="0 秒";
     [ObservableProperty] private string dayState="尚无记录";
     [ObservableProperty] private bool restDay;
@@ -131,7 +132,8 @@ public sealed partial class MainViewModel
         {
             var from=DateOnly.FromDateTime(StatsFrom);var to=DateOnly.FromDateTime(StatsTo);
             Analysis=StudyAnalytics.Build(_records,AllSubjects,from,to,LocalToday(),string.IsNullOrEmpty(StatsSubjectId)?null:StatsSubjectId);
-            StatsTotal=Duration(Analysis.DurationMs);NaturalAverage=Duration((long)Analysis.CalendarAverageMs);LearningAverage=Duration((long)Analysis.LearningAverageMs);StatsDays=Analysis.LearningDays.ToString();StatsSessions=Analysis.Sessions.ToString();
+            StatsTotal=Duration(Analysis.DurationMs);NaturalAverage=Duration(DurationText.ForDisplay(Analysis.CalendarAverageMs));LearningAverage=Duration(DurationText.ForDisplay(Analysis.LearningAverageMs));StatsDays=Analysis.LearningDays.ToString();StatsSessions=Analysis.Sessions.ToString();
+            SubjectDisplayNote=Analysis.SubjectDisplayCarrySeconds>0?$"各科目分别向下显示到秒；不足一秒的余量合并贡献 {Analysis.SubjectDisplayCarrySeconds} 秒，已包含在范围总计中。":"总计按原始时长汇总；科目分别显示到秒，不重新分配余量。";
             SubjectPlot=Analysis.Subjects.Select(s=>new PlotPoint(s.SubjectId,s.Name,s.DurationMs,ThemeService.SubjectColor(s.SubjectId),s.SubjectId,from,to,Status:"范围内已保存有效学习")).ToList();
             var scope=string.IsNullOrEmpty(StatsSubjectId)?null:StatsSubjectId;
             if(Analysis.Daily.Count<=62){DailyPlot=DailyPoints(Analysis.Daily,scope);ChartGranularity="每日科目投入";}
@@ -148,7 +150,7 @@ public sealed partial class MainViewModel
             {var ch=AllChapters.FirstOrDefault(c=>c.Id==g.Key.ChapterId);var sub=AllSubjects.FirstOrDefault(s=>s.Id==g.Key.SubjectId);return new PlotPoint(g.Key.ChapterId??"__unspecified",(sub?.Name??g.Key.SubjectId)+(sub?.Archived==true?" · 科目归档":"")+" / "+(ch?.Name??"未指定章节")+(ch?.Archived==true?" · 章节归档":""),g.Sum(x=>x.p.DurationMs),ThemeService.SubjectColor(g.Key.SubjectId),g.Key.SubjectId,from,to);}).OrderByDescending(p=>p.Value).ToList();
             RefreshReviewMaterials();
         }
-        catch(ArgumentException e){Status=e.Message;Analysis=null;SubjectPlot=DailyPlot=TrendPlot=StatsHeatmap=ChapterPlot=Array.Empty<PlotPoint>();StatsTotal=NaturalAverage=LearningAverage="—";StatsDays=StatsSessions="—";}
+        catch(ArgumentException e){Status=e.Message;Analysis=null;SubjectPlot=DailyPlot=TrendPlot=StatsHeatmap=ChapterPlot=Array.Empty<PlotPoint>();StatsTotal=NaturalAverage=LearningAverage="—";StatsDays=StatsSessions="—";SubjectDisplayNote="";ReviewFactSummary="请先选择有效日期范围";ReviewSnapshotSummary="";}
     }
     private List<PlotPoint> DailyPoints(IEnumerable<DailyBreakdown> daily,string? subjectScope=null)=>daily.Select(d=>new PlotPoint(d.Date.ToString("yyyy-MM-dd"),d.Date.ToString("MM-dd"),d.DurationMs,ThemeService.SubjectColor("math"),SubjectId:subjectScope,From:d.Date,To:d.Date,
         Segments:d.Subjects.Select(s=>new PlotPoint(d.Date+"-"+s.Key,(AllSubjects.FirstOrDefault(x=>x.Id==s.Key)?.Name??s.Key)+" · "+d.Date.ToString("yyyy-MM-dd"),s.Value,ThemeService.SubjectColor(s.Key),s.Key,d.Date,d.Date)).ToList())).ToList();

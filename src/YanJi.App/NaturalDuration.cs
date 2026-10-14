@@ -17,7 +17,8 @@ public sealed class NaturalDuration : TextBlock
     {
         var ms=Math.Max(0,Milliseconds);Inlines.Clear();
         void Part(string number,string unit){Inlines.Add(new Run(number){FontWeight=FontWeights.SemiBold});Inlines.Add(new Run(" "+unit+" "){FontSize=FontSize*.55,FontWeight=FontWeights.Normal});}
-        if(ms<60000){Part((ms/1000).ToString(CultureInfo.InvariantCulture),"秒");}
+        if(ms is >0 and <1000){Inlines.Add(new Run("不足 "){FontSize=FontSize*.65});Part("1","秒");}
+        else if(ms<60000){Part((ms/1000).ToString(CultureInfo.InvariantCulture),"秒");}
         else
         {
             var hours=ms/3600000;var minutes=ms/60000%60;var seconds=ms%60000/1000;

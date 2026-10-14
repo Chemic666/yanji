@@ -85,6 +85,7 @@ public static class SmokeRunner
             var backup=Path.Combine(output,"smoke.yanjibak");vm.Database.Backup(backup);vm.Database.ValidateBackup(backup);vm.Database.ExportCsv(Path.Combine(output,"smoke.csv"));Assert(File.Exists(backup),"UI process backup and CSV");
             await VisualUpgradeRunner.RunAsync(window,output,Assert);
             await V022NativeRunner.RunAsync(window,Assert);
+            await V023NativeRunner.RunAsync(window,Assert);
             if(((App)Application.Current).V02Visual)await V02VisualRunner.RunAsync(window,output,Assert,NotTested);
             if(((App)Application.Current).V02Visual)await V021VisualRunner.RunAsync(window,output,Assert);
             var dpi=VisualTreeHelper.GetDpi(window);using var process=Process.GetCurrentProcess();

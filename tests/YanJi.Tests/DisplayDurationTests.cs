@@ -4,8 +4,8 @@ public sealed class DisplayDurationTests
 {
     [Theory]
     [InlineData(0,"0 秒")]
-    [InlineData(1,"0 秒")]
-    [InlineData(999,"0 秒")]
+    [InlineData(1,"不足 1 秒")]
+    [InlineData(999,"不足 1 秒")]
     [InlineData(27125,"27 秒")]
     [InlineData(60000,"1 分")]
     [InlineData(61000,"1 分 1 秒")]

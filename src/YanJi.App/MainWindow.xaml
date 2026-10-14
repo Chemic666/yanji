@@ -6,6 +6,7 @@
     <BooleanToVisibilityConverter x:Key="BoolVisibility" />
     <local:EmptyVisibilityConverter x:Key="Empty" />
     <local:HeatWidthConverter x:Key="HeatWidth" />
+    <local:AverageMillisecondsConverter x:Key="AverageMilliseconds" />
     <Style TargetType="local:MetricCard">
       <Setter Property="Margin" Value="0,0,12,0" />
       <Setter Property="Template">
@@ -138,7 +139,7 @@
         </StackPanel>
         <StackPanel DockPanel.Dock="Bottom">
           <Button Content="退出应用" Click="Exit_Click" x:Name="ExitButton" Style="{StaticResource QuietButton}" />
-          <TextBlock Text="V0.2.2 · 本地离线" FontSize="11" Foreground="{DynamicResource Muted}" x:Name="VersionHint" Margin="10,8,0,0" Style="{StaticResource FocusTextBlock}" />
+          <TextBlock Text="V0.2.3 · 本地离线" FontSize="11" Foreground="{DynamicResource Muted}" x:Name="VersionHint" Margin="10,8,0,0" Style="{StaticResource FocusTextBlock}" />
         </StackPanel>
         <ListBox x:Name="NavigationList" SelectedIndex="{Binding Page}" BorderThickness="0" Background="Transparent" SelectionChanged="Navigation_Changed" ItemContainerStyle="{StaticResource NavigationItem}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
           <ListBoxItem ToolTip="今日学习">
@@ -635,7 +636,7 @@
                   </StackPanel>
                   <Button Content="刷新统计" VerticalAlignment="Bottom" Margin="0" Command="{Binding RecalculateCommand}" Style="{StaticResource FocusButton}" />
                 </WrapPanel>
-                <TextBlock Text="原值聚合后向下显示整数秒 · 不足一秒显示 0 秒，仍保留学习事实 · 最多十年" FontSize="11" Foreground="{DynamicResource Muted}" Margin="0,4,0,0" Style="{StaticResource FocusTextBlock}" />
+                <TextBlock Text="原值聚合后显示整数秒 · 非零不足一秒显示“不足 1 秒” · 最多十年" FontSize="11" Foreground="{DynamicResource Muted}" Margin="0,4,0,0" Style="{StaticResource FocusTextBlock}" />
               </StackPanel>
             </Border>
 <StackPanel Visibility="{Binding StatsView,Converter={StaticResource PageVisibility},ConverterParameter=0}">
@@ -651,7 +652,7 @@
               </StackPanel>
               <StackPanel Grid.Column="1">
                 <TextBlock Text="已过自然日均" Style="{StaticResource MetaText}" />
-                <local:NaturalDuration Milliseconds="{Binding Analysis.CalendarAverageMs}" LineHeight="34" FontSize="20" ToolTip="{Binding NaturalAverage}">
+                <local:NaturalDuration Milliseconds="{Binding Analysis.CalendarAverageMs,Converter={StaticResource AverageMilliseconds}}" LineHeight="34" FontSize="20" ToolTip="{Binding NaturalAverage}">
                   <local:NaturalDuration.Style><Style TargetType="TextBlock" BasedOn="{StaticResource DurationNumber}"><Style.Triggers><DataTrigger Binding="{Binding Analysis.CalendarDays}" Value="0"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers></Style></local:NaturalDuration.Style>
                 </local:NaturalDuration>
                 <TextBlock x:Name="CalendarAverageUndefined" Text="—" FontSize="20" LineHeight="34" ToolTip="范围内暂无已过自然日，暂不计算平均">
@@ -661,7 +662,7 @@
               </StackPanel>
               <StackPanel Grid.Column="2">
                 <TextBlock Text="学习日均" Style="{StaticResource MetaText}" />
-                <local:NaturalDuration Milliseconds="{Binding Analysis.LearningAverageMs}" LineHeight="34" FontSize="20" ToolTip="{Binding LearningAverage}">
+                <local:NaturalDuration Milliseconds="{Binding Analysis.LearningAverageMs,Converter={StaticResource AverageMilliseconds}}" LineHeight="34" FontSize="20" ToolTip="{Binding LearningAverage}">
                   <local:NaturalDuration.Style><Style TargetType="TextBlock" BasedOn="{StaticResource DurationNumber}"><Style.Triggers><DataTrigger Binding="{Binding Analysis.LearningDays}" Value="0"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers></Style></local:NaturalDuration.Style>
                 </local:NaturalDuration>
                 <TextBlock x:Name="LearningAverageUndefined" Text="—" FontSize="20" LineHeight="34" ToolTip="暂无学习日，暂不计算平均">
@@ -696,6 +697,7 @@
                   <TextBlock Text="科目分布" Style="{StaticResource Subheading}" />
                   <local:StudyChart x:Name="SubjectDonut" Mode="Donut" Data="{Binding SubjectPlot}" PointInvoked="Chart_Drill" />
                   <TextBlock Text="悬停查看整数秒时长；点击科目查看记录。" Style="{StaticResource MutedText}" />
+                  <TextBlock Text="{Binding SubjectDisplayNote}" Style="{StaticResource MutedText}" />
                 </StackPanel>
               </Border>
             </Grid>
@@ -703,7 +705,7 @@
               <StackPanel>
                 <TextBlock Text="范围学习热力" Style="{StaticResource Subheading}" />
                 <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
-                  <local:StudyChart Data="{Binding StatsHeatmap}" Mode="Heatmap" Width="{Binding StatsHeatmap,Converter={StaticResource HeatWidth}}" PointInvoked="Chart_Drill" />
+                  <local:StudyChart x:Name="StatsHeatmapChart" Data="{Binding StatsHeatmap}" Mode="Heatmap" Width="{Binding StatsHeatmap,Converter={StaticResource HeatWidth}}" PointInvoked="Chart_Drill" />
                 </ScrollViewer>
                 <TextBlock Text="学习 / 休息标记 / 无记录 / 待核对分开；未知时长不计入。横向滚动查看完整范围，左右键可达每一天。" Style="{StaticResource MutedText}" />
               </StackPanel>
@@ -713,6 +715,7 @@
             <Border Style="{StaticResource SectionSurface}"><StackPanel>
               <TextBlock Text="科目时长对比" Style="{StaticResource Subheading}" />
               <local:StudyChart Mode="Ranking" Data="{Binding SubjectPlot}" PointInvoked="Chart_Drill" />
+              <TextBlock Text="{Binding SubjectDisplayNote}" Style="{StaticResource MutedText}" />
               <TextBlock Text="点击科目保留日期范围，查看有效片段与整次记录。" Style="{StaticResource MutedText}" />
             </StackPanel></Border>
             <Border Style="{StaticResource SectionSurface}">
@@ -750,6 +753,8 @@
             </Border>
 </StackPanel>
 <StackPanel Visibility="{Binding StatsView,Converter={StaticResource PageVisibility},ConverterParameter=2}">
+  <TextBlock Text="{Binding ReviewFactSummary}" Style="{StaticResource FocusTextBlock}" Margin="0,0,0,4" />
+  <TextBlock Text="{Binding ReviewSnapshotSummary}" Style="{StaticResource MutedText}" Margin="0,0,0,8" />
   <Border Style="{StaticResource SectionSurface}">
     <StackPanel>
       <TextBlock Text="阶段复盘" Style="{StaticResource Subheading}" />

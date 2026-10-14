@@ -9,6 +9,7 @@ public sealed record AnalyticsSnapshot(long DurationMs,int CalendarDays,int Lear
 {
     public double CalendarAverageMs=>CalendarDays==0?0:(double)ElapsedDurationMs/CalendarDays;
     public double LearningAverageMs=>LearningDays==0?0:(double)DurationMs/LearningDays;
+    public long SubjectDisplayCarrySeconds=>Subjects.Sum(s=>s.DurationMs%1000)/1000;
 }
 public static class StudyAnalytics
 {
@@ -31,6 +32,9 @@ public static class StudyAnalytics
 }
 public static class DurationText
 {
+    // Display-only threshold sentinel. Never persist or aggregate this value.
+    public static long ForDisplay(double milliseconds)
+    {if(!double.IsFinite(milliseconds)||milliseconds<0)throw new ArgumentOutOfRangeException(nameof(milliseconds));return milliseconds==0?0:milliseconds>=long.MaxValue?long.MaxValue:Math.Max(1,(long)milliseconds);}
     /// <summary>Presentation floors seconds after raw aggregation. Canonical data is unchanged.</summary>
     public static string Compact(long milliseconds)=>Format(milliseconds);
     public static string Timer(long milliseconds)
@@ -38,6 +42,7 @@ public static class DurationText
     public static string Format(long milliseconds)
     {
         ArgumentOutOfRangeException.ThrowIfNegative(milliseconds);
+        if(milliseconds is >0 and <1000)return "不足 1 秒";
         var seconds=milliseconds/1000%60;var hours=milliseconds/3600000;var minutes=milliseconds/60000%60;
         if(hours==0&&minutes==0)return seconds+" 秒";
         return (hours>0?hours+" 小时":"")+(minutes>0?(hours>0?" ":"")+minutes+" 分":"")+(seconds>0?" "+seconds+" 秒":"");

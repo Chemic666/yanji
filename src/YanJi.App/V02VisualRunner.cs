@@ -87,7 +87,7 @@ internal static class V02VisualRunner
   vm.StatsSubjectId="math";w.UpdateLayout();check(w.TrendChart.ToolTip==null,"V02 changing chart filter clears stale precision tooltip");vm.StatsSubjectId="";
   vm.Page=5;w.MainScroll.ScrollToTop();w.UpdateLayout();var theme=VisualUpgradeRunner.Descendants(w).OfType<CheckBox>().First(c=>Equals(c.Content,"深色主题"));Keyboard.Focus(theme);theme.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
   check(Keyboard.FocusedElement!=null,"V02 themed settings retain keyboard navigation");
-  var converter=new DurationDisplayConverter();check((string)converter.Convert(1L,typeof(string),null!,System.Globalization.CultureInfo.InvariantCulture)=="0 秒"&&vm.Database.Records().Any(r=>r.Parts.Any(p=>p.DurationMs==1)),"V022 compact display floors seconds while one millisecond facts persist");
+  var converter=new DurationDisplayConverter();check((string)converter.Convert(1L,typeof(string),null!,System.Globalization.CultureInfo.InvariantCulture)=="不足 1 秒"&&vm.Database.Records().Any(r=>r.Parts.Any(p=>p.DurationMs==1)),"V023 subsecond display distinguishes nonzero facts from zero");
   await vm.RunAsync(()=>vm.Database.SaveSetting("theme","light"),"验收完成");vm.Page=0;await vm.ChangeDayAsync(today.ToDateTime(TimeOnly.MinValue));w.MainScroll.ScrollToTop();
   var editor=new EditorDialog(w,"快速补录 · 输入验证",[new("minutes","时长（分钟）*","invalid")],"保留输入，错误直接显示在当前表单。",v=>double.TryParse(v["minutes"],out _)?null:"请输入有效分钟数");
   Exception? editorFailure=null;
