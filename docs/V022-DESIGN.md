@@ -6,6 +6,8 @@ Redesign scan found one long statistics page, equal-weight secondary sections, m
 
 Display rule: sum original milliseconds first; floor seconds only for text, never promote 1ms to 1 second. Long values retain seconds. Timer shows total hours and minutes, hours do not wrap. Raw backup/audit and CSV preserve facts. Routine pages hide technical zone IDs; settings and exception evidence retain them.
 
+Average KPI semantics: elapsed natural-day average uses only the elapsed portion of the range; learning-day average uses days with nonzero confirmed effective time. Both show their denominator. If a denominator is zero, the UI displays an em dash and states that the average is not computed. A genuinely zero average over existing natural days still displays 0 seconds. Tiny nonzero days remain learning days even when their display floors to 0 seconds.
+
 Period reviews are independent authored records with range, optional subject, body, timestamps and version. Current weaknesses/tasks are snapshots; dated daily reflections are supporting material. No invented efficiency or historical task completion metric.
 
 ## Native audit and Make full review

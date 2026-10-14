@@ -651,13 +651,23 @@
               </StackPanel>
               <StackPanel Grid.Column="1">
                 <TextBlock Text="已过自然日均" Style="{StaticResource MetaText}" />
-                <local:NaturalDuration Milliseconds="{Binding Analysis.CalendarAverageMs}" Style="{StaticResource DurationNumber}" LineHeight="34" FontSize="20" ToolTip="{Binding NaturalAverage}" />
-                <TextBlock Text="{Binding Analysis.CalendarDays,StringFormat=截至今天 · 除以 {0} 天}" Style="{StaticResource MetaText}" />
+                <local:NaturalDuration Milliseconds="{Binding Analysis.CalendarAverageMs}" LineHeight="34" FontSize="20" ToolTip="{Binding NaturalAverage}">
+                  <local:NaturalDuration.Style><Style TargetType="TextBlock" BasedOn="{StaticResource DurationNumber}"><Style.Triggers><DataTrigger Binding="{Binding Analysis.CalendarDays}" Value="0"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers></Style></local:NaturalDuration.Style>
+                </local:NaturalDuration>
+                <TextBlock x:Name="CalendarAverageUndefined" Text="—" FontSize="20" LineHeight="34" ToolTip="范围内暂无已过自然日，暂不计算平均">
+                  <TextBlock.Style><Style TargetType="TextBlock" BasedOn="{StaticResource DurationNumber}"><Setter Property="Visibility" Value="Collapsed" /><Style.Triggers><DataTrigger Binding="{Binding Analysis.CalendarDays}" Value="0"><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers></Style></TextBlock.Style>
+                </TextBlock>
+                <TextBlock><TextBlock.Style><Style TargetType="TextBlock" BasedOn="{StaticResource MetaText}"><Setter Property="Text" Value="{Binding Analysis.CalendarDays,StringFormat=截至今天 · 除以 {0} 天}" /><Style.Triggers><DataTrigger Binding="{Binding Analysis.CalendarDays}" Value="0"><Setter Property="Text" Value="范围内暂无已过自然日 · 暂不计算平均" /></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock>
               </StackPanel>
               <StackPanel Grid.Column="2">
                 <TextBlock Text="学习日均" Style="{StaticResource MetaText}" />
-                <local:NaturalDuration Milliseconds="{Binding Analysis.LearningAverageMs}" Style="{StaticResource DurationNumber}" LineHeight="34" FontSize="20" ToolTip="{Binding LearningAverage}" />
-                <TextBlock Text="{Binding Analysis.LearningDays,StringFormat=有效学习 · 除以 {0} 天}" Style="{StaticResource MetaText}" />
+                <local:NaturalDuration Milliseconds="{Binding Analysis.LearningAverageMs}" LineHeight="34" FontSize="20" ToolTip="{Binding LearningAverage}">
+                  <local:NaturalDuration.Style><Style TargetType="TextBlock" BasedOn="{StaticResource DurationNumber}"><Style.Triggers><DataTrigger Binding="{Binding Analysis.LearningDays}" Value="0"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers></Style></local:NaturalDuration.Style>
+                </local:NaturalDuration>
+                <TextBlock x:Name="LearningAverageUndefined" Text="—" FontSize="20" LineHeight="34" ToolTip="暂无学习日，暂不计算平均">
+                  <TextBlock.Style><Style TargetType="TextBlock" BasedOn="{StaticResource DurationNumber}"><Setter Property="Visibility" Value="Collapsed" /><Style.Triggers><DataTrigger Binding="{Binding Analysis.LearningDays}" Value="0"><Setter Property="Visibility" Value="Visible" /></DataTrigger></Style.Triggers></Style></TextBlock.Style>
+                </TextBlock>
+                <TextBlock><TextBlock.Style><Style TargetType="TextBlock" BasedOn="{StaticResource MetaText}"><Setter Property="Text" Value="{Binding Analysis.LearningDays,StringFormat=有效学习 · 除以 {0} 天}" /><Style.Triggers><DataTrigger Binding="{Binding Analysis.LearningDays}" Value="0"><Setter Property="Text" Value="暂无学习日 · 暂不计算平均" /></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock>
               </StackPanel>
             </Grid>
             <Grid>

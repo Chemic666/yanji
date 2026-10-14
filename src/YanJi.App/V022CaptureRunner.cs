@@ -46,7 +46,13 @@ internal static class V022CaptureRunner
      if(state=="filled"){vm.OpenRecords(day,day);vm.OpenDetail(vm.FilteredRecords.First());await Shot($"detail-{suffix}");vm.DrawerOpen=false;}
     }
    }
-   await Matrix("empty");var db=vm.Database;
+   await Matrix("empty");
+   var emptyFrom=vm.StatsFrom;var emptyTo=vm.StatsTo;
+   vm.StatsTo=day.AddDays(3).ToDateTime(TimeOnly.MinValue);vm.StatsFrom=day.AddDays(1).ToDateTime(TimeOnly.MinValue);vm.Page=4;vm.StatsView=0;
+   w.Width=900;w.Height=600;
+   foreach(var dark in new[]{false,true}){vm.DarkTheme=dark;w.MainScroll.ScrollToTop();await Shot($"empty-future-stats-0-{(dark?"dark":"light")}-900x600");}
+   vm.StatsFrom=emptyFrom;vm.StatsTo=emptyTo;
+   var db=vm.Database;
    var longText="先明确条件，再保留推导与错因。下一阶段用反例核对适用边界；投入时长不代表掌握。";
    db.SaveChapter(new("capture-math","math","函数与极限",60,Mastery.Reviewing));db.SaveChapter(new("capture-archive","408","旧章节 · 可读引用",Archived:true));
    db.SaveTask(new("capture-task","复习函数边界",day,false,"math"));db.SaveTask(new("capture-done","整理推导笔记",day.AddDays(-3),true,"408"));

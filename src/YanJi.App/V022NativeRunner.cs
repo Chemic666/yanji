@@ -14,6 +14,15 @@ internal static class V022NativeRunner
         check(w.Model.TimerChapters.First().Name.Contains("暂无章节"),"V022 initial chapter selector teaches empty state");
         check(w.Model.TimerText=="00:00","V022 timer uses total HH:mm");
         check(VisualUpgradeRunner.Descendants(w).OfType<Button>().Any(b=>Equals(b.Content,"管理章节")),"V022 chapter management shortcut exists");
+        var vm=w.Model;var from=vm.StatsFrom;var to=vm.StatsTo;
+        vm.Page=4;vm.StatsView=0;w.UpdateLayout();
+        bool VisibleText(string text)=>VisualUpgradeRunner.Descendants(w).OfType<TextBlock>().Any(t=>t.IsVisible&&t.Text==text);
+        check(VisibleText("暂无学习日 · 暂不计算平均"),"V022 empty learning average explains undefined denominator");
+        check(w.FindName("LearningAverageUndefined") is TextBlock empty&&empty.IsVisible&&empty.Text=="—","V022 empty learning average renders undefined rather than zero");
+        vm.StatsTo=vm.LocalToday().AddDays(3).ToDateTime(TimeOnly.MinValue);vm.StatsFrom=vm.LocalToday().AddDays(1).ToDateTime(TimeOnly.MinValue);w.UpdateLayout();
+        check(VisibleText("范围内暂无已过自然日 · 暂不计算平均"),"V022 future-only calendar average explains undefined denominator");
+        check(w.FindName("CalendarAverageUndefined") is TextBlock future&&future.IsVisible&&future.Text=="—","V022 future-only calendar average renders undefined rather than zero");
+        vm.StatsFrom=from;vm.StatsTo=to;vm.Page=0;w.UpdateLayout();
     }
     public static async Task RunAsync(MainWindow w,Action<bool,string> check)
     {
