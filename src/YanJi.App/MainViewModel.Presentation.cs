@@ -77,7 +77,7 @@ public sealed partial class MainViewModel
         var subject=RecordSubjectId;var stats=StatsSubjectId;var weak=WeakSubjectId;
         Replace(SubjectFilters,new[]{new Choice("","全部科目")}.Concat(AllSubjects.Select(s=>new Choice(s.Id,s.Name+(s.Archived?" · 归档":"")))));
         RecordSubjectId=subject;StatsSubjectId=stats;WeakSubjectId=weak;
-        var chapter=RecordChapterId;Replace(ChapterFilters,new[]{new Choice("","全部章节")}.Concat(AllChapters.Select(c=>new Choice(c.Id,c.Name+(c.Archived?" · 归档":"")))));RecordChapterId=chapter;
+        RefreshChapterFilters();
         _themeLoading=true;DarkTheme=_settings.GetValueOrDefault("theme")=="dark";_themeLoading=false;ThemeService.Apply(DarkTheme);
         CheckpointLabel="约 "+_settings.GetValueOrDefault("checkpoint-seconds","15")+" 秒 · 不是实时保证";
         Replace(SubjectGroups,AllSubjects.Select(s=>new SubjectGroup(s,AllChapters.Where(c=>c.SubjectId==s.Id).Select(c=>new ChapterRow(c,MasteryName(c.Mastery),c.Archived?"已归档":"使用中")).ToList())));
@@ -89,7 +89,9 @@ public sealed partial class MainViewModel
     }
     partial void OnDarkThemeChanged(bool value)
     {ThemeService.Apply(value);if(!_themeLoading)_=RunAsync(()=>Database.SaveSetting("theme",value?"dark":"light"),"主题已保存");}
-    partial void OnRecordSubjectIdChanged(string value)=>RefreshRecordFilters();
+    private void RefreshChapterFilters()
+    {var selected=RecordChapterId;var chapters=AllChapters.Where(c=>string.IsNullOrEmpty(RecordSubjectId)||c.SubjectId==RecordSubjectId);Replace(ChapterFilters,new[]{new Choice("","全部章节"),new Choice("__unspecified","未指定章节")}.Concat(chapters.Select(c=>new Choice(c.Id,(AllSubjects.FirstOrDefault(s=>s.Id==c.SubjectId)?.Name??c.SubjectId)+" · "+c.Name+(c.Archived?" · 归档":"")))));RecordChapterId=ChapterFilters.Any(c=>c.Value==selected)?selected:"";}
+    partial void OnRecordSubjectIdChanged(string value){RefreshChapterFilters();RefreshRecordFilters();}
     partial void OnRecordChapterIdChanged(string value)=>RefreshRecordFilters();
     partial void OnRecordSourceChanged(string value)=>RefreshRecordFilters();
     partial void OnRecordStateChanged(string value)=>RefreshRecordFilters();
@@ -106,7 +108,7 @@ public sealed partial class MainViewModel
     {
         var from=DateOnly.FromDateTime(RecordFrom);var to=DateOnly.FromDateTime(RecordTo);
         if(to<from){Replace(FilteredRecords,Array.Empty<RecordRow>());RecordSummary="结束日期早于开始日期";return;}
-        var rows=_records.Where(r=>(string.IsNullOrEmpty(RecordSubjectId)||r.SubjectId==RecordSubjectId)&&(string.IsNullOrEmpty(RecordChapterId)||r.ChapterId==RecordChapterId)&&(string.IsNullOrEmpty(RecordSource)||(RecordSource=="timer")== (r.Source==SessionSource.Timer))
+        var rows=_records.Where(r=>(string.IsNullOrEmpty(RecordSubjectId)||r.SubjectId==RecordSubjectId)&&(string.IsNullOrEmpty(RecordChapterId)||(RecordChapterId=="__unspecified"?r.ChapterId==null:r.ChapterId==RecordChapterId))&&(string.IsNullOrEmpty(RecordSource)||(RecordSource=="timer")== (r.Source==SessionSource.Timer))
             &&(RecordState=="all"||(RecordState=="deleted")==r.Deleted)&&r.Parts.Any(p=>p.Date>=from&&p.Date<=to))
             .OrderByDescending(r=>r.Parts.Max(p=>p.Date)).ThenByDescending(r=>r.CreatedAt).Select(r=>Row(r) with{ScopeFrom=from,ScopeTo=to,Contribution=r.Parts.Where(p=>p.Date>=from&&p.Date<=to).Sum(p=>p.DurationMs)}).ToList();
         Replace(FilteredRecords,rows);RecordSummary=$"{rows.Count} 次学习 · 范围内有效贡献 {Duration(rows.Where(r=>!r.Deleted).Sum(r=>r.Contribution??0))} · 每行保留整次身份";
@@ -131,10 +133,20 @@ public sealed partial class MainViewModel
             Analysis=StudyAnalytics.Build(_records,AllSubjects,from,to,LocalToday(),string.IsNullOrEmpty(StatsSubjectId)?null:StatsSubjectId);
             StatsTotal=Duration(Analysis.DurationMs);NaturalAverage=Duration((long)Analysis.CalendarAverageMs);LearningAverage=Duration((long)Analysis.LearningAverageMs);StatsDays=Analysis.LearningDays.ToString();StatsSessions=Analysis.Sessions.ToString();
             SubjectPlot=Analysis.Subjects.Select(s=>new PlotPoint(s.SubjectId,s.Name,s.DurationMs,ThemeService.SubjectColor(s.SubjectId),s.SubjectId)).ToList();
-            DailyPlot=DailyPoints(Analysis.Daily,string.IsNullOrEmpty(StatsSubjectId)?null:StatsSubjectId);var buckets=TrendPeriod=="month"?Analysis.Months:Analysis.Weeks;
+            var scope=string.IsNullOrEmpty(StatsSubjectId)?null:StatsSubjectId;
+            if(Analysis.Daily.Count<=62){DailyPlot=DailyPoints(Analysis.Daily,scope);ChartGranularity="每日科目投入";}
+            else
+            {
+                var monthly=Analysis.Daily.Count>366;ChartGranularity=monthly?"每月科目投入 · 首尾仅含所选范围":"每周科目投入 · 首尾仅含所选范围";
+                DailyPlot=Analysis.Daily.GroupBy(d=>monthly?new DateOnly(d.Date.Year,d.Date.Month,1):d.Date.AddDays(-(((int)d.Date.DayOfWeek+6)%7))).Select(g=>
+                {var a=g.Min(d=>d.Date);var b=g.Max(d=>d.Date);var subjects=g.SelectMany(d=>d.Subjects).GroupBy(s=>s.Key).Select(s=>new PlotPoint(s.Key,(AllSubjects.FirstOrDefault(x=>x.Id==s.Key)?.Name??s.Key)+$" · {a:yyyy-MM-dd} — {b:yyyy-MM-dd}",s.Sum(x=>x.Value),ThemeService.SubjectColor(s.Key),s.Key,a,b)).ToList();return new PlotPoint(a.ToString("yyyy-MM-dd"),a.ToString(monthly?"yyyy-MM":"MM-dd"),subjects.Sum(s=>s.Value),ThemeService.SubjectColor("math"),scope,a,b,subjects,Status=$"{a:yyyy-MM-dd} — {b:yyyy-MM-dd}");}).ToList();
+            }
+            var buckets=TrendPeriod=="month"?Analysis.Months:Analysis.Weeks;
             TrendPlot=buckets.Select(b=>new PlotPoint(b.From.ToString("yyyy-MM-dd"),b.From.ToString("MM-dd"),b.DurationMs,ThemeService.SubjectColor(string.IsNullOrEmpty(StatsSubjectId)?"math":StatsSubjectId),SubjectId:string.IsNullOrEmpty(StatsSubjectId)?null:StatsSubjectId,From:b.From,To:b.To)).ToList();
             StatsHeatmap=Heatmap(from,to,string.IsNullOrEmpty(StatsSubjectId)?null:StatsSubjectId);
-            ChapterPlot=Analysis.Chapters.Select(c=>new PlotPoint(c.Key,AllChapters.FirstOrDefault(ch=>ch.Id==c.Key)?.Name??c.Key,c.Value,ThemeService.SubjectColor(c.Key))).OrderByDescending(p=>p.Value).ToList();
+            ChapterPlot=_records.Where(r=>!r.Deleted&&(scope==null||r.SubjectId==scope)).SelectMany(r=>r.Parts.Where(p=>p.Date>=from&&p.Date<=to).Select(p=>(r,p))).GroupBy(x=>(x.r.SubjectId,x.r.ChapterId)).Select(g=>
+            {var ch=AllChapters.FirstOrDefault(c=>c.Id==g.Key.ChapterId);var sub=AllSubjects.FirstOrDefault(s=>s.Id==g.Key.SubjectId);return new PlotPoint(g.Key.ChapterId??"__unspecified",(sub?.Name??g.Key.SubjectId)+(sub?.Archived==true?" · 科目归档":"")+" / "+(ch?.Name??"未指定章节")+(ch?.Archived==true?" · 章节归档":""),g.Sum(x=>x.p.DurationMs),ThemeService.SubjectColor(g.Key.SubjectId),g.Key.SubjectId,from,to);}).OrderByDescending(p=>p.Value).ToList();
+            RefreshReviewMaterials();
         }
         catch(ArgumentException e){Status=e.Message;Analysis=null;SubjectPlot=DailyPlot=TrendPlot=StatsHeatmap=ChapterPlot=Array.Empty<PlotPoint>();StatsTotal=NaturalAverage=LearningAverage="—";StatsDays=StatsSessions="—";}
     }
@@ -148,7 +160,8 @@ public sealed partial class MainViewModel
     private string DayStatus(DateOnly date,long ms)
     {
         var pending=Timer.State==TimerState.NeedsReview&&(Timer.Parts.Any(p=>p.Date==date)||Timer.LastSample is { } sample&&DateOnly.FromDateTime(TimeZoneInfo.ConvertTime(sample.Utc,TimeParts.ResolveZone(Timer.ZoneId)).DateTime)==date);
-        if(pending)return "待核对";if(ms>0)return "学习日";return _settings.GetValueOrDefault("rest-day:"+date.ToString("yyyy-MM-dd"))=="true"?"休息日":"尚无记录";
+        var rest=_settings.GetValueOrDefault("rest-day:"+date.ToString("yyyy-MM-dd"))=="true";
+        return (pending?(ms>0?"待核对 · 含已确认学习":"待核对 · 未知时长不计入"):ms>0?"学习日":"尚无记录")+(rest?" · 休息标记":"");
     }
     private void RefreshDayPresentation()
     {
@@ -160,7 +173,7 @@ public sealed partial class MainViewModel
             var p=x.Part;var zone=TimeParts.ResolveZone(p.ZoneId);var start=DateTimeOffset.FromUnixTimeMilliseconds(p.StartUtcMs!.Value);var end=DateTimeOffset.FromUnixTimeMilliseconds(p.EndUtcMs!.Value);
             DateTimeOffset Boundary(DateOnly d){var local=d.ToDateTime(TimeOnly.MinValue);while(zone.IsInvalidTime(local))local=local.AddMinutes(1);return zone.IsAmbiguousTime(local)?new DateTimeOffset(local,zone.GetAmbiguousTimeOffsets(local).Max()):new DateTimeOffset(TimeZoneInfo.ConvertTimeToUtc(local,zone));}
             var a=Boundary(day);var b=Boundary(day.AddDays(1));
-            return new PlotPoint(x.Record.Id,AllSubjects.FirstOrDefault(s=>s.Id==x.Record.SubjectId)?.Name??x.Record.SubjectId,p.DurationMs,ThemeService.SubjectColor(x.Record.SubjectId),x.Record.SubjectId,day,day,Status:$"{TimeZoneInfo.ConvertTime(start,zone):HH:mm:ss}–{TimeZoneInfo.ConvertTime(end,zone):HH:mm:ss} · {p.ZoneId}",Start:(start-a).TotalMilliseconds/(b-a).TotalMilliseconds,End:(end-a).TotalMilliseconds/(b-a).TotalMilliseconds);
+            return new PlotPoint(x.Record.Id,AllSubjects.FirstOrDefault(s=>s.Id==x.Record.SubjectId)?.Name??x.Record.SubjectId,p.DurationMs,ThemeService.SubjectColor(x.Record.SubjectId),x.Record.SubjectId,day,day,Status:$"{TimeZoneInfo.ConvertTime(start,zone):HH:mm:ss}–{TimeZoneInfo.ConvertTime(end,zone):HH:mm:ss}",Start:(start-a).TotalMilliseconds/(b-a).TotalMilliseconds,End:(end-a).TotalMilliseconds/(b-a).TotalMilliseconds);
         }).ToList();
     }
     public async Task ToggleRestDayAsync()=>await RunAsync(()=>Database.SaveSetting("rest-day:"+SelectedDate.ToString("yyyy-MM-dd",CultureInfo.InvariantCulture),RestDay?"false":"true"),"休息日标记已更新；已有学习数据不被改变");
@@ -171,7 +184,7 @@ public sealed partial class MainViewModel
         {string Summary(string? json){if(json==null)return "无";var s=JsonSerializer.Deserialize<StudyRecord>(json)!;return $"{Duration(s.DurationMs)} · {s.Parts.Count} 片段 · {(s.Deleted?"已删除":"有效")} · {string.Join("、",s.Parts.Select(p=>p.Date).Distinct())}";}
             return $"{r.At.ToLocalTime():yyyy-MM-dd HH:mm:ss} · v{r.Version} · {(r.Reason.StartsWith("排除学习片段")?"排除单个片段":r.Reason.StartsWith("恢复学习片段")?"恢复单个片段":r.Reason)}\n{Summary(r.BeforeJson)} → {Summary(r.AfterJson)}";}));
     }
-    private static PartRow Part(StudyPart p,bool excluded)=>new(p,p.Kind==PartKind.DurationOnly?"未提供时间位置":$"{TimeZoneInfo.ConvertTime(DateTimeOffset.FromUnixTimeMilliseconds(p.StartUtcMs!.Value),TimeParts.ResolveZone(p.ZoneId)):HH:mm:ss zzz} — {TimeZoneInfo.ConvertTime(DateTimeOffset.FromUnixTimeMilliseconds(p.EndUtcMs!.Value),TimeParts.ResolveZone(p.ZoneId)):HH:mm:ss zzz} · {p.ZoneId}",Duration(p.DurationMs),excluded);
+    private static PartRow Part(StudyPart p,bool excluded)=>new(p,p.Kind==PartKind.DurationOnly?"未提供时间位置":$"{TimeZoneInfo.ConvertTime(DateTimeOffset.FromUnixTimeMilliseconds(p.StartUtcMs!.Value),TimeParts.ResolveZone(p.ZoneId)):HH:mm:ss} — {TimeZoneInfo.ConvertTime(DateTimeOffset.FromUnixTimeMilliseconds(p.EndUtcMs!.Value),TimeParts.ResolveZone(p.ZoneId)):HH:mm:ss}",Duration(p.DurationMs),excluded);
     public void OpenRecords(DateOnly from,DateOnly to,string? subject=null,string? chapter=null)
     {DrawerOpen=false;RecordFrom=from.ToDateTime(TimeOnly.MinValue);RecordTo=to.ToDateTime(TimeOnly.MinValue);RecordSubjectId=subject??"";RecordChapterId=chapter??"";RecordSource="";RecordState="active";Page=6;RefreshRecordFilters();}
     public void StatsRange(string period)

@@ -14,7 +14,7 @@ public sealed class DurationDisplayConverter : IValueConverter
         if(!double.IsFinite(raw)||raw<0)return "—";
         var ms=value is long exact?exact:(long)Math.Min(Math.Floor(raw),long.MaxValue);
         var text=DurationText.Compact(ms);
-        return raw!=ms&&!text.StartsWith("≈",StringComparison.Ordinal)?"≈ "+text:text;
+        return text;
     }
     public object ConvertBack(object value,Type targetType,object parameter,CultureInfo culture)=>Binding.DoNothing;
 }

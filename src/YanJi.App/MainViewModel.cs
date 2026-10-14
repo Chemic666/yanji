@@ -27,7 +27,7 @@ public sealed record RecordRow(StudyRecord Record,string Subject,string Chapter,
     public string Summary=>Source+" · "+State+" · "+Record.Parts.Count+" 个片段 · "+Dates;
 }
 public sealed record CalendarDay(DateTime Date,string Day,string Duration,bool InMonth,bool Selected,string Status="尚无记录",string Color="#EDF3F5",long Milliseconds=0)
-{ public string Label=>Day+"\n"+(Duration.Length>0?Duration:Status=="尚无记录"?"无记录":Status);public string Description=>$"{Date:yyyy-MM-dd} · {Status}"+(Duration.Length>0?" · "+Duration:"");public string DisplayDuration=>Milliseconds>0?DurationText.Compact(Milliseconds):Status=="尚无记录"?"—":Status; }
+{ public bool IsPending=>Status.Contains("待核对");public string Label=>Day+"\n"+(Duration.Length>0?Duration:Status=="尚无记录"?"无记录":Status);public string Description=>$"{Date:yyyy-MM-dd} · {Status}"+(Duration.Length>0?" · "+Duration:"");public string DisplayDuration=>Milliseconds>0?DurationText.Compact(Milliseconds):Status=="尚无记录"?"—":Status; }
 public sealed record StatRow(string Label,string Duration,double Width);
 public sealed partial class MainViewModel : ObservableObject
 {
@@ -104,7 +104,7 @@ public sealed partial class MainViewModel : ObservableObject
     public static string Duration(long milliseconds)=>DurationText.Format(milliseconds);
     private static void Replace<T>(ObservableCollection<T> target,IEnumerable<T> source){target.Clear();foreach(var item in source)target.Add(item);}
     private void LoadChapters(ObservableCollection<Chapter> target,string? subject,bool archived=false)
-    {Replace(target,new[]{new Chapter("",subject??"","不指定章节")}.Concat(subject==null?[]:Database.Chapters(subject,archived)));}
+    {var list=subject==null?[]:Database.Chapters(subject,archived).Where(c=>!c.Archived||target==TimerChapters&&c.Id==Timer.ChapterId&&Timer.IsActive).ToList();Replace(target,new[]{new Chapter("",subject??"",list.Count==0?"暂无章节 · 可不指定":"不指定章节")}.Concat(list));}
     private static string? ChapterId(Chapter? chapter)=>string.IsNullOrWhiteSpace(chapter?.Id)?null:chapter.Id;
     partial void OnTimerSubjectChanged(Subject? value){LoadChapters(TimerChapters,value?.Id,_timer.Snapshot.IsActive);TimerChapter=TimerChapters.FirstOrDefault();}
     partial void OnManualSubjectChanged(Subject? value){LoadChapters(ManualChapters,value?.Id);ManualChapter=ManualChapters.FirstOrDefault();UpdateWarning();}
@@ -186,7 +186,7 @@ public sealed partial class MainViewModel : ObservableObject
     private void UpdateTimer()
     {
         var s=_timer.Snapshot;TimerActive=s.IsActive;TimerRunning=s.State==TimerState.Running;NeedsReview=s.State==TimerState.NeedsReview;
-        var elapsed=TimeSpan.FromMilliseconds(s.DurationMs);TimerText=$"{(long)elapsed.TotalHours:00}:{elapsed.Minutes:00}:{elapsed.Seconds:00}";
+        TimerText=DurationText.Timer(s.DurationMs);
         TimerStateText=s.State switch{TimerState.Running=>"正在学习 · 暂停时长不计入",TimerState.Paused=>"已暂停 · 可以继续或结束保存",TimerState.NeedsReview=>"待核对 · 未确认时间未计入",TimerState.Completed=>"已保存 · 下一段学习随时开始",_=>"选一个科目，从此刻开始"};ReviewReason=s.ReviewReason??"";
         ReviewEvidence=s.TrustedEndUtcMs is long end?$"最后确认到 {TimeZoneInfo.ConvertTime(DateTimeOffset.FromUnixTimeMilliseconds(end),TimeParts.ResolveZone(s.ZoneId)):yyyy-MM-dd HH:mm:ss}（{s.ZoneId}）。已确认 {Duration(s.DurationMs)}。":"";
     }
@@ -224,7 +224,7 @@ public sealed partial class MainViewModel : ObservableObject
     {
         // Called on the UI dispatcher. Freeze immediately, even if a checkpoint write is in flight.
         _timer.MarkUncertain(reason);UpdateTimer();
-        if(Busy)return;Busy=true;try{if(TimerActive)await PersistTimerAsync("系统事件待核对");}catch(Exception e){Status=e.Message;}finally{Busy=false;UpdateTimer();}
+        if(Busy)return;Busy=true;try{if(TimerActive)await PersistTimerAsync("系统事件待核对");Refresh();}catch(Exception e){Status=e.Message;}finally{Busy=false;UpdateTimer();}
     }
     public async Task ResolveAsync(IEnumerable<StudyPart> extra)
     {

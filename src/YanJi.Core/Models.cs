@@ -29,6 +29,9 @@ public sealed record Revision(string Id, string EntityKind, string EntityId, lon
 public sealed record DailyTotal(DateOnly Date, long DurationMs);
 public sealed record SubjectTotal(string SubjectId, string Name, long DurationMs);
 public sealed record ClockSample(DateTimeOffset Utc, long AwakeMs, long BootMs, string ProcessToken);
+/// <summary>Authored review; never an inferred learning or completion fact.</summary>
+public sealed record PeriodReview(string Id,DateOnly From,DateOnly To,string? SubjectId,string Body,
+    long Version=0,bool Deleted=false,DateTimeOffset? CreatedAt=null,DateTimeOffset? UpdatedAt=null,int Format=1);
 public sealed record TimerSnapshot(string SessionId, string SubjectId, string? ChapterId, string Note,
     string ZoneId, TimerState State, List<StudyPart> Parts, ClockSample? LastSample,
     long? TrustedEndUtcMs, string? ReviewReason = null, long Version = 0)

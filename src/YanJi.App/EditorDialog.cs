@@ -13,6 +13,20 @@ public sealed class EditorDialog : Window
     private readonly Dictionary<string,Control> _controls=[];
     public Dictionary<string,string>? Values {get;private set;}
     internal void SetField(string key,string value){if(_controls[key] is TextBox text)text.Text=value;else ((ComboBox)_controls[key]).SelectedValue=value;}
+    internal void BindChapters(List<YanJi.Core.Chapter> chapters,string? existing)
+    {
+        if(!_controls.TryGetValue("subject",out var subjectControl)||subjectControl is not ComboBox subject||!_controls.TryGetValue("chapter",out var chapterControl)||chapterControl is not ComboBox chapter)return;
+        void Refresh(bool initial)
+        {
+            var selected=initial?existing:null;var owner=subject.SelectedValue?.ToString();
+            var list=chapters.Where(c=>c.SubjectId==owner&&(!c.Archived||initial&&c.Id==existing)).ToList();
+            chapter.ItemsSource=new[]{new Choice("",list.Count==0?"暂无章节 · 可不指定":"不指定章节")}.Concat(list.Select(c=>new Choice(c.Id,c.Name+(c.Archived?" · 已归档引用":"")))).ToList();
+            chapter.SelectedValue=list.Any(c=>c.Id==selected)?selected:"";
+        }
+        Refresh(true);subject.SelectionChanged+=(_,_)=>Refresh(false);
+        if(chapter.Parent is Panel panel)
+        {var manage=new Button{Content="管理章节",Style=(Style)FindResource("QuietButton"),HorizontalAlignment=HorizontalAlignment.Left};manage.Click+=(_,_)=>{if(Owner is MainWindow w){w.Model.Page=2;w.MainScroll.ScrollToTop();}Close();};panel.Children.Insert(panel.Children.IndexOf(chapter)+1,manage);}
+    }
     public EditorDialog(Window owner,string title,IEnumerable<Field> fields,string hint="",Func<Dictionary<string,string>,string?>? validate=null)
     {
         Style=(Style)FindResource(typeof(Window));Owner=owner;Title=title;Width=600;SizeToContent=SizeToContent.Height;MinWidth=480;MinHeight=300;MaxHeight=Math.Min(720,SystemParameters.WorkArea.Height);

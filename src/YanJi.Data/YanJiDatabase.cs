@@ -248,10 +248,44 @@ public sealed class YanJiDatabase : IDisposable
         if(point.SubjectId!=null&&!Subjects(true).Any(s=>s.Id==point.SubjectId))throw new ArgumentException("科目不存在。");
         if(point.ChapterId!=null&&!Chapters(null,true).Any(s=>s.Id==point.ChapterId&&s.SubjectId==point.SubjectId))throw new ArgumentException("章节不属于该科目。");SaveEntity("weakpoints",point.Id,point,"薄弱点修改");}
     public string Reflection(DateOnly date)=>Entities<ReflectionEntry>("reflections").Find(x=>x.Date==date)?.Text??"";
+    public Dictionary<DateOnly,string> Reflections()=>Entities<ReflectionEntry>("reflections").ToDictionary(r=>r.Date,r=>r.Text);
     public void SaveReflection(DateOnly date,string text)=>SaveEntity("reflections",date.ToString("yyyy-MM-dd",CultureInfo.InvariantCulture),new ReflectionEntry(date,text),"每日感想修改");
     public string Setting(string key,string fallback)
     {lock(_gate){using var c=Open();return Scalar(c,null,"SELECT payload FROM settings WHERE id=$id",("$id",key)) is string text?Parse<string>(text):fallback;}}
     public void SaveSetting(string key,string value)=>SaveEntity("settings",key,value,"设置修改");
+    private const string ReviewPrefix="period-review:v1:";
+    private static void ValidateReview(PeriodReview item,string id,bool stored)
+    {
+        if(item.Format!=1||item.Id!=id||string.IsNullOrWhiteSpace(id)||id.Length>100||id.Any(c=>!char.IsLetterOrDigit(c)&&c!='-'&&c!='_')||
+            item.To<item.From||item.To.DayNumber-item.From.DayNumber>3660||string.IsNullOrWhiteSpace(item.Body)||item.Body.Length>20000||
+            item.Version<0||stored&&(item.Version==0||item.CreatedAt==null||item.UpdatedAt==null))
+            throw new ArgumentException("阶段复盘字段或版本无效（正文 1–20000 字，范围最多十年）。");
+    }
+    public List<PeriodReview> PeriodReviews(bool includeDeleted=false)
+    {
+        return Settings().Where(p=>p.Key.StartsWith(ReviewPrefix,StringComparison.Ordinal)).Select(p=>
+        {var item=Parse<PeriodReview>(p.Value);ValidateReview(item,p.Key[ReviewPrefix.Length..],true);return item;})
+            .Where(p=>includeDeleted||!p.Deleted).OrderByDescending(p=>p.To).ThenByDescending(p=>p.UpdatedAt).ToList();
+    }
+    public PeriodReview SavePeriodReview(PeriodReview draft)
+    {
+        ValidateReview(draft,draft.Id,false);
+        lock(_gate)
+        {
+            using var c=Open();using var tx=c.BeginTransaction();var key=ReviewPrefix+draft.Id;
+            var raw=Scalar(c,tx,"SELECT payload FROM settings WHERE id=$id",("$id",key)) as string;
+            var before=raw==null?null:Parse<PeriodReview>(Parse<string>(raw));
+            if(before!=null)ValidateReview(before,draft.Id,true);
+            if(draft.Version!=(before?.Version??0))throw new InvalidOperationException("阶段复盘已改变，请刷新后再编辑。");
+            if(draft.SubjectId!=null&&Scalar(c,tx,"SELECT id FROM subjects WHERE id=$id",("$id",draft.SubjectId))==null)throw new ArgumentException("复盘科目不存在。");
+            var now=DateTimeOffset.UtcNow;var saved=draft with{Version=draft.Version+1,CreatedAt=before?.CreatedAt??now,UpdatedAt=now};
+            Exec(c,tx,"INSERT INTO settings VALUES($id,$payload) ON CONFLICT(id) DO UPDATE SET payload=excluded.payload",("$id",key),("$payload",Json(Json(saved))));
+            Audit(c,tx,"period-review",saved.Id,saved.Version,saved.Deleted?"阶段复盘软删除":before?.Deleted==true?"阶段复盘恢复":"阶段复盘保存",before==null?null:Json(before),Json(saved));
+            tx.Commit();return saved;
+        }
+    }
+    public void SetPeriodReviewDeleted(string id,long version,bool deleted)
+    {var item=PeriodReviews(true).Single(p=>p.Id==id);SavePeriodReview(item with{Version=version,Deleted=deleted});}
     public Dictionary<string,string> Settings()
     {lock(_gate){using var c=Open();using var cmd=Command(c,null,"SELECT id,payload FROM settings");using var r=cmd.ExecuteReader();Dictionary<string,string> result=[];while(r.Read())result.Add(r.GetString(0),Parse<string>(r.GetString(1)));return result;}}
     public string Integrity(){lock(_gate){using var c=Open();return (string)Scalar(c,null,"PRAGMA integrity_check")!;}}
@@ -323,13 +357,13 @@ public sealed class YanJiDatabase : IDisposable
                 if(table=="weakpoints"){var item=Parse<WeakPoint>(payload);if(item.Id!=id||string.IsNullOrWhiteSpace(item.Title)||!Enum.IsDefined(item.State)||item.SubjectId!=null&&Scalar(c,null,"SELECT id FROM subjects WHERE id=$id",("$id",item.SubjectId))==null||item.ChapterId!=null&&!Equals(Scalar(c,null,"SELECT subject FROM chapters WHERE id=$id",("$id",item.ChapterId)),item.SubjectId))throw new InvalidDataException("薄弱点内容无效。");}
                 if(table=="reflections"&&Parse<ReflectionEntry>(payload).Date.ToString("yyyy-MM-dd",CultureInfo.InvariantCulture)!=id)throw new InvalidDataException("感想日期无效。");
                 if(table=="settings")
-                {var value=Parse<string>(payload);if(id=="zone")TimeParts.ResolveZone(value);
+                {var value=Parse<string>(payload);if(id.StartsWith(ReviewPrefix,StringComparison.Ordinal)){var item=Parse<PeriodReview>(value);ValidateReview(item,id[ReviewPrefix.Length..],true);if(item.SubjectId!=null&&Scalar(c,null,"SELECT id FROM subjects WHERE id=$id",("$id",item.SubjectId))==null)throw new InvalidDataException("复盘科目无效。");}if(id=="zone")TimeParts.ResolveZone(value);
                     if(id=="exam-date"&&value.Length>0)DateOnly.ParseExact(value,"yyyy-MM-dd",CultureInfo.InvariantCulture);
                     if(id=="checkpoint-seconds"&&(!int.TryParse(value,out var seconds)||seconds<2||seconds>60))throw new InvalidDataException("检查点偏好无效。");}
             }
         }
         using(var cmd=Command(c,null,"SELECT at,before_json,after_json,kind FROM revisions"))using(var r=cmd.ExecuteReader())
-            while(r.Read()){DateTimeOffset.Parse(r.GetString(0),CultureInfo.InvariantCulture);for(var i=1;i<=2;i++)if(!r.IsDBNull(i)){using var document=JsonDocument.Parse(r.GetString(i));if(r.GetString(3)=="session")ValidateParts(Parse<StudyRecord>(r.GetString(i)),true);}}
+            while(r.Read()){DateTimeOffset.Parse(r.GetString(0),CultureInfo.InvariantCulture);for(var i=1;i<=2;i++)if(!r.IsDBNull(i)){using var document=JsonDocument.Parse(r.GetString(i));if(r.GetString(3)=="session")ValidateParts(Parse<StudyRecord>(r.GetString(i)),true);if(r.GetString(3)=="period-review"){var review=Parse<PeriodReview>(r.GetString(i));ValidateReview(review,review.Id,true);}}}
         if(Scalar(c,null,"SELECT payload FROM active_timer") is string timerJson)
         {
             var timer=Parse<TimerSnapshot>(timerJson);TimeParts.ResolveZone(timer.ZoneId);var current=records.Find(x=>x.Id==timer.SessionId);
@@ -408,9 +442,9 @@ public sealed class YanJiDatabase : IDisposable
     {
         if(File.Exists(path))throw new IOException("导出文件已存在，请另选文件名。");
         static string Cell(string value){if(value.StartsWith('=')||value.StartsWith('+')||value.StartsWith('-')||value.StartsWith('@'))value="'"+value;return "\""+value.Replace("\"","\"\"")+"\"";}
-        lock(_gate){using var writer=new StreamWriter(new FileStream(path,FileMode.CreateNew,FileAccess.Write),new UTF8Encoding(true));writer.WriteLine("记录ID,日期,科目,章节,来源,分钟,时间类型,开始UTC,结束UTC,备注");
+        lock(_gate){using var writer=new StreamWriter(new FileStream(path,FileMode.CreateNew,FileAccess.Write),new UTF8Encoding(true));writer.WriteLine("记录ID,日期,科目,章节,来源,分钟,时间类型,开始UTC,结束UTC,备注,精确毫秒,显示整数秒");
             var subjects=Subjects(true).ToDictionary(x=>x.Id,x=>x.Name);var chapters=Chapters(null,true).ToDictionary(x=>x.Id,x=>x.Name);
-            foreach(var record in Records())foreach(var p in record.Parts)writer.WriteLine(string.Join(',',new[]{record.Id,p.Date.ToString("yyyy-MM-dd",CultureInfo.InvariantCulture),subjects[record.SubjectId],record.ChapterId==null?"":chapters[record.ChapterId],record.Source.ToString(),(p.DurationMs/60000d).ToString("0.###",CultureInfo.InvariantCulture),p.Kind.ToString(),p.StartUtcMs is long start?DateTimeOffset.FromUnixTimeMilliseconds(start).ToString("O"):"",p.EndUtcMs is long end?DateTimeOffset.FromUnixTimeMilliseconds(end).ToString("O"):"",record.Note}.Select(Cell)));}
+            foreach(var record in Records())foreach(var p in record.Parts)writer.WriteLine(string.Join(',',new[]{record.Id,p.Date.ToString("yyyy-MM-dd",CultureInfo.InvariantCulture),subjects[record.SubjectId],record.ChapterId==null?"":chapters[record.ChapterId],record.Source.ToString(),(p.DurationMs/60000d).ToString("0.###",CultureInfo.InvariantCulture),p.Kind.ToString(),p.StartUtcMs is long start?DateTimeOffset.FromUnixTimeMilliseconds(start).ToString("O"):"",p.EndUtcMs is long end?DateTimeOffset.FromUnixTimeMilliseconds(end).ToString("O"):"",record.Note,p.DurationMs.ToString(CultureInfo.InvariantCulture),(p.DurationMs/1000).ToString(CultureInfo.InvariantCulture)}.Select(Cell)));}
     }
     public void Dispose() { /* Connections are short-lived and never pooled. */ }
 }

@@ -29,7 +29,7 @@ public partial class MainWindow
         var content=Math.Max(0,ActualWidth-(narrow?72:184)-MainScroll.Padding.Left-MainScroll.Padding.Right-24);
         void Columns(ColumnDefinition left,ColumnDefinition gap,ColumnDefinition right,FrameworkElement panel,double ratio,double threshold)
         {var stack=content<threshold;left.Width=new GridLength(stack?1:ratio,GridUnitType.Star);gap.Width=new GridLength(stack?0:16);right.Width=new GridLength(stack?0:1,GridUnitType.Star);Grid.SetColumn(panel,stack?0:2);Grid.SetRow(panel,stack?1:0);}
-        Columns(TodayLeft,TodayGap,TodayRight,TodayReflection,.72,700);Columns(CalendarLeft,CalendarGap,CalendarRight,CalendarDetail,1/1.35,740);Columns(StatsLeft,StatsGap,StatsRight,StatsDailyCard,1.7,850);
+        Columns(TodayLeft,TodayGap,TodayRight,TodayReflection,.72,800);Columns(CalendarLeft,CalendarGap,CalendarRight,CalendarDetail,1/1.35,800);Columns(StatsLeft,StatsGap,StatsRight,StatsDailyCard,1.7,850);
         if(TimerFields!=null&&TimerChapterField!=null)
         {var stack=content<700?content:((content-16)*.72/1.72);var vertical=stack<280;TimerFields.ColumnDefinitions[1].Width=new GridLength(vertical?0:12);TimerFields.ColumnDefinitions[2].Width=new GridLength(vertical?0:1,GridUnitType.Star);Grid.SetColumn(TimerChapterField,vertical?0:2);Grid.SetRow(TimerChapterField,vertical?1:0);}
         if(DrawerSurface!=null)DrawerSurface.Width=Math.Min(620,Math.Max(0,ActualWidth-32));
@@ -54,13 +54,23 @@ public partial class MainWindow
     private async void DayRecords_Click(object sender,RoutedEventArgs e){if(await Model.SaveReflectionAsync()){var date=DateOnly.FromDateTime(Model.SelectedDate);Model.OpenRecords(date,date);MainScroll.ScrollToTop();}}
     private async void StatsRecords_Click(object sender,RoutedEventArgs e){if(await Model.SaveReflectionAsync()){Model.OpenRecords(DateOnly.FromDateTime(Model.StatsFrom),DateOnly.FromDateTime(Model.StatsTo),Model.StatsSubjectId);MainScroll.ScrollToTop();}}
     private void StatsRange_Click(object sender,RoutedEventArgs e)=>Model.StatsRange(((Button)sender).Tag.ToString()!);
+    private void StatsView_Click(object sender,RoutedEventArgs e){Model.StatsView=int.Parse(((Button)sender).Tag.ToString()!);MainScroll.ScrollToTop();}
+    private void ManageChapters_Click(object sender,RoutedEventArgs e){Model.Page=2;MainScroll.ScrollToTop();}
+    private void NewReview_Click(object sender,RoutedEventArgs e)=>Model.NewPeriodReview();
+    private async void SaveReview_Click(object sender,RoutedEventArgs e)=>await Model.SavePeriodReviewAsync();
+    private void EditReview_Click(object sender,RoutedEventArgs e){Model.EditPeriodReview((ReviewRow)((Button)sender).Tag);ReviewEditor.BringIntoView();}
+    private void ReviewRecords_Click(object sender,RoutedEventArgs e){var row=(ReviewRow)((Button)sender).Tag;Model.OpenRecords(row.Review.From,row.Review.To,row.Review.SubjectId);MainScroll.ScrollToTop();}
+    private async void DeleteReview_Click(object sender,RoutedEventArgs e)
+    {var row=(ReviewRow)((Button)sender).Tag;if(Confirm("删除阶段复盘",row.Label+"\n可在显示已删除复盘后恢复。","软删除复盘"))await Model.RunAsync(()=>Model.Database.SetPeriodReviewDeleted(row.Review.Id,row.Review.Version,true),"复盘已软删除");}
+    private async void RestoreReview_Click(object sender,RoutedEventArgs e)
+    {var row=(ReviewRow)((Button)sender).Tag;await Model.RunAsync(()=>Model.Database.SetPeriodReviewDeleted(row.Review.Id,row.Review.Version,false),"复盘已恢复");}
     private async void Chart_Drill(PlotPoint point)
     {if(!await Model.SaveReflectionAsync())return;Model.OpenRecords(point.From??DateOnly.FromDateTime(Model.StatsFrom),point.To??DateOnly.FromDateTime(Model.StatsTo),point.SubjectId);MainScroll.ScrollToTop();}
     private async void Heatmap_Drill(PlotPoint point)
     {if(point.From is DateOnly date){await Model.ChangeDayAsync(date.ToDateTime(TimeOnly.MinValue));Model.CalendarMonth=date.ToDateTime(TimeOnly.MinValue);Model.Page=1;await Model.ChangeDayAsync(date.ToDateTime(TimeOnly.MinValue));}}
     private void Timeline_Drill(PlotPoint point){var row=Model.DayRecords.FirstOrDefault(r=>r.Record.Id==point.Key);if(row!=null)ShowDetail(row);}
     private async void ChapterDrill_Click(object sender,RoutedEventArgs e)
-    {if(!await Model.SaveReflectionAsync())return;var point=(PlotPoint)((Button)sender).Tag;Model.OpenRecords(DateOnly.FromDateTime(Model.StatsFrom),DateOnly.FromDateTime(Model.StatsTo),Model.StatsSubjectId,point.Key);MainScroll.ScrollToTop();}
+    {if(!await Model.SaveReflectionAsync())return;var point=(PlotPoint)((Button)sender).Tag;Model.OpenRecords(DateOnly.FromDateTime(Model.StatsFrom),DateOnly.FromDateTime(Model.StatsTo),point.SubjectId,point.Key);MainScroll.ScrollToTop();}
     private void Detail_Click(object sender,RoutedEventArgs e){if(((Button)sender).Tag is RecordRow row)ShowDetail(row);}
     private void ShowDetail(RecordRow row){_detailFocus=Keyboard.FocusedElement;Model.OpenDetail(row);Dispatcher.BeginInvoke(new Action(()=>DrawerCloseButton.Focus()));}
     private void CloseDrawer_Click(object sender,RoutedEventArgs e)

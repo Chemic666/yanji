@@ -1,0 +1,19 @@
+# V0.2.2 validation
+
+Development evidence: 86 Core cases PASS, 145 actual WPF/VM assertions PASS at actual DPI 192 on Windows 11 10.0.26200, .NET 10.0.12. Counts come from this run, not inherited V0.2.1 totals. Release acceptance requires the final self-contained EXE to repeat the native suite and fresh capture; the package's core-final.trx, native/results.json, capture/result.json and ZIP-VERIFICATION.json are the final authority.
+
+Meaningful red→green evidence is retained: old fractional-second/compact-hour behavior failed new expectations; 600+600ms aggregation, 1ms fact retention; missing period entity/API compile failure; CSV precise-value failure; corrupt review-revision backup failure; initial chapter shortcut failure; pending-state refresh failure. No business assertion was deleted. Changed old display assertions now require integer seconds. At 900×600, the lower chart explanation is checked after actual native scrolling; 1200×800 retains the initial-viewport check.
+
+Covered: real Windows timer start/pause/resume/finish, uncertain prefix and unknown gap exclusion, duration-only records without fake intervals, known overlaps, Chinese text persistence, edit/delete/restore, cross-day effective contribution vs whole identity, part exclusion/recovery, keyboard chart drill and focus return, subject/date/chapter/unspecified scopes, archive preservation and selector refresh, period review create/edit/delete/restore/version conflict, entity+revision rollback, invalid namespace/revision parsing, full backup restore/integrity, raw CSV 1ms preservation, zero/tiny/huge geometry, full long heatmap keyboard ranges, theme state and high-contrast palette simulation.
+
+The added clock-offset fixture changes only a synthetic entity timestamp, never OS time. Wall-clock timestamps may precede an older machine's CreatedAt after clock offset; edit order is authoritative Version. The application does not invent monotonic wall-clock dates.
+
+Legacy compatibility: a read-only SQLite snapshot of artifacts/v021-implementation/evidence-repair-20261014-db was copied into a new owned directory. Its d9a50ed provenance is retained. New code opened it without changing any table facts, backed it up, wrote a new review, and restored the old complete snapshot with no migration and integrity ok. This is isolated legacy evidence, not testing a real user database.
+
+Screenshots: V022CaptureRunner captures the three statistics views × light/dark × 1200×800/900×600 × empty/filled, lower scroll positions, other affected pages, four detail views, long ranges, pending/rest prefix, actual donut hover and its owned popup, single 1ms/extreme windows. Every actual image has observed HWND/PID, dimensions, DPI, timestamp and SHA256. Final capture uses one final published EXE and assembly source identity. Smoke bitmap variants are simulation tests, not proof of changed OS DPI. Only the dedicated native batch is shipped as screenshot evidence.
+
+Performance: bounded startup processes and the existing 400-row virtualized list-load sample are ordinary local observations; working set/CPU timings are retained raw where measured. No certification for all machines is claimed.
+
+NOT TESTED: physical IME composition, physical Narrator, actual power/sleep/lock events, changed system clock, other physical DPI settings, clean-machine installation or physical network disconnection. Native controls, automation/focus assertions and rendered bitmap variants do not establish those gates. No administrator installation, restart, system setting change, public push, credentials or real %LOCALAPPDATA%\YanJi database access occurred.
+
+Impeccable cannot detect WPF. Engine context exit 0 and guidance-based native audit/polish do not imply web detector, isolated-agent critique or browser acceptance.

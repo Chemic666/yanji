@@ -35,6 +35,7 @@ public static class SmokeRunner
             if(((App)Application.Current).PerformanceOnly)
             {await PerformanceRunner.RunAsync(window,output);Assert(true,"Fresh self-contained process performance completed");return;}
             VisualUpgradeRunner.CaptureEmpty(window,output);
+            V022NativeRunner.Empty(window,Assert);
             if(((App)Application.Current).V02Visual)await V02VisualRunner.EmptyAsync(window,output);
             vm.ManualMinutes="37";vm.ManualNote="中文输入验证：高等数学 · 极限";await vm.AddManualCommand.ExecuteAsync(null);
             Assert(vm.Database.Records().Any(r=>r.Note=="中文输入验证：高等数学 · 极限"&&r.DurationMs==2220000),"Manual command with Chinese note persisted");
@@ -82,6 +83,7 @@ public static class SmokeRunner
             Assert(editor.ShowDialog()==true&&editor.Values?["text"]=="中文测试","Actual editor default-save action preserves Chinese text");
             var backup=Path.Combine(output,"smoke.yanjibak");vm.Database.Backup(backup);vm.Database.ValidateBackup(backup);vm.Database.ExportCsv(Path.Combine(output,"smoke.csv"));Assert(File.Exists(backup),"UI process backup and CSV");
             await VisualUpgradeRunner.RunAsync(window,output,Assert);
+            await V022NativeRunner.RunAsync(window,Assert);
             if(((App)Application.Current).V02Visual)await V02VisualRunner.RunAsync(window,output,Assert);
             if(((App)Application.Current).V02Visual)await V021VisualRunner.RunAsync(window,output,Assert);
             var dpi=VisualTreeHelper.GetDpi(window);using var process=Process.GetCurrentProcess();

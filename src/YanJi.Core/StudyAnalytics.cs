@@ -31,26 +31,16 @@ public static class StudyAnalytics
 }
 public static class DurationText
 {
-    /// <summary>Compact display only. The approximation mark declares omitted low digits.</summary>
-    public static string Compact(long milliseconds)
-    {
-        ArgumentOutOfRangeException.ThrowIfNegative(milliseconds);
-        if(milliseconds<60000)return Format(milliseconds);
-        var hours=milliseconds/3600000;
-        var minutes=milliseconds/60000%60;
-        if(hours>0)
-            return (milliseconds%60000>0?"≈ ":"")+hours+" 小时"+(minutes>0?" "+minutes+" 分":"");
-        var seconds=milliseconds%60000/1000;
-        return (milliseconds%1000>0?"≈ ":"")+minutes+" 分"+(seconds>0?" "+seconds+" 秒":"");
-    }
+    /// <summary>Presentation floors seconds after raw aggregation. Canonical data is unchanged.</summary>
+    public static string Compact(long milliseconds)=>Format(milliseconds);
+    public static string Timer(long milliseconds)
+    {ArgumentOutOfRangeException.ThrowIfNegative(milliseconds);return (milliseconds/3600000).ToString("00",System.Globalization.CultureInfo.InvariantCulture)+":"+(milliseconds/60000%60).ToString("00",System.Globalization.CultureInfo.InvariantCulture);}
     public static string Format(long milliseconds)
     {
         ArgumentOutOfRangeException.ThrowIfNegative(milliseconds);
-        var seconds=(milliseconds%60000)/1000m;
-        var secondText=seconds.ToString("0.###",System.Globalization.CultureInfo.InvariantCulture);
-        if(milliseconds<60000)return secondText+" 秒";
-        var hours=milliseconds/3600000;var minutes=milliseconds/60000%60;
-        return (hours>0?hours+" 小时":"")+(minutes>0?(hours>0?" ":"")+minutes+" 分":"")+(seconds>0?" "+secondText+" 秒":"");
+        var seconds=milliseconds/1000%60;var hours=milliseconds/3600000;var minutes=milliseconds/60000%60;
+        if(hours==0&&minutes==0)return seconds+" 秒";
+        return (hours>0?hours+" 小时":"")+(minutes>0?(hours>0?" ":"")+minutes+" 分":"")+(seconds>0?" "+seconds+" 秒":"");
     }
     public static string Exact(long milliseconds)=>milliseconds.ToString("N0",System.Globalization.CultureInfo.GetCultureInfo("zh-CN"))+" 毫秒";
 }

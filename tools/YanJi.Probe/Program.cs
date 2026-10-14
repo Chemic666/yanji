@@ -6,6 +6,22 @@ using YanJi.Data;
 
 if(args.Length<2)throw new ArgumentException("Specify --run <new isolated directory> or --child <directory>.");
 var root=Path.GetFullPath(args[1]);
+if(args[0]=="--v022-compat")
+{
+    if(!File.Exists(Path.Combine(root,"owned-v022-legacy.marker")))throw new ArgumentException("Owned legacy synthetic fixture required.");
+    string State()
+    {
+        using var c=new SqliteConnection($"Data Source={Path.Combine(root,"data","yanji.sqlite")};Mode=ReadOnly;Pooling=False");c.Open();
+        using var names=c.CreateCommand();names.CommandText="SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name";var tables=new List<string>();using(var r=names.ExecuteReader())while(r.Read())tables.Add(r.GetString(0));
+        var rows=new Dictionary<string,string[]>();foreach(var table in tables){using var cmd=c.CreateCommand();cmd.CommandText="SELECT * FROM \""+table.Replace("\"","\"\"")+"\"";using var r=cmd.ExecuteReader();var items=new List<string>();while(r.Read()){var values=new object[r.FieldCount];r.GetValues(values);items.Add(JsonSerializer.Serialize(values));}rows[table]=items.Order(StringComparer.Ordinal).ToArray();}return JsonSerializer.Serialize(rows);
+    }
+    var before=State();using var db=new YanJiDatabase(Path.Combine(root,"data"));if(State()!=before)throw new Exception("Opening old synthetic DB changed stored facts.");
+    var backup=Path.Combine(root,"legacy-full.yanjibak");db.Backup(backup);db.ValidateBackup(backup);
+    var day=new DateOnly(2026,10,14);db.SavePeriodReview(new("compat-review",day,day,null,"新版本独立阶段复盘"));if(db.PeriodReviews().Count!=1)throw new Exception("New review write failed.");
+    db.RestoreBackup(backup);if(State()!=before||db.PeriodReviews().Count!=0)throw new Exception("Legacy full restore changed original snapshot.");
+    var report=new{Status="PASS",WriterSource="d9a50ed2f9b4b31545a32d3d717647f29ff10233",ReaderVersion=typeof(YanJiDatabase).Assembly.GetName().Version?.ToString(),OriginalTablesUnchanged=true,BackupRoundTrip=true,NewReviewRoundTrip=true,Integrity=db.Integrity(),SyntheticOnly=true};
+    File.WriteAllText(Path.Combine(root,"compatibility.json"),JsonSerializer.Serialize(report,new JsonSerializerOptions{WriteIndented=true}));Console.WriteLine(JsonSerializer.Serialize(report));return;
+}
 if(args[0] is "--v02-compat-capture" or "--v02-compat-verify")
 {
     if(!File.Exists(Path.Combine(root,"owned-v02-upgrade.marker")))throw new ArgumentException("V0.2 compatibility requires an owned fixture marker.");

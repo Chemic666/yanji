@@ -37,16 +37,23 @@ public sealed class StudyChart : FrameworkElement
     protected override AutomationPeer OnCreateAutomationPeer()=>new FrameworkElementAutomationPeer(this);
     protected override Size MeasureOverride(Size available)
     {
-        var height=Mode=="Heatmap"?154:Mode=="Timeline"?Math.Max(96,(Data?.Count??0)*52+28):Mode=="Ranking"?((Data?.Any(p=>p.Value>0)??false)?Data.Count*44:80):Mode=="Donut"?((Data?.Any(p=>p.Value>0)??false)?Math.Max(220,(Data?.Count??0)*44+12):80):Mode=="Sparkline"?44:((Data?.Any(p=>p.Value>0)??false)?220:80);
+        var height=Mode=="Heatmap"?154:Mode=="Timeline"?Math.Max(96,(Data?.Count??0)*52+28):Mode=="Ranking"?((Data?.Any(p=>p.Value>0)??false)?Data.Count*44:80):Mode=="Donut"?((Data?.Any(p=>p.Value>0)??false)?(available.Width<420?180+(Data?.Count??0)*44:Math.Max(220,(Data?.Count??0)*44+12)):80):Mode=="Sparkline"?44:((Data?.Any(p=>p.Value>0)??false)?220:80);
         return new Size(double.IsInfinity(available.Width)?500:available.Width,Math.Min(height,available.Height));
     }
     public void RefreshTheme()=>InvalidateVisual();
     private static Brush ColorBrush(string color)=>new SolidColorBrush((Color)ColorConverter.ConvertFromString(color));
     private static string Value(PlotPoint p,string unit)=>unit=="time"?DurationText.Format(p.Value):p.Value+" "+unit;
-    private string Description(PlotPoint p)=>p.Label+" · "+Value(p,Unit)+(Unit=="time"?"（"+DurationText.Exact(p.Value)+"）":"")+(p.Status.Length>0?" · "+p.Status:"");
+    private string Description(PlotPoint p)=>p.Label+" · "+(Unit=="time"&&p.Status.Contains("待核对")?(p.Value>0?"已确认 "+Value(p,Unit):"未知时长不计入"):Value(p,Unit))+(p.From is DateOnly from?$" · {from:yyyy-MM-dd}"+(p.To!=from?$" — {p.To:yyyy-MM-dd}":""):"")+(p.Status.Length>0?" · "+p.Status:"");
     private void Text(DrawingContext dc,string text,double x,double y,double size=11,Brush? brush=null,double width=1000)
     {if(width<2)return;var f=new FormattedText(text,CultureInfo.GetCultureInfo("zh-CN"),FlowDirection.LeftToRight,new Typeface("Segoe UI, Microsoft YaHei UI"),size,brush??ThemeService.Brush("Muted"),VisualTreeHelper.GetDpi(this).PixelsPerDip){MaxTextWidth=width,MaxTextHeight=size*1.8,Trimming=TextTrimming.CharacterEllipsis};dc.DrawText(f,new(x,y));}
+    private static long maxAxis(IReadOnlyList<PlotPoint> data)=>Math.Max(1,data.Max(p=>p.Value));
     private void Hit(Geometry g,PlotPoint p)=>_hits.Add((g,p));
+    internal Rect DonutCenterBounds {get;private set;}
+    private void CenterText(DrawingContext dc,string text,Point center,double size,double width)
+    {
+        var f=new FormattedText(text,CultureInfo.GetCultureInfo("zh-CN"),FlowDirection.LeftToRight,new Typeface("Segoe UI, Microsoft YaHei UI"),size,ThemeService.Brush("Ink"),VisualTreeHelper.GetDpi(this).PixelsPerDip){MaxTextWidth=width,TextAlignment=TextAlignment.Center};
+        var box=new Rect(center.X-width/2,center.Y-f.Height/2,width,f.Height);DonutCenterBounds=box;dc.DrawText(f,box.TopLeft);
+    }
     protected override void OnRender(DrawingContext dc)
     {
         base.OnRender(dc);_hits.Clear();dc.DrawRectangle(Brushes.Transparent,null,new(0,0,ActualWidth,ActualHeight));
@@ -68,7 +75,7 @@ public sealed class StudyChart : FrameworkElement
         }
         else if(Mode=="Donut")
         {
-            var sum=data.Sum(p=>p.Value);var cx=86d;var cy=105d;var radius=62d;var angle=-Math.PI/2;
+            var sum=data.Sum(p=>p.Value);var stacked=width<420;var cx=stacked?width/2:86d;var cy=stacked?82d:105d;var radius=62d;var angle=-Math.PI/2;var legendX=stacked?4:180d;var legendY=stacked?170:10;
             dc.DrawEllipse(null,new Pen(ThemeService.Brush("Soft"),20),new(cx,cy),radius,radius);
             for(var i=0;i<data.Count;i++)
             {
@@ -76,12 +83,12 @@ public sealed class StudyChart : FrameworkElement
                 if(sweep>=2*Math.PI-0.000001)g=new EllipseGeometry(new(cx,cy),radius,radius);
                 else {var path=new StreamGeometry();using(var c=path.Open()){c.BeginFigure(new(cx+radius*Math.Cos(angle),cy+radius*Math.Sin(angle)),false,false);c.ArcTo(new(cx+radius*Math.Cos(angle+sweep),cy+radius*Math.Sin(angle+sweep)),new(radius,radius),0,sweep>Math.PI,SweepDirection.Clockwise,true,false);}g=path;}
                 if(p.Value>0){dc.DrawGeometry(null,new Pen(ColorBrush(p.Color),20),g);Hit(g.GetWidenedPathGeometry(new Pen(Brushes.Black,28)),p);}
-                var legend=new Rect(180,10+i*44,Math.Max(1,width-180),40);dc.DrawRoundedRectangle(ColorBrush(p.Color),null,new(180,17+i*44,8,8),3,3);
-                Text(dc,p.Label,196,10+i*44,12,ThemeService.Brush("Ink"),width-196);
-                Text(dc,$"{(Unit=="time"?DurationText.Compact(p.Value):Value(p,Unit))} · {(100d*p.Value/sum):0.#}%",196,28+i*44,11,null,width-196);Hit(new RectangleGeometry(legend),p);angle+=sweep;
+                var legend=new Rect(legendX,legendY+i*44,Math.Max(1,width-legendX),40);dc.DrawRoundedRectangle(ColorBrush(p.Color),null,new(legendX,legendY+7+i*44,8,8),3,3);
+                Text(dc,p.Label,legendX+16,legendY+i*44,12,ThemeService.Brush("Ink"),width-legendX-16);
+                Text(dc,$"{(Unit=="time"?DurationText.Compact(p.Value):Value(p,Unit))} · {(100d*p.Value/sum):0.#}%",legendX+16,legendY+18+i*44,11,null,width-legendX-16);Hit(new RectangleGeometry(legend),p);angle+=sweep;
             }
-            var center=Unit!="time"?sum+" "+Unit:DurationText.Compact(sum);
-            Text(dc,"范围总计",cx-38,cy-21,11,null,90);Text(dc,center,cx-48,cy+2,14,ThemeService.Brush("Ink"),100);
+            var center=Unit!="time"?sum+" "+Unit:sum>=3600000?sum/3600000+" 小时\n"+sum/60000%60+" 分 "+sum/1000%60+" 秒":DurationText.Compact(sum);
+            CenterText(dc,"范围总计\n"+center,new(cx,cy),center.Length>20?10:12,100);
             Hit(new EllipseGeometry(new(cx,cy),48,48),new PlotPoint("total","范围总计",sum,data[0].Color,data.Select(p=>p.SubjectId).Distinct().Count()==1?data[0].SubjectId:null));
         }
         else if(Mode=="Heatmap")
@@ -90,7 +97,7 @@ public sealed class StudyChart : FrameworkElement
                 var intensity=p.Value==0?0:Math.Clamp(p.Value/(double)max,.18,1);
                 var fill=p.Value==0?ThemeService.Brush("Soft"):ColorBrush(p.Color);dc.PushOpacity(p.Value==0?1:.3+.7*intensity);dc.DrawRoundedRectangle(fill,null,rect,3,3);dc.Pop();
                 if(p.Status.Contains("休息"))Text(dc,"−",x+2,y-2,10,null,12);if(p.Status.Contains("待核对"))dc.DrawRoundedRectangle(null,new Pen(ThemeService.Brush("Warning"),2),rect,3,3);
-                if(p.From?.Day==1)Text(dc,p.From.Value.ToString("M月"),x,1,10,null,40);Hit(new RectangleGeometry(rect),p);}
+                if(p.From?.Day==1)Text(dc,p.From.Value.ToString("yyyy-MM"),x,1,10,null,64);if(p.Status!="范围外")Hit(new RectangleGeometry(rect),p);}
             Text(dc,"一",0,25,10);Text(dc,"三",0,57,10);Text(dc,"五",0,89,10);
         }
         else if(Mode=="Timeline")
@@ -103,8 +110,8 @@ public sealed class StudyChart : FrameworkElement
         }
         else
         {
-            var spark=Mode=="Sparkline";var left=spark?4:72;var top=spark?3:12;var bottom=spark?height-3:height-33;var right=width-10;var max=Math.Max(1,data.Max(p=>p.Value));var areaH=bottom-top;var areaW=Math.Max(1,right-left);
-            if(!spark)for(var tick=0;tick<=3;tick++){var y=bottom-areaH*tick/3;dc.DrawLine(new Pen(ThemeService.Brush("Line"),1),new(left,y),new(right,y));var divisor=max>=3600000?3600000d:max>=60000?60000d:1000d;var unit=max>=3600000?" 时":max>=60000?" 分":" 秒";var value=max*tick/3d/divisor;Text(dc,Unit=="time"?value.ToString(value>=1_000_000?"0.##E+0":"0.#",CultureInfo.InvariantCulture)+unit:((long)(max*tick/3d))+" "+Unit,0,y-7,10,null,left-6);}
+            var spark=Mode=="Sparkline";var left=spark?4:Math.Max(72,((maxAxis(data)/1000).ToString("N0",CultureInfo.InvariantCulture).Length+2)*7);var top=spark?3:12;var bottom=spark?height-3:height-33;var right=width-10;var max=Math.Max(1,data.Max(p=>p.Value));var areaH=bottom-top;var areaW=Math.Max(1,right-left);
+            if(!spark)for(var tick=0;tick<=3;tick++){var y=bottom-areaH*tick/3;dc.DrawLine(new Pen(ThemeService.Brush("Line"),1),new(left,y),new(right,y));Text(dc,Unit=="time"?((long)(max*tick/3d)/1000).ToString("N0",CultureInfo.InvariantCulture)+" 秒":((long)(max*tick/3d))+" "+Unit,0,y-7,10,null,left-6);}
             var step=areaW/data.Count;var points=new List<Point>();
             for(var i=0;i<data.Count;i++)
             {
@@ -118,12 +125,12 @@ public sealed class StudyChart : FrameworkElement
             if(points.Count>1){var g=new StreamGeometry();using(var c=g.Open()){c.BeginFigure(points[0],false,false);c.PolyLineTo(points.Skip(1).ToArray(),true,false);}var area=new StreamGeometry();using(var c=area.Open()){c.BeginFigure(new(points[0].X,bottom),true,true);c.LineTo(points[0],true,false);c.PolyLineTo(points.Skip(1).ToArray(),true,false);c.LineTo(new(points[^1].X,bottom),true,false);}dc.PushOpacity(.10);dc.DrawGeometry(ThemeService.Brush("Accent"),null,area);dc.Pop();dc.DrawGeometry(null,new Pen(ThemeService.Brush("Accent"),spark?2:2.5){LineJoin=PenLineJoin.Round},g);}
             if(points.Count==1)dc.DrawEllipse(ThemeService.Brush("Accent"),null,points[0],4,4);
         }
-        if(_selected>=0&&_selected<_hits.Count&&(IsKeyboardFocused||IsMouseOver)){dc.DrawGeometry(null,new Pen(ThemeService.Brush("Ink"),1.5),_hits[_selected].Shape);}
+        if(_selected>=0&&_selected<_hits.Count&&IsKeyboardFocused){var b=_hits[_selected].Shape.Bounds;dc.DrawRoundedRectangle(null,new Pen(ThemeService.Brush("Ink"),1.5),Mode=="Donut"?new Rect(2,2,12,12):b,2,2);}
     }
     protected override void OnMouseMove(MouseEventArgs e){base.OnMouseMove(e);var p=e.GetPosition(this);var hit=_hits.FindLastIndex(h=>h.Shape.FillContains(p));ToolTip=hit<0?null:Description(_hits[hit].Point);_hoverTip.IsOpen=hit>=0;if(hit>=0){_hoverTip.PlacementTarget=this;_hoverTip.PlacementRectangle=new Rect(p.X+12,p.Y+16,1,1);_hoverTip.Content=ToolTip;_keyboardTip.IsOpen=false;}if(hit!=_selected){_selected=hit;InvalidateVisual();}}
     protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e){base.OnMouseLeftButtonDown(e);Focus();var hit=_hits.FindLastIndex(h=>h.Shape.FillContains(e.GetPosition(this)));if(hit>=0){_selected=hit;PointInvoked?.Invoke(_hits[hit].Point);e.Handled=true;}}
     protected override void OnKeyDown(KeyEventArgs e){base.OnKeyDown(e);if(_hits.Count==0)return;
-        if(e.Key is Key.Left or Key.Right or Key.Home or Key.End){_selected=e.Key==Key.Home?0:e.Key==Key.End?_hits.Count-1:Math.Clamp(_selected+(e.Key==Key.Left?-1:1),0,_hits.Count-1);var description=Description(_hits[_selected].Point);AutomationProperties.SetHelpText(this,description);_keyboardTip.PlacementTarget=this;_keyboardTip.Content=description;_keyboardTip.IsOpen=true;InvalidateVisual();e.Handled=true;}
+        if(e.Key is Key.Left or Key.Right or Key.Home or Key.End){_selected=e.Key==Key.Home?0:e.Key==Key.End?_hits.Count-1:Math.Clamp(_selected+(e.Key==Key.Left?-1:1),0,_hits.Count-1);var description=Description(_hits[_selected].Point);BringIntoView(_hits[_selected].Shape.Bounds);AutomationProperties.SetHelpText(this,description);_keyboardTip.PlacementTarget=this;_keyboardTip.Content=description;_keyboardTip.IsOpen=true;InvalidateVisual();e.Handled=true;}
         if(e.Key==Key.Enter&&_selected>=0&&_selected<_hits.Count){PointInvoked?.Invoke(_hits[_selected].Point);e.Handled=true;}}
     protected override void OnGotKeyboardFocus(KeyboardFocusChangedEventArgs e){base.OnGotKeyboardFocus(e);if(_selected<0)_selected=0;InvalidateVisual();}
     protected override void OnLostKeyboardFocus(KeyboardFocusChangedEventArgs e){base.OnLostKeyboardFocus(e);_keyboardTip.IsOpen=false;InvalidateVisual();}

@@ -37,7 +37,7 @@ public partial class MainWindow : Window
         _tick.Tick+=async(_,_)=>{try{await Model.TickAsync();_tray.Text="研迹 · "+Model.TimerText;}catch(Exception e){Model.Status="自动保存未完成："+e.Message;}};
         Model.Error+=text=>{var smoke=((App)Application.Current).SmokePath;if(smoke!=null){Directory.CreateDirectory(smoke);File.AppendAllText(Path.Combine(smoke,"operation-errors.txt"),text+"\n");}else MessageBox.Show(this,text,"研迹",MessageBoxButton.OK,MessageBoxImage.Information);};
         SourceInitialized+=(_,_)=>{var handle=new WindowInteropHelper(this).Handle;_source=HwndSource.FromHwnd(handle);_source.AddHook(HandleMessage);WTSRegisterSessionNotification(handle,0);((App)Application.Current).RecordWindow(handle);};
-        Loaded+=async(_,_)=>{await Model.InitializeAsync();_tick.Start();if(((App)Application.Current).V021Capture)await V021CaptureRunner.RunAsync(this,((App)Application.Current).SmokePath!,((App)Application.Current).V021Fixture!);else if(((App)Application.Current).SmokePath!=null)await SmokeRunner.RunAsync(this,((App)Application.Current).SmokePath!);};
+        Loaded+=async(_,_)=>{await Model.InitializeAsync();_tick.Start();if(((App)Application.Current).V022Capture)await V022CaptureRunner.RunAsync(this,((App)Application.Current).SmokePath!);else if(((App)Application.Current).V021Capture)await V021CaptureRunner.RunAsync(this,((App)Application.Current).SmokePath!,((App)Application.Current).V021Fixture!);else if(((App)Application.Current).SmokePath!=null)await SmokeRunner.RunAsync(this,((App)Application.Current).SmokePath!);};
         Closing+=OnClosing;
         Closed+=(_,_)=>{ThemeService.Changed-=RefreshChartThemes;_tick.Stop();if(_source!=null){WTSUnRegisterSessionNotification(_source.Handle);_source.RemoveHook(HandleMessage);}_tray.Dispose();Model.Database.Dispose();Application.Current.Shutdown();};
     }
@@ -91,7 +91,7 @@ public partial class MainWindow : Window
     private static string? Null(string text)=>string.IsNullOrWhiteSpace(text)?null:text;
     private static DateOnly? Date(string text)=>Null(text)==null?null:DateOnly.ParseExact(text.Trim(),"yyyy-MM-dd",CultureInfo.InvariantCulture);
     private Dictionary<string,string>? Edit(string title,Field[] fields,string hint="",Func<Dictionary<string,string>,string?>? validate=null)
-    {var dialog=new EditorDialog(this,title,fields,hint,validate);TestDialogShown?.Invoke(dialog);return dialog.ShowDialog()==true?dialog.Values:null;}
+    {var dialog=new EditorDialog(this,title,fields,hint,validate);dialog.BindChapters(Model.AllChapters.ToList(),fields.FirstOrDefault(f=>f.Key=="chapter")?.Value);TestDialogShown?.Invoke(dialog);return dialog.ShowDialog()==true?dialog.Values:null;}
     private static string? Required(Dictionary<string,string> values,params string[] keys)=>keys.Any(key=>string.IsNullOrWhiteSpace(values[key]))?"请填写必填项。":null;
     private async void AddSubject_Click(object sender,RoutedEventArgs e)=>await EditSubjectAsync(null);
     private async void EditSubject_Click(object sender,RoutedEventArgs e)=>await EditSubjectAsync(((Button)sender).Tag as Subject);
@@ -146,8 +146,8 @@ public partial class MainWindow : Window
     {
         var record=((RecordRow)((Button)sender).Tag).Record;
         if(Model.TimerActive&&record.Id==Model.Timer.SessionId){MessageBox.Show(this,"请先结束活动计时，再修正这条记录。","研迹");return;}
-        var allocation=string.Join('\n',record.Parts.GroupBy(p=>p.Date).Select(g=>$"{g.Key:yyyy-MM-dd} = {(g.Sum(p=>p.DurationMs)/60000d).ToString("0.######",CultureInfo.InvariantCulture)}"));
-        var v=Edit("每日记录 · 查看与修正",[new("subject","科目 *",record.SubjectId,SubjectChoices()),new("chapter","主要章节（可选）",record.ChapterId??"",ChapterChoices()),new("note","备注",record.Note,Multiline:true),new("mode","时间修正方式","keep",[new("keep","保留原有时间片段"),new("duration","改为按日期分配的纯时长"),new("interval","改为明确起止时间")]),new("allocation","日期 = 分钟（仅纯时长模式生效）",allocation,Multiline:true),new("start","开始时间（仅区间模式；含偏移）"),new("end","结束时间（仅区间模式；含偏移）")],$"这是修改已有记录，不会追加一条。整次 {MainViewModel.Duration(record.DurationMs)}；受影响日期：{string.Join("、",record.Parts.Select(p=>p.Date).Distinct())}。原始片段保留在历史中。",v=>{if(v["mode"]=="duration")Allocations(v["allocation"],Model.ZoneId);if(v["mode"]=="interval")Interval(v,Model.ZoneId);return Required(v,"subject")??CheckChapter(v);});
+        var allocation=string.Join('\n',record.Parts.Select(p=>p.Date).Distinct().Select(d=>$"{d:yyyy-MM-dd} = "));
+        var v=Edit("每日记录 · 查看与修正",[new("subject","科目 *",record.SubjectId,SubjectChoices()),new("chapter","主要章节（可选）",record.ChapterId??"",ChapterChoices()),new("note","备注",record.Note,Multiline:true),new("mode","时间修正方式","keep",[new("keep","保留原有时间片段"),new("duration","改为按日期分配的纯时长"),new("interval","改为明确起止时间")]),new("allocation","日期 = 分钟（替换时请重新明确填写）",allocation,Multiline:true),new("start","开始时间（仅区间模式；含偏移）"),new("end","结束时间（仅区间模式；含偏移）")],$"这是修改已有记录，不会追加一条。整次 {MainViewModel.Duration(record.DurationMs)}；受影响日期：{string.Join("、",record.Parts.Select(p=>p.Date).Distinct())}。原始片段保留在历史中。",v=>{if(v["mode"]=="duration")Allocations(v["allocation"],Model.ZoneId);if(v["mode"]=="interval")Interval(v,Model.ZoneId);return Required(v,"subject")??CheckChapter(v);});
         if(v==null)return;try{await Model.FlushTimerAsync();await Model.RunAsync(()=>Model.Database.SaveRecord(record with{SubjectId=v["subject"],ChapterId=Null(v["chapter"]),Note=v["note"],Parts=v["mode"]=="keep"?record.Parts:v["mode"]=="duration"?Allocations(v["allocation"],Model.ZoneId):Interval(v,Model.ZoneId)},"用户修正已有记录"),"记录已修正，统计已更新");}catch(Exception exception){Model.Status=exception.Message;}
     }
     private void History_Click(object sender,RoutedEventArgs e)
@@ -159,7 +159,7 @@ public partial class MainWindow : Window
         if(text==null)return "（无）";var record=JsonSerializer.Deserialize<StudyRecord>(text)!;
         var subject=Model.AllSubjects.FirstOrDefault(s=>s.Id==record.SubjectId)?.Name??record.SubjectId;
         var chapter=Model.AllChapters.FirstOrDefault(c=>c.Id==record.ChapterId)?.Name??"未指定章节";
-        var lines=record.Parts.Select(p=>$"{p.Date:yyyy-MM-dd} · {MainViewModel.Duration(p.DurationMs)}"+(p.Kind==PartKind.DurationOnly?"（纯时长）":$" · {TimeZoneInfo.ConvertTime(DateTimeOffset.FromUnixTimeMilliseconds(p.StartUtcMs!.Value),TimeParts.ResolveZone(p.ZoneId)):HH:mm:ss} — {TimeZoneInfo.ConvertTime(DateTimeOffset.FromUnixTimeMilliseconds(p.EndUtcMs!.Value),TimeParts.ResolveZone(p.ZoneId)):HH:mm:ss}（{p.ZoneId}）"));
+        var lines=record.Parts.Select(p=>$"{p.Date:yyyy-MM-dd} · {MainViewModel.Duration(p.DurationMs)}"+(p.Kind==PartKind.DurationOnly?"（纯时长）":$" · {TimeZoneInfo.ConvertTime(DateTimeOffset.FromUnixTimeMilliseconds(p.StartUtcMs!.Value),TimeParts.ResolveZone(p.ZoneId)):HH:mm:ss} — {TimeZoneInfo.ConvertTime(DateTimeOffset.FromUnixTimeMilliseconds(p.EndUtcMs!.Value),TimeParts.ResolveZone(p.ZoneId)):HH:mm:ss}"));
         return $"科目：{subject} · 章节：{chapter}\n来源：{(record.Source==SessionSource.Timer?"计时":"补录")} · 状态：{(record.Deleted?"已删除":"有效")}\n总时长：{MainViewModel.Duration(record.DurationMs)}\n{string.Join('\n',lines)}\n备注：{record.Note}";
     }
     private void ShowText(string title,string text){var dialog=new Window{Owner=this,Title=title,Width=700,Height=600,WindowStartupLocation=WindowStartupLocation.CenterOwner};dialog.Content=new TextBox{Text=text,IsReadOnly=true,TextWrapping=TextWrapping.Wrap,VerticalScrollBarVisibility=ScrollBarVisibility.Auto,Margin=new Thickness(24)};dialog.ShowDialog();}

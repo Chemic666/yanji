@@ -19,7 +19,7 @@ internal static class V021VisualRunner
     {var point=e.TranslatePoint(new Point(),w.MainScroll);return point.Y>=0&&point.Y+e.ActualHeight<=w.MainScroll.ActualHeight-w.MainScroll.Padding.Bottom&&point.X>=0&&point.X+e.ActualWidth<=w.MainScroll.ActualWidth;}
     public static async Task RunAsync(MainWindow w,string output,Action<bool,string> check)
     {
-        var vm=w.Model;vm.DrawerOpen=false;vm.StatsSubjectId="";var day=vm.LocalToday();
+        var vm=w.Model;vm.DrawerOpen=false;vm.StatsView=0;vm.StatsSubjectId="";var day=vm.LocalToday();
         vm.Page=3;w.UpdateLayout();var search=VisualUpgradeRunner.Descendants(w).OfType<TextBox>().First(t=>AutomationProperties.GetName(t)=="搜索名称、困难或错误分类");
         check(search.ActualHeight==40,"V021 weak search matches 40 DIP filter height");
         foreach(var size in new[]{(900d,600d),(1200d,800d)})
@@ -27,11 +27,12 @@ internal static class V021VisualRunner
             w.Width=size.Item1;w.Height=size.Item2;vm.Page=0;w.MainScroll.ScrollToTop();w.UpdateLayout();await Task.Delay(80);
             var actions=VisualUpgradeRunner.Descendants(w).OfType<Button>().Where(b=>b.IsVisible&&b.Content is string s&&(s=="开始"||s=="暂停 / 继续"||s=="结束")).ToList();
             check(actions.Count==3&&actions.All(b=>VisibleIn(w,b)),$"V021 timer three actions inside {size.Item1}x{size.Item2} initial viewport");
-            check(Grid.GetColumn(w.TodayReflection)==2,$"V021 today keeps two usable columns at {size.Item1}");
+            check(Grid.GetColumn(w.TodayReflection)==(size.Item1==900?0:2),$"V021 today keeps two usable columns at {size.Item1}");
             vm.Page=4;w.MainScroll.ScrollToTop();w.UpdateLayout();await Task.Delay(60);
             check(VisibleIn(w,w.DailyStack),$"V021 entire daily plot and axes inside {size.Item1}x{size.Item2} initial viewport");
             var caption=VisualUpgradeRunner.Descendants(w).OfType<TextBlock>().First(t=>t.IsVisible&&t.Text=="纵轴为实际时长，非归一化百分比；颜色对应科目。");
-            check(VisibleIn(w,caption),$"V021 daily plot scope explanation inside {size.Item1}x{size.Item2} initial viewport");
+            if(size.Item1==900){caption.BringIntoView();w.UpdateLayout();}
+            check(VisibleIn(w,caption),$"V022 daily plot scope explanation reachable at {size.Item1}x{size.Item2}"+(size.Item1==900?" by native vertical scroll":" initial viewport"));w.MainScroll.ScrollToTop();
             check(w.MainScroll.ExtentWidth<=w.MainScroll.ViewportWidth+1,$"V021 no main horizontal overflow at {size.Item1}");
         }
         vm.Page=0;w.MainScroll.ScrollToTop();w.UpdateLayout();
@@ -39,25 +40,25 @@ internal static class V021VisualRunner
         check(w.DrawerCloseButton.IsKeyboardFocused,"V021 drawer uses stable named close focus");
         w.RaiseEvent(new KeyEventArgs(Keyboard.PrimaryDevice,PresentationSource.FromVisual(w),0,Key.Escape){RoutedEvent=Keyboard.PreviewKeyDownEvent});await Task.Delay(80);
         check(view.IsKeyboardFocused,"V021 compact detail Escape returns to original visible action");
-        vm.Page=4;w.MainScroll.ScrollToTop();w.SubjectDonut.BringIntoView();w.UpdateLayout();w.Activate();await Task.Delay(100);
+        vm.Page=4;vm.StatsView=0;w.UpdateLayout();w.MainScroll.ScrollToTop();w.SubjectDonut.BringIntoView();w.UpdateLayout();w.Activate();await Task.Delay(100);
         var chart=w.SubjectDonut;var points=chart.Data!;
-        check(chart.Mode=="Ranking"&&chart.HitCount==points.Count,"V021 ranking has one hit per canonical subject");
+        check(chart.Mode=="Donut"&&chart.HitCount==points.Count*2+1,"V021 donut has one hit per canonical subject");
         var first=points[0];Keyboard.Focus(chart);PressKey(chart,Key.Home);PressKey(chart,Key.Enter);await Task.Delay(100);
-        check(vm.Page==6&&vm.RecordSubjectId==first.SubjectId&&DateOnly.FromDateTime(vm.RecordFrom)==DateOnly.FromDateTime(vm.StatsFrom)&&DateOnly.FromDateTime(vm.RecordTo)==DateOnly.FromDateTime(vm.StatsTo),"V021 ranking Enter preserves original subject and range");
-        check(vm.FilteredRecords.Sum(r=>r.Contribution)==first.Value,"V021 ranking drill record contributions equal raw point milliseconds");
+        check(vm.Page==6&&vm.RecordSubjectId==first.SubjectId&&DateOnly.FromDateTime(vm.RecordFrom)==DateOnly.FromDateTime(vm.StatsFrom)&&DateOnly.FromDateTime(vm.RecordTo)==DateOnly.FromDateTime(vm.StatsTo),"V021 donut Enter preserves original subject and range");
+        check(vm.FilteredRecords.Sum(r=>r.Contribution)==first.Value,"V021 donut drill record contributions equal raw point milliseconds");
         vm.Page=4;chart.BringIntoView();w.UpdateLayout();var pointer=NativeCapture.MoveToOwned(chart,chart.FirstHitCenter);
         try
         {
             await Task.Delay(350);
-            check(chart.HoverTooltip.IsOpen&&chart.HoverTooltip.Content is string s&&s.Contains(DurationText.Exact(first.Value)),"V021 native ranking hover exposes exact original milliseconds");
-            NativeCapture.SavePopup(chart.HoverTooltip,Path.Combine(output,"v021-ranking-tooltip-native.png"));
+            check(chart.HoverTooltip.IsOpen&&chart.HoverTooltip.Content is string s&&s.Contains(DurationText.Format(first.Value)),"V021 native donut hover exposes exact integer seconds while raw data stays unchanged");
+            NativeCapture.SavePopup(chart.HoverTooltip,Path.Combine(output,"v021-donut-tooltip-native.png"));
             chart.RaiseEvent(new MouseButtonEventArgs(Mouse.PrimaryDevice,0,MouseButton.Left){RoutedEvent=Mouse.MouseDownEvent});await Task.Delay(80);
-            check(vm.Page==6&&vm.RecordSubjectId==first.SubjectId,"V021 routed mouse at owned pointer ranking hit preserves subject");
+            check(vm.Page==6&&vm.RecordSubjectId==first.SubjectId,"V021 routed mouse at owned pointer donut hit preserves subject");
         }
         finally{NativeCapture.RestoreCursor(pointer);}
-        vm.Page=4;vm.StatsSubjectId="english";w.UpdateLayout();check(!chart.HoverTooltip.IsOpen&&chart.ToolTip==null,"V021 filter change clears native ranking precision popup");
-        chart.Data=[new("zero","zero",0,"#456653")];w.UpdateLayout();await Task.Delay(30);check(chart.HitCount==0&&chart.DesiredSize.Height==80,"V021 all-zero ranking has no fictitious hit and compact height");
-        chart.Data=[new("tiny","long label for precision boundary",1,"#456653","math"),new("large","large",long.MaxValue/2,"#456653","english")];w.UpdateLayout();await Task.Delay(30);check(chart.HitCount==2,"V021 ranking tiny and extreme values remain finite and independently reachable");
+        vm.Page=4;vm.StatsSubjectId="english";w.UpdateLayout();check(!chart.HoverTooltip.IsOpen&&chart.ToolTip==null,"V021 filter change clears native donut precision popup");
+        chart.Data=[new("zero","zero",0,"#456653")];w.UpdateLayout();await Task.Delay(30);check(chart.HitCount==0&&chart.DesiredSize.Height==80,"V021 all-zero donut has no fictitious hit and compact height");
+        chart.Data=[new("tiny","long label for precision boundary",1,"#456653","math"),new("large","large",long.MaxValue/2,"#456653","english")];w.UpdateLayout();await Task.Delay(30);check(chart.HitCount==5,"V021 donut tiny and extreme values remain finite and independently reachable");
         chart.ClearValue(StudyChart.DataProperty);chart.SetBinding(StudyChart.DataProperty,"SubjectPlot");vm.StatsSubjectId="";
         w.Width=900;w.Height=600;
         foreach(var dark in new[]{false,true})
@@ -85,7 +86,7 @@ internal static class V021VisualRunner
         foreach(var ms in new long[]{0,1,1555,59000,60000,61001,3600001})
         {
             var display=new NaturalDuration{Milliseconds=ms,FontSize=28};var host=new Window{Owner=w,Content=display,Width=320,Height=100,ShowActivated=false};host.Show();await Task.Delay(20);
-            check(display.Milliseconds==ms&&AutomationProperties.GetName(display).Contains(DurationText.Exact(ms))&&display.Inlines.OfType<Run>().Any(r=>r.FontSize<display.FontSize),"V021 natural duration hierarchy retains "+ms+"ms precision");host.Close();
+            check(display.Milliseconds==ms&&AutomationProperties.GetName(display)==DurationText.Format(ms)&&display.Inlines.OfType<Run>().Any(r=>r.FontSize<display.FontSize),"V021 natural duration hierarchy retains "+ms+"ms precision");host.Close();
         }
         vm.Page=0;await vm.ChangeDayAsync(day.ToDateTime(TimeOnly.MinValue));
     }

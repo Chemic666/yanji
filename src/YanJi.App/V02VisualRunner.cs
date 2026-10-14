@@ -66,15 +66,15 @@ internal static class V02VisualRunner
   w.Width=1600;w.Height=1000;vm.Page=4;w.MainScroll.ScrollToTop();await Shot(w,output,"statistics-large-dark");
   check(w.ActualWidth>=1200&&w.ActualHeight>=800,"V02 large window expands workspace within OS tracking limit");
   w.Width=1200;w.Height=800;vm.Page=4;w.MainScroll.ScrollToBottom();await Shot(w,output,"statistics-secondary-dark");
-  w.MainScroll.ScrollToTop();Keyboard.Focus(w.TrendChart);w.TrendChart.RaiseEvent(new KeyEventArgs(Keyboard.PrimaryDevice,PresentationSource.FromVisual(w),0,Key.Home){RoutedEvent=Keyboard.KeyDownEvent});
-  check(AutomationProperties.GetHelpText(w.TrendChart).Contains("毫秒")&&Application.Current.Windows.Count>0,"V02 chart keyboard provides exact raw-duration description");
+  vm.StatsView=1;w.UpdateLayout();w.MainScroll.ScrollToTop();Keyboard.Focus(w.TrendChart);w.TrendChart.RaiseEvent(new KeyEventArgs(Keyboard.PrimaryDevice,PresentationSource.FromVisual(w),0,Key.Home){RoutedEvent=Keyboard.KeyDownEvent});
+  check(!AutomationProperties.GetHelpText(w.TrendChart).Contains("毫秒")&&AutomationProperties.GetHelpText(w.TrendChart).Contains(DurationText.Format(w.TrendChart.Data![0].Value))&&Application.Current.Windows.Count>0,"V02 chart keyboard provides integer-second duration description");
   w.TrendChart.BringIntoView();w.UpdateLayout();w.Activate();Keyboard.Focus(w.ExitButton);await Task.Delay(80);ToolTipService.SetInitialShowDelay(w.TrendChart,100);
   var pointer=NativeCapture.MoveToOwned(w.TrendChart,w.TrendChart.FirstHitCenter);
   try
   {
    await Task.Delay(700);
-   var expected=DurationText.Exact(w.TrendChart.Data![0].Value);
-   check(w.TrendChart.IsMouseOver&&w.TrendChart.ToolTip is string hover&&hover.Contains(expected),"V02 actual owned-window pointer hover displays canonical milliseconds");
+   var expected=DurationText.Format(w.TrendChart.Data![0].Value);
+   check(w.TrendChart.IsMouseOver&&w.TrendChart.ToolTip is string hover&&hover.Contains(expected),"V02 actual owned-window pointer hover displays integer-second presentation");
    var tooltip=w.TrendChart.HoverTooltip;
    check(tooltip.IsOpen&&tooltip.IsVisible&&tooltip.Content is string text&&text.Contains(expected),"V02 actual chart hover opens its native tooltip popup");NativeCapture.SavePopup(tooltip,Path.Combine(output,"chart-hover-exact-native.png"));
   }
@@ -82,7 +82,7 @@ internal static class V02VisualRunner
   vm.StatsSubjectId="math";w.UpdateLayout();check(w.TrendChart.ToolTip==null,"V02 changing chart filter clears stale precision tooltip");vm.StatsSubjectId="";
   vm.Page=5;w.MainScroll.ScrollToTop();w.UpdateLayout();var theme=VisualUpgradeRunner.Descendants(w).OfType<CheckBox>().First(c=>Equals(c.Content,"深色主题"));Keyboard.Focus(theme);theme.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
   check(Keyboard.FocusedElement!=null,"V02 themed settings retain keyboard navigation");
-  var converter=new DurationDisplayConverter();check((string)converter.Convert(1L,typeof(string),null!,System.Globalization.CultureInfo.InvariantCulture)=="0.001 秒","V02 compact display retains subsecond precision");
+  var converter=new DurationDisplayConverter();check((string)converter.Convert(1L,typeof(string),null!,System.Globalization.CultureInfo.InvariantCulture)=="0 秒"&&vm.Database.Records().Any(r=>r.Parts.Any(p=>p.DurationMs==1)),"V022 compact display floors seconds while one millisecond facts persist");
   await vm.RunAsync(()=>vm.Database.SaveSetting("theme","light"),"验收完成");vm.Page=0;await vm.ChangeDayAsync(today.ToDateTime(TimeOnly.MinValue));w.MainScroll.ScrollToTop();
   var editor=new EditorDialog(w,"快速补录 · 输入验证",[new("minutes","时长（分钟）*","invalid")],"保留输入，错误直接显示在当前表单。",v=>double.TryParse(v["minutes"],out _)?null:"请输入有效分钟数");
   Exception? editorFailure=null;

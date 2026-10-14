@@ -395,6 +395,6 @@
     <Setter Property="FontFamily" Value="Segoe UI Variable Text, Segoe UI, Microsoft YaHei UI" />
     <Setter Property="Typography.NumeralAlignment" Value="Tabular" />
     <Setter Property="FontSize" Value="28" /><Setter Property="Foreground" Value="{DynamicResource Ink}" />
-    <Setter Property="TextWrapping" Value="NoWrap" />
+    <Setter Property="TextWrapping" Value="Wrap" />
   </Style>
 </ResourceDictionary>

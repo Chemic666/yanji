@@ -19,7 +19,7 @@ public sealed class AnalyticsTests
         var empty=StudyAnalytics.Build([],[],Day.AddDays(1),Day.AddDays(2),Day);Assert.Equal(0,empty.CalendarDays);Assert.Equal(0,empty.CalendarAverageMs);Assert.Empty(empty.Subjects);
         Assert.Throws<ArgumentException>(()=>StudyAnalytics.Build([],[],Day.AddDays(1),Day,Day));
     }
-    [Theory][InlineData(1,"0.001 秒")][InlineData(1555,"1.555 秒")][InlineData(59000,"59 秒")][InlineData(60000,"1 分")][InlineData(61001,"1 分 1.001 秒")][InlineData(3600000,"1 小时")]
+    [Theory][InlineData(1,"0 秒")][InlineData(1555,"1 秒")][InlineData(59000,"59 秒")][InlineData(60000,"1 分")][InlineData(61001,"1 分 1 秒")][InlineData(3600000,"1 小时")]
     public void NaturalDurationsDoNotTurnSecondsIntoZeroMinutes(long ms,string expected)=>Assert.Equal(expected,DurationText.Format(ms));
     [Fact] public void LargeValueAndSinglePointRetainActualScale()
     {var a=StudyAnalytics.Build([R("a","math",Day,1_000_000_000_000)],[],Day,Day,Day);Assert.Equal(1_000_000_000_000,a.DurationMs);Assert.Single(a.Daily);Assert.Equal(1_000_000_000_000,a.Subjects.Single().DurationMs);}
