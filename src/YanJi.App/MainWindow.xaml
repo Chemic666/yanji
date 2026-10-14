@@ -260,9 +260,9 @@
                       <ComboBox x:Name="FocusModeSelector" SelectedIndex="{Binding FocusModeIndex}" Width="130" Style="{StaticResource FocusComboBox}" AutomationProperties.Name="专注模式">
                         <ComboBoxItem Content="自由计时" /><ComboBoxItem Content="倒计时" /><ComboBoxItem Content="番茄钟" />
                       </ComboBox>
-                      <TextBox Text="{Binding FocusMinutes,UpdateSourceTrigger=PropertyChanged}" Width="55" Visibility="{Binding ConfiguredTimed,Converter={StaticResource BoolVisibility}}" Style="{StaticResource FocusTextBox}" AutomationProperties.Name="专注分钟" ToolTip="限时模式专注 1～720 分钟；自由计时忽略此项" />
+                      <TextBox Text="{Binding FocusMinutes,UpdateSourceTrigger=PropertyChanged}" Width="86" Padding="6,2" HorizontalContentAlignment="Center" Visibility="{Binding ConfiguredTimed,Converter={StaticResource BoolVisibility}}" Style="{StaticResource FocusTextBox}" AutomationProperties.Name="专注分钟" ToolTip="限时模式专注 1～720 分钟；自由计时忽略此项" />
                       <TextBlock Text="分" Visibility="{Binding ConfiguredTimed,Converter={StaticResource BoolVisibility}}" Style="{StaticResource MutedText}" VerticalAlignment="Center" Margin="4,0" />
-                      <TextBox Text="{Binding BreakMinutes,UpdateSourceTrigger=PropertyChanged}" Width="45" Visibility="{Binding ConfiguredPomodoro,Converter={StaticResource BoolVisibility}}" Style="{StaticResource FocusTextBox}" AutomationProperties.Name="番茄休息分钟" ToolTip="番茄结束后休息 1～60 分钟，不计入学习" />
+                      <TextBox Text="{Binding BreakMinutes,UpdateSourceTrigger=PropertyChanged}" Width="68" Padding="6,2" HorizontalContentAlignment="Center" Visibility="{Binding ConfiguredPomodoro,Converter={StaticResource BoolVisibility}}" Style="{StaticResource FocusTextBox}" AutomationProperties.Name="番茄休息分钟" ToolTip="番茄结束后休息 1～60 分钟，不计入学习" />
                       <TextBlock Text="分休息" Visibility="{Binding ConfiguredPomodoro,Converter={StaticResource BoolVisibility}}" Style="{StaticResource MutedText}" VerticalAlignment="Center" />
                     </WrapPanel>
                     <TextBlock Text="{Binding FocusSubjectLabel}" Style="{StaticResource MutedText}" Margin="0,2,0,6" />
