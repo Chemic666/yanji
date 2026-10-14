@@ -53,7 +53,7 @@ internal static class TimerDisplayValidation
                     await vm.PauseResumeCommand.ExecuteAsync(null);var paused=vm.Timer.DurationMs;var frozen=vm.TimerText;await Task.Delay(3100);await Read(((FocusMode)mode)+"-paused");Check(vm.Timer.DurationMs==paused&&vm.TimerText==frozen,"Pause 3 seconds freezes both time facts and digits");
                     await vm.PauseResumeCommand.ExecuteAsync(null);await Reach(paused+1000);await Read(((FocusMode)mode)+"-resumed");
                     var before=vm.Timer.DurationMs;w.WindowState=WindowState.Minimized;await Reach(before+2000);await Read(((FocusMode)mode)+"-minimized");w.WindowState=WindowState.Normal;
-                    vm.Page=4;before=vm.Timer.DurationMs;await Reach(before+2000);await Read(((FocusMode)mode)+"-other-page");vm.Page=0;await Read(((FocusMode)mode)+"-restored-page");
+                    vm.Page=app.M1Check?2:4;before=vm.Timer.DurationMs;await Reach(before+2000);await Read(((FocusMode)mode)+"-other-page");vm.Page=0;await Read(((FocusMode)mode)+"-restored-page");
                     await Reach(65000);await Read(((FocusMode)mode)+"-over-65-seconds");vm.DarkTheme=mode==1;w.Width=mode==1?900:1200;w.Height=mode==1?600:800;await Shot(w,((FocusMode)mode)+"-65seconds");
                 }
                 await vm.FinishCommand.ExecuteAsync(null);var saved=vm.Database.Records().Single(r=>r.Id==vm.Timer.SessionId);Check(saved.DurationMs==vm.Timer.DurationMs&&saved.Parts.Sum(p=>p.DurationMs)==saved.DurationMs,"Finished raw timer equals saved effective parts");

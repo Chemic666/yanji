@@ -12,7 +12,7 @@ namespace YanJi.App;
 public sealed record ChapterRow(Chapter Chapter,string MasteryLabel,string ArchiveLabel)
 {public string Name=>Chapter.Name;public int Progress=>Chapter.Progress;}
 public sealed record SubjectGroup(Subject Subject,List<ChapterRow> Children)
-{public string Name=>Subject.Name;public string Detail=>$"{Children.Count} 个章节"+(Subject.Archived?" · 已归档":"");public string Color=>ThemeService.SubjectColor(Subject.Id);}
+{public string Name=>Subject.Name;public string Detail=>$"{Children.Count} 个知识节点"+(Subject.Archived?" · 已归档":"");public string Color=>ThemeService.SubjectColor(Subject.Id);}
 public sealed record WeakRow(WeakPoint Point,string Subject,string Chapter,string State,string Review,string History)
 {public string Title=>Point.Title;public string Detail=>Point.Detail;public string Category=>Point.Category.Length==0?"未分类":Point.Category;public string Color=>ThemeService.SubjectColor(Point.SubjectId??"none");}
 public sealed record PartRow(StudyPart Part,string Time,string Duration,bool Excluded)

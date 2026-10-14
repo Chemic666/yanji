@@ -139,7 +139,7 @@
         </StackPanel>
         <StackPanel DockPanel.Dock="Bottom">
           <Button Content="退出应用" Click="Exit_Click" x:Name="ExitButton" Style="{StaticResource QuietButton}" />
-          <TextBlock Text="V0.3.1 · 本地离线" FontSize="11" Foreground="{DynamicResource Muted}" x:Name="VersionHint" Margin="10,8,0,0" Style="{StaticResource FocusTextBlock}" />
+          <TextBlock Text="V0.4 M1 · 隔离验证" FontSize="11" Foreground="{DynamicResource Muted}" x:Name="VersionHint" Margin="10,8,0,0" Style="{StaticResource FocusTextBlock}" />
         </StackPanel>
         <ListBox x:Name="NavigationList" SelectedIndex="{Binding Page}" BorderThickness="0" Background="Transparent" SelectionChanged="Navigation_Changed" ItemContainerStyle="{StaticResource NavigationItem}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
           <ListBoxItem ToolTip="今日学习">
@@ -193,7 +193,7 @@
         <RowDefinition Height="Auto" />
       </Grid.RowDefinitions>
       <ScrollViewer x:Name="MainScroll" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="28,24,28,8">
-        <Grid IsEnabled="{Binding Busy,Converter={StaticResource Inverse}}">
+        <ScrollViewer.Style><Style TargetType="ScrollViewer"><Style.Triggers><DataTrigger Binding="{Binding Page}" Value="2"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers></Style></ScrollViewer.Style><Grid IsEnabled="{Binding Busy,Converter={StaticResource Inverse}}">
           <StackPanel Visibility="{Binding Page,Converter={StaticResource PageVisibility},ConverterParameter=0}">
             <DockPanel Margin="0,0,0,8">
               <Button DockPanel.Dock="Right" Content="＋ 快速补录" Style="{StaticResource FocusButton}" Click="QuickAdd_Click" />
@@ -479,7 +479,7 @@
               </StackPanel>
             </Border>
           </StackPanel>
-          <StackPanel Visibility="{Binding Page,Converter={StaticResource PageVisibility},ConverterParameter=2}">
+          <StackPanel x:Name="LegacyProgress" Visibility="{Binding Page,Converter={StaticResource PageVisibility},ConverterParameter=2}">
             <DockPanel>
               <WrapPanel DockPanel.Dock="Right">
                 <Button Content="＋ 科目" Click="AddSubject_Click" Style="{StaticResource FocusButton}" />
@@ -502,7 +502,7 @@
                 <Border Style="{StaticResource SectionSurface}">
                   <TreeView ItemsSource="{Binding SubjectGroups}" Style="{StaticResource FocusTreeView}">
                     <TreeView.Resources>
-                      <HierarchicalDataTemplate DataType="{x:Type local:SubjectGroup}" ItemsSource="{Binding Children}">
+                      <HierarchicalDataTemplate DataType="{x:Type local:SubjectGroup}">
                         <DockPanel>
                           <Button DockPanel.Dock="Right" Content="编辑 / 归档" Tag="{Binding Subject}" Click="EditSubject_Click" Style="{StaticResource QuietButton}" />
                           <StackPanel Orientation="Horizontal">
@@ -918,6 +918,7 @@
           </StackPanel>
         </Grid>
       </ScrollViewer>
+      <Border Visibility="{Binding Page,Converter={StaticResource PageVisibility},ConverterParameter=2}" IsEnabled="{Binding Busy,Converter={StaticResource Inverse}}" Padding="24,16,24,12"><local:KnowledgeWorkspace x:Name="KnowledgeView" /></Border>
       <Border Grid.Row="1" Background="{DynamicResource CardBackground}" BorderBrush="{DynamicResource Line}" BorderThickness="0,1,0,0" Padding="24,8">
         <DockPanel>
           <TextBlock DockPanel.Dock="Right" Text="处理中…" Foreground="{DynamicResource Accent}" Visibility="{Binding Busy,Converter={StaticResource BoolVisibility}}" Style="{StaticResource FocusTextBlock}" />

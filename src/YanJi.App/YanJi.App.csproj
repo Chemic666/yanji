@@ -6,4 +6,5 @@
     <AssemblyName>YanJi</AssemblyName><RootNamespace>YanJi.App</RootNamespace>
   </PropertyGroup>
   <ItemGroup><ProjectReference Include="../YanJi.Data/YanJi.Data.csproj" /><PackageReference Include="CommunityToolkit.Mvvm" /></ItemGroup>
+  <ItemGroup><None Include="../../tools/Launch-M1.cmd" Link="Launch-M1.cmd" CopyToPublishDirectory="PreserveNewest" /></ItemGroup>
 </Project>

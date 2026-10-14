@@ -50,7 +50,7 @@
         "type": "Project",
         "dependencies": {
           "Microsoft.Data.Sqlite": "[10.0.12, )",
-          "YanJi.Core": "[0.1.1, )"
+          "YanJi.Core": "[0.4.0-m1.1, )"
         }
       },
       "Microsoft.Data.Sqlite": {
