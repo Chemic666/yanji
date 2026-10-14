@@ -39,7 +39,9 @@ internal static class TimerDisplayValidation
         try
         {
             var root=Path.GetFullPath("artifacts")+Path.DirectorySeparatorChar;
-            if(!Path.GetFullPath(output).StartsWith(root,StringComparison.OrdinalIgnoreCase)||!vm.Database.DirectoryPath.StartsWith(root,StringComparison.OrdinalIgnoreCase)||Directory.Exists(output)&&Directory.EnumerateFileSystemEntries(output).Any()||vm.Database.Records().Count!=0)throw new InvalidOperationException("Fresh isolated artifact paths required");
+            var seedRecords=vm.Database.Records();
+            var knownM1Seed=app.M1Check&&seedRecords.Count==1&&seedRecords[0] is {Id:"fixture-learning",SubjectId:"math",ChapterId:"fixture-1",Source:SessionSource.Manual,Note:"合成关联记录",Parts.Count:1} seed&&seed.Parts[0] is {Id:"fixture-part",DurationMs:1500,Kind:PartKind.DurationOnly,StartUtcMs:null,EndUtcMs:null};
+            if(!Path.GetFullPath(output).StartsWith(root,StringComparison.OrdinalIgnoreCase)||!vm.Database.DirectoryPath.StartsWith(root,StringComparison.OrdinalIgnoreCase)||Directory.Exists(output)&&Directory.EnumerateFileSystemEntries(output).Any()||seedRecords.Count!=0&&!knownM1Seed)throw new InvalidOperationException("Fresh isolated artifact paths required");
             Directory.CreateDirectory(output);var asm=typeof(App).Assembly;
             Write("provenance.json",new{Synthetic=true,Source=asm.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion,Executable=Environment.ProcessPath,ExeSha256=Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(Environment.ProcessPath!))),AssemblySha256=Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(asm.Location))),OS=System.Runtime.InteropServices.RuntimeInformation.OSDescription,Runtime=System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription,Probe=probe});
             vm.PropertyChanged+=(_,e)=>{if(e.PropertyName==nameof(vm.TimerText))notifications++;};w.ShowMiniTimer();
