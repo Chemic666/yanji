@@ -42,7 +42,7 @@ public partial class MainWindow
         if(Model.DrawerOpen||Keyboard.Modifiers!=ModifierKeys.Control)return;
         if(e.Key==Key.M){e.Handled=true;ShowMiniTimer();return;}
         if(e.Key is Key.N or Key.L){QuickAdd_Click(this,e);e.Handled=true;return;}
-        if(e.OriginalSource is System.Windows.Controls.Primitives.TextBoxBase||e.OriginalSource is ComboBox)return;
+        if(e.OriginalSource is System.Windows.Controls.Primitives.TextBoxBase or ComboBox or ComboBoxItem||Keyboard.FocusedElement is System.Windows.Controls.Primitives.TextBoxBase or ComboBox or ComboBoxItem)return;
         if(e.Key==Key.Enter){e.Handled=true;await Model.StartCommand.ExecuteAsync(null);}else if(e.Key==Key.Space){e.Handled=true;await Model.PauseResumeCommand.ExecuteAsync(null);}
     }
     private async void QuickAdd_Click(object sender,RoutedEventArgs e)

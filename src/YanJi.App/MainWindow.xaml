@@ -278,7 +278,7 @@
                     <WrapPanel>
                       <Button Content="跳过休息" Command="{Binding SkipBreakCommand}" Visibility="{Binding BreakActive,Converter={StaticResource BoolVisibility}}" Style="{StaticResource QuietButton}" />
                       <Button Visibility="{Binding HasLinkedTask,Converter={StaticResource BoolVisibility}}" Content="解除任务关联" Command="{Binding ClearFocusTaskCommand}" IsEnabled="{Binding CanStartFocus}" Style="{StaticResource QuietButton}" />
-                      <Button Visibility="{Binding HasLinkedTask,Converter={StaticResource BoolVisibility}}" Content="标记任务完成" Command="{Binding CompleteFocusTaskCommand}" Style="{StaticResource QuietButton}" />
+                      <Button Visibility="{Binding HasLinkedTask,Converter={StaticResource BoolVisibility}}" Content="标记任务完成" Command="{Binding CompleteFocusTaskCommand}" IsEnabled="{Binding CanCompleteLinkedTask}" Style="{StaticResource QuietButton}" />
                     </WrapPanel>
                     <Grid x:Name="TimerFields" Visibility="{Binding FocusSetupVisible,Converter={StaticResource BoolVisibility}}" IsEnabled="{Binding TimerActive,Converter={StaticResource Inverse}}"><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
                       <Grid.ColumnDefinitions>

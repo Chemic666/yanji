@@ -26,6 +26,7 @@ public sealed partial class MainViewModel
     [ObservableProperty] private bool hasFocusGoal;
     [ObservableProperty] private string focusSubjectLabel="有效学习时间 · HH:mm";
     [ObservableProperty] private bool focusSetupVisible=true;
+    [ObservableProperty] private bool canCompleteLinkedTask;
     private NonStudyCountdown? _break;
     public ObservableCollection<LearningTask> TodayTasks {get;}=[];
     partial void OnFocusModeIndexChanged(int value)
@@ -54,6 +55,7 @@ public sealed partial class MainViewModel
         var subject=s.IsActive?AllSubjects.FirstOrDefault(x=>x.Id==s.SubjectId)?.Name:TimerSubject?.Name;
         FocusSubjectLabel=(subject??"请选择科目")+" · 有效学习时间 HH:mm"+(focus?.Mode==FocusMode.Pomodoro?" · 番茄钟":focus?.Mode==FocusMode.Countdown?" · 倒计时":"");
         ConfiguredTimed=FocusModeIndex!=0;ConfiguredPomodoro=FocusModeIndex==2;HasLinkedTask=focus?.TaskId!=null||FocusTask!=null;HasFocusGoal=focus is {Mode:not FocusMode.Free};
+        var linkedId=focus?.TaskId??FocusTask?.Id;CanCompleteLinkedTask=!Busy&&linkedId!=null&&Tasks.Any(t=>t.Id==linkedId&&!t.Done);
         FocusTaskLabel=s.IsActive&&focus?.TaskId!=null?"任务 · "+focus.TaskTitle:FocusTask!=null?"任务 · "+FocusTask.Title:"自由开始 · 也可从今日待办开始";
         FocusRemainingText=focus is {Mode:not FocusMode.Free}?"剩余 "+Duration(Math.Max(0,focus.TargetMs-s.DurationMs))+" · 目标 "+Duration(focus.TargetMs):"自由计时 · 按实际有效时长保存";
         FocusProgress=focus is {TargetMs:>0}?Math.Clamp(s.DurationMs/(double)focus.TargetMs*100,0,100):0;
