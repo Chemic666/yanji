@@ -24,7 +24,7 @@ public sealed partial class MainViewModel
     [ObservableProperty] private bool configuredPomodoro;
     [ObservableProperty] private bool hasLinkedTask;
     [ObservableProperty] private bool hasFocusGoal;
-    [ObservableProperty] private string focusSubjectLabel="有效学习时间 · HH:mm";
+    [ObservableProperty] private string focusSubjectLabel="有效学习时间 · HH:mm:ss";
     [ObservableProperty] private bool focusSetupVisible=true;
     [ObservableProperty] private bool canCompleteLinkedTask;
     private NonStudyCountdown? _break;
@@ -54,13 +54,14 @@ public sealed partial class MainViewModel
         var s=Timer;var focus=s.IsActive?s.Focus:null;
         FocusSetupVisible=!s.IsActive;
         var subject=s.IsActive?AllSubjects.FirstOrDefault(x=>x.Id==s.SubjectId)?.Name:TimerSubject?.Name;
-        FocusSubjectLabel=(subject??"请选择科目")+" · 有效学习时间 HH:mm"+(focus?.Mode==FocusMode.Pomodoro?" · 番茄钟":focus?.Mode==FocusMode.Countdown?" · 倒计时":"");
+        TimerText=DurationText.FocusTimer(s);
+        FocusSubjectLabel=(subject??"请选择科目")+(focus is {Mode:not FocusMode.Free}?" · 剩余时间 HH:mm:ss":" · 有效学习时间 HH:mm:ss")+(focus?.Mode==FocusMode.Pomodoro?" · 番茄钟":focus?.Mode==FocusMode.Countdown?" · 倒计时":"");
         ConfiguredTimed=FocusModeIndex!=0;ConfiguredPomodoro=FocusModeIndex==2;HasLinkedTask=focus?.TaskId!=null||FocusTask!=null;HasFocusGoal=focus is {Mode:not FocusMode.Free};
         var linkedId=focus?.TaskId??FocusTask?.Id;CanCompleteLinkedTask=!Busy&&linkedId!=null&&Tasks.Any(t=>t.Id==linkedId&&!t.Done);
         FocusTaskLabel=s.IsActive&&focus?.TaskId!=null?"任务 · "+focus.TaskTitle:FocusTask!=null?"任务 · "+FocusTask.Title:"自由开始 · 也可从今日待办开始";
-        FocusRemainingText=focus is {Mode:not FocusMode.Free}?"剩余 "+Duration(Math.Max(0,focus.TargetMs-s.DurationMs))+" · 目标 "+Duration(focus.TargetMs):!s.IsActive&&FocusModeIndex!=0?"目标 "+FocusMinutes+" 分钟 · 开始后仅扣减有效学习时间":"自由计时 · 按实际有效时长保存";
+        FocusRemainingText=focus is {Mode:not FocusMode.Free}?"已学习 "+Duration(s.DurationMs)+" · 目标 "+Duration(focus.TargetMs):!s.IsActive&&FocusModeIndex!=0?"目标 "+FocusMinutes+" 分钟 · 开始后仅扣减有效学习时间":"自由计时 · 按实际有效时长保存";
         FocusProgress=focus is {TargetMs:>0}?Math.Clamp(s.DurationMs/(double)focus.TargetMs*100,0,100):0;
-        if(BreakActive&&_break!=null){TimerText=DurationText.Timer(_break.RemainingMs);TimerStateText=_break.RemainingMs==0?"休息结束 · 主动开始下一轮":_break.Running?"休息中 · 不计入学习时长":"休息已暂停 · 不计入学习时长";FocusRemainingText="休息剩余 "+Duration(_break.RemainingMs);}
+        if(BreakActive&&_break!=null){FocusSubjectLabel="休息剩余时间 · HH:mm:ss";TimerText=DurationText.Timer(_break.RemainingMs);TimerStateText=_break.RemainingMs==0?"休息结束 · 主动开始下一轮":_break.Running?"休息中 · 不计入学习时长":"休息已暂停 · 不计入学习时长";FocusRemainingText="休息剩余 "+Duration(_break.RemainingMs);}
         CanStartFocus=!Busy&&!s.IsActive;CanPauseFocus=!Busy&&!NeedsReview&&(s.IsActive||BreakActive&&_break?.RemainingMs>0);
         FocusStartLabel=BreakActive?"开始下一轮":FocusModeIndex==0?"开始学习":"开始专注";
     }

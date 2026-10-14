@@ -37,6 +37,6 @@ public sealed class DisplayDurationTests
         var tiny=StudyAnalytics.Build([R("c",1)],[],day,day,day);
         Assert.Equal(1,tiny.LearningDays);Assert.Equal(1,tiny.Sessions);Assert.Equal(1,tiny.DurationMs);
     }
-    [Theory][InlineData(0,"00:00")][InlineData(86399999,"23:59")][InlineData(86400000,"24:00")][InlineData(444599999,"123:29")]
-    public void TimerHasTotalHoursAndMinutes(long ms,string expected)=>Assert.Equal(expected,DurationText.Timer(ms));
+    [Theory][InlineData(0,"00:00:00")][InlineData(86399999,"23:59:59")][InlineData(86400000,"24:00:00")][InlineData(444599999,"123:29:59")]
+    public void TimerHasTotalHoursMinutesAndSeconds(long ms,string expected)=>Assert.Equal(expected,DurationText.Timer(ms));
 }

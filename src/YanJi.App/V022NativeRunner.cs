@@ -12,7 +12,7 @@ internal static class V022NativeRunner
     {
         w.Model.Page=0;w.UpdateLayout();
         check(w.Model.TimerChapters.First().Name.Contains("暂无章节"),"V022 initial chapter selector teaches empty state");
-        check(w.Model.TimerText=="00:00","V022 timer uses total HH:mm");
+        check(w.Model.TimerText=="00:00:00","Timer uses total HH:mm:ss");
         check(VisualUpgradeRunner.Descendants(w).OfType<Button>().Any(b=>Equals(b.Content,"管理章节")),"V022 chapter management shortcut exists");
         var vm=w.Model;var from=vm.StatsFrom;var to=vm.StatsTo;
         vm.Page=4;vm.StatsView=0;w.UpdateLayout();

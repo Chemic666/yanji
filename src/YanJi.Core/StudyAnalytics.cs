@@ -38,7 +38,9 @@ public static class DurationText
     /// <summary>Presentation floors seconds after raw aggregation. Canonical data is unchanged.</summary>
     public static string Compact(long milliseconds)=>Format(milliseconds);
     public static string Timer(long milliseconds)
-    {ArgumentOutOfRangeException.ThrowIfNegative(milliseconds);return (milliseconds/3600000).ToString("00",System.Globalization.CultureInfo.InvariantCulture)+":"+(milliseconds/60000%60).ToString("00",System.Globalization.CultureInfo.InvariantCulture);}
+    {ArgumentOutOfRangeException.ThrowIfNegative(milliseconds);return (milliseconds/3600000).ToString("00",System.Globalization.CultureInfo.InvariantCulture)+":"+(milliseconds/60000%60).ToString("00",System.Globalization.CultureInfo.InvariantCulture)+":"+(milliseconds/1000%60).ToString("00",System.Globalization.CultureInfo.InvariantCulture);}
+    // Pure presentation of trusted elapsed facts; no independent display clock.
+    public static string FocusTimer(TimerSnapshot snapshot)=>Timer(snapshot.IsActive&&snapshot.Focus is {Mode:not FocusMode.Free} focus?Math.Max(0,focus.TargetMs-snapshot.DurationMs):snapshot.DurationMs);
     public static string Format(long milliseconds)
     {
         ArgumentOutOfRangeException.ThrowIfNegative(milliseconds);

@@ -17,4 +17,17 @@ public class TimerDisplayTests
         if(mode!=FocusMode.Free)Assert.Equal("00:00:55",DurationText.Timer(t.Snapshot.Focus!.TargetMs-t.Snapshot.DurationMs));
         t.Finish(At(69125));Assert.Equal(66125,t.Snapshot.DurationMs);Assert.Equal("00:01:06",DurationText.Timer(t.Snapshot.DurationMs));
     }
-}
+    [Theory][InlineData(FocusMode.Free)][InlineData(FocusMode.Countdown)][InlineData(FocusMode.Pomodoro)]
+    public void SharedProjectionUsesRemainingOnlyWhileFiniteTimerIsActive(FocusMode mode)
+    {
+        var t=new TimerMachine();t.Start("math",null,"","UTC",At(0),new(mode,mode==FocusMode.Free?0:120000));
+        t.Advance(At(3000));Assert.Equal(mode==FocusMode.Free?"00:00:03":"00:01:57",DurationText.FocusTimer(t.Snapshot));
+        t.Pause(At(3000));t.Advance(At(6000));Assert.Equal(mode==FocusMode.Free?"00:00:03":"00:01:57",DurationText.FocusTimer(t.Snapshot));
+        t.Resume(At(6000));t.Advance(At(68000));Assert.Equal(mode==FocusMode.Free?"00:01:05":"00:00:55",DurationText.FocusTimer(t.Snapshot));
+        t.Finish(At(69125));Assert.Equal("00:01:06",DurationText.FocusTimer(t.Snapshot));
+    }
+    [Fact] public void TargetCompletionShowsSavedEffectiveTimeWithoutTickCounting()
+    {
+        var t=new TimerMachine();t.Start("math",null,"","UTC",At(0),new(FocusMode.Countdown,60000));t.Advance(At(65125));
+        Assert.Equal(60000,t.Snapshot.DurationMs);Assert.Equal(TimerState.Completed,t.Snapshot.State);Assert.Equal("00:01:00",DurationText.FocusTimer(t.Snapshot));
+    }}
