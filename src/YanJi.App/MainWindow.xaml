@@ -139,7 +139,7 @@
         </StackPanel>
         <StackPanel DockPanel.Dock="Bottom">
           <Button Content="退出应用" Click="Exit_Click" x:Name="ExitButton" Style="{StaticResource QuietButton}" />
-          <TextBlock Text="V0.4 M3 · 隔离预览" FontSize="11" Foreground="{DynamicResource Muted}" x:Name="VersionHint" Margin="10,8,0,0" Style="{StaticResource FocusTextBlock}" />
+          <TextBlock Text="V0.4 RC1 · 候选验收" FontSize="11" Foreground="{DynamicResource Muted}" x:Name="VersionHint" Margin="10,8,0,0" Style="{StaticResource FocusTextBlock}" />
         </StackPanel>
         <ListBox x:Name="NavigationList" SelectedIndex="{Binding Page}" BorderThickness="0" Background="Transparent" SelectionChanged="Navigation_Changed" ItemContainerStyle="{StaticResource NavigationItem}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
           <ListBoxItem ToolTip="今日学习">
@@ -850,7 +850,8 @@
                     <TextBlock Text="考试档案" Style="{StaticResource Subheading}" />
                     <TextBlock Text="{Binding ExamDate}" FontSize="16" Style="{StaticResource FocusTextBlock}" />
                     <TextBlock Text="{Binding ZoneId,StringFormat=统计时区：{0}}" Style="{StaticResource MutedText}" Margin="0,8" />
-                    <Button Content="编辑档案与计时偏好" Click="Preferences_Click" HorizontalAlignment="Left" Style="{StaticResource FocusButton}" />
+                    <Button Content="配置考试档案与科目" Click="ConfigureExamProfile_Click" HorizontalAlignment="Left" Style="{StaticResource Primary}" />
+                    <Button Content="编辑日期与计时偏好" Click="Preferences_Click" HorizontalAlignment="Left" Style="{StaticResource FocusButton}" />
                   <Border BorderBrush="{DynamicResource Line}" BorderThickness="0,1,0,0" Margin="0,16,0,16" />
                     <TextBlock Text="界面与主题" Style="{StaticResource Subheading}" />
                     <CheckBox Content="深色主题" IsChecked="{Binding DarkTheme}" Style="{StaticResource FocusCheckBox}" />
@@ -875,6 +876,7 @@
                       <Button Content="检查数据库" Click="Integrity_Click" Style="{StaticResource FocusButton}" />
                     </WrapPanel>
                     <Button Content="恢复完整备份" Click="RestoreBackup_Click" Style="{StaticResource DangerButton}" HorizontalAlignment="Left" Margin="0,12,0,8" />
+                    <WrapPanel><Button Content="旧版升级到新目录" Click="UpgradeCopy_Click" Style="{StaticResource QuietButton}" /><Button Content="原格式回退" Click="OriginalRollback_Click" Style="{StaticResource QuietButton}" /></WrapPanel>
                     <TextBlock Text="完整恢复整体替换，不合并；先校验，再自动备份当前库并保留回退副本。CSV 不能替代备份。每日快照不自动清理，同一磁盘不能防止磁盘故障。" Style="{StaticResource MutedText}" />
                   </StackPanel>
                 </Border>

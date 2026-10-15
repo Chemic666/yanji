@@ -8,7 +8,17 @@ if (args.Length < 2) throw new ArgumentException("prepare <owned artifacts folde
 var owned = Path.GetFullPath(args[1]);
 if (!owned.StartsWith(Path.GetFullPath("artifacts") + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase))
     throw new InvalidOperationException("Probe must stay inside project artifacts.");
-if (args[0] == "prepare")
+if(args[0]=="m4-original")
+{
+    var target=Path.GetFullPath(args[2]);if(!target.StartsWith(Path.GetFullPath("artifacts")+Path.DirectorySeparatorChar,StringComparison.OrdinalIgnoreCase))throw new InvalidOperationException("Rollback target must stay in artifacts.");
+    Console.WriteLine(YanJiDatabase.RestoreOriginalToNewDirectory(owned,target));
+}
+else if(args[0]=="m4-upgrade")
+{
+    var target=Path.GetFullPath(args[2]);if(!target.StartsWith(Path.GetFullPath("artifacts")+Path.DirectorySeparatorChar,StringComparison.OrdinalIgnoreCase))throw new InvalidOperationException("Upgrade target must stay in artifacts.");
+    var result=YanJiDatabase.PrepareUpgradeCopy(owned,target);File.WriteAllText(Path.Combine(target,"m4-upgrade-result.json"),JsonSerializer.Serialize(result,new JsonSerializerOptions{WriteIndented=true}));Console.WriteLine(JsonSerializer.Serialize(result));
+}
+else if (args[0] == "prepare")
 {
     Directory.CreateDirectory(owned); Environment.SetEnvironmentVariable("YANJI_M1_TEST_ROOT", owned);
     var root = LegacySchemaFixture.Create(); var result = YanJiDatabase.UpgradeLegacyIsolated(root);

@@ -50,7 +50,7 @@ public sealed partial class KnowledgeWorkspaceViewModel : ObservableObject
     public static string[] KindLabels { get; } = ["章节", "知识点"];
     public MainViewModel Owner { get; }
     public IReadOnlyList<Subject> Subjects { get; private set; }
-    public string ProfileLabel { get; }
+    public string ProfileLabel { get; private set; }
     [ObservableProperty] private Subject? subject;
     [ObservableProperty] private bool knowledgeBusy;
     [ObservableProperty] private bool showArchived;
@@ -156,6 +156,7 @@ public sealed partial class KnowledgeWorkspaceViewModel : ObservableObject
             if (generation != _generation) return;
             _epoch = data.Epoch;
             Subjects = data.subjects; OnPropertyChanged(nameof(Subjects));
+            ProfileLabel=Owner.Database.ExamProfiles().First(p=>p.Id=="legacy-default").Name;OnPropertyChanged(nameof(ProfileLabel));
             _skipSubjectReload = true; Subject = Subjects.FirstOrDefault(s => s.Id == subjectId) ?? Subjects.FirstOrDefault(); _skipSubjectReload = false;
             _nodes = data.nodes; _map = data.map; _paths = data.paths; _children = _nodes.Where(n => n.ParentId != null).ToLookup(n => n.ParentId!);
             Roots = Rows(null).ToArray(); Selected = null;

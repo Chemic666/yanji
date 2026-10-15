@@ -89,7 +89,7 @@ public sealed partial class MainViewModel : ObservableObject
     public ObservableCollection<WeakPoint> WeakPoints {get;}=[];
     public ObservableCollection<StatRow> Stats {get;}=[];
     public TimerSnapshot Timer=>_timer.Snapshot;
-    public MainViewModel(string dataDirectory){Database=new(dataDirectory);}
+    public MainViewModel(string dataDirectory){YanJiDatabase.CheckUpgradeReady(dataDirectory);Database=new(dataDirectory);}
     public async Task InitializeAsync()
     {
         await RunAsync(()=>
@@ -133,7 +133,7 @@ public sealed partial class MainViewModel : ObservableObject
         LoadChapters(ManualChapters,ManualSubject?.Id);ManualChapter=ManualChapters.FirstOrDefault(c=>c.Id==manualChapterId)??ManualChapters.FirstOrDefault();
         Replace(Tasks,Database.Tasks());Replace(WeakPoints,Database.WeakPoints());RefreshFocusTasks();RefreshLearning();
         ZoneId=Database.Setting("zone","Asia/Shanghai");TimeParts.ResolveZone(ZoneId);
-        ExamDate=Database.Setting("exam-date","") is string date&&date.Length>0?"考试日期 "+date:"2028 年入学 · 考试日期待定";
+        ExamDate=Database.ExamProfiles().FirstOrDefault(p=>p.Id=="legacy-default")?.ExamDate is DateOnly date?"考试日期 "+date.ToString("yyyy-MM-dd"):"2028 年入学 · 考试日期待定";
         var today=LocalToday();var week=today.AddDays(-(((int)today.DayOfWeek+6)%7));var month=new DateOnly(today.Year,today.Month,1);
         TodayDurationMs=Database.DailyTotals(today,today).Sum(x=>x.DurationMs);WeekDurationMs=Database.DailyTotals(week,today).Sum(x=>x.DurationMs);MonthDurationMs=Database.DailyTotals(month,today).Sum(x=>x.DurationMs);
         TodayTotal=Duration(TodayDurationMs);WeekTotal=Duration(WeekDurationMs);MonthTotal=Duration(MonthDurationMs);

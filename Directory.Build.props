@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>latest</LangVersion>
     <Deterministic>true</Deterministic>
-    <Version>0.4.0-m3.0</Version>
+    <Version>0.4.0-rc.1</Version>
     <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
     <Authors>YanJi</Authors>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
