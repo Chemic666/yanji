@@ -1,0 +1,714 @@
+{
+  "SchemaVersion": 1,
+  "ProjectLicense": "Apache-2.0",
+  "ProjectLicenseScope": "original-code",
+  "RuntimeVersionsUnchanged": true,
+  "Components": [
+    {
+      "Name": "communitytoolkit.mvvm",
+      "Version": "8.4.2",
+      "Source": "https://www.nuget.org/packages/communitytoolkit.mvvm/8.4.2",
+      "License": "MIT",
+      "SourceDistributed": false,
+      "BinaryDistributed": true,
+      "ReferencedInSource": true,
+      "Copyright": "(c) .NET Foundation and Contributors. All rights reserved.",
+      "Notice": "Keep applicable license texts and upstream notices; NuGet binaries are not vendored into the source ZIP.",
+      "LicenseEvidence": "docs/legal/nuget-dependencies.json; xunit.abstractions additionally uses docs/legal/legacy-license-resolution.json",
+      "LicenseFiles": [
+        "resources/licenses/CommunityToolkit-MIT.md",
+        "resources/licenses/CommunityToolkit-NOTICES.txt"
+      ]
+    },
+    {
+      "Name": "microsoft.codecoverage",
+      "Version": "18.10.1",
+      "Source": "https://www.nuget.org/packages/microsoft.codecoverage/18.10.1",
+      "License": "MIT",
+      "SourceDistributed": false,
+      "BinaryDistributed": false,
+      "ReferencedInSource": true,
+      "Copyright": "© Microsoft Corporation. All rights reserved.",
+      "Notice": "Keep applicable license texts and upstream notices; NuGet binaries are not vendored into the source ZIP.",
+      "LicenseEvidence": "docs/legal/nuget-dependencies.json; xunit.abstractions additionally uses docs/legal/legacy-license-resolution.json",
+      "LicenseFiles": []
+    },
+    {
+      "Name": "microsoft.data.sqlite",
+      "Version": "10.0.12",
+      "Source": "https://www.nuget.org/packages/microsoft.data.sqlite/10.0.12",
+      "License": "MIT",
+      "SourceDistributed": false,
+      "BinaryDistributed": true,
+      "ReferencedInSource": true,
+      "Copyright": "© Microsoft Corporation. All rights reserved.",
+      "Notice": "Keep applicable license texts and upstream notices; NuGet binaries are not vendored into the source ZIP.",
+      "LicenseEvidence": "docs/legal/nuget-dependencies.json; xunit.abstractions additionally uses docs/legal/legacy-license-resolution.json",
+      "LicenseFiles": [
+        "resources/licenses/EFCore-Sqlite-MIT.txt"
+      ]
+    },
+    {
+      "Name": "microsoft.data.sqlite.core",
+      "Version": "10.0.12",
+      "Source": "https://www.nuget.org/packages/microsoft.data.sqlite.core/10.0.12",
+      "License": "MIT",
+      "SourceDistributed": false,
+      "BinaryDistributed": true,
+      "ReferencedInSource": true,
+      "Copyright": "© Microsoft Corporation. All rights reserved.",
+      "Notice": "Keep applicable license texts and upstream notices; NuGet binaries are not vendored into the source ZIP.",
+      "LicenseEvidence": "docs/legal/nuget-dependencies.json; xunit.abstractions additionally uses docs/legal/legacy-license-resolution.json",
+      "LicenseFiles": [
+        "resources/licenses/EFCore-Sqlite-MIT.txt"
+      ]
+    },
+    {
+      "Name": "microsoft.net.test.sdk",
+      "Version": "18.10.1",
+      "Source": "https://www.nuget.org/packages/microsoft.net.test.sdk/18.10.1",
+      "License": "MIT",
+      "SourceDistributed": false,
+      "BinaryDistributed": false,
+      "ReferencedInSource": true,
+      "Copyright": "© Microsoft Corporation. All rights reserved.",
+      "Notice": "Keep applicable license texts and upstream notices; NuGet binaries are not vendored into the source ZIP.",
+      "LicenseEvidence": "docs/legal/nuget-dependencies.json; xunit.abstractions additionally uses docs/legal/legacy-license-resolution.json",
+      "LicenseFiles": []
+    },
+    {
+      "Name": "microsoft.netcore.app.runtime.win-x64",
+      "Version": "10.0.12",
+      "Source": "https://www.nuget.org/packages/microsoft.netcore.app.runtime.win-x64/10.0.12",
+      "License": "MIT",
+      "SourceDistributed": false,
+      "BinaryDistributed": true,
+      "ReferencedInSource": true,
+      "Copyright": "© Microsoft Corporation. All rights reserved.",
+      "Notice": "Keep applicable license texts and upstream notices; NuGet binaries are not vendored into the source ZIP.",
+      "LicenseEvidence": "docs/legal/nuget-dependencies.json; xunit.abstractions additionally uses docs/legal/legacy-license-resolution.json",
+      "LicenseFiles": [
+        "resources/licenses/DotNet-Runtime-MIT.txt",
+        "resources/licenses/DotNet-ThirdPartyNotices.txt"
+      ]
+    },
+    {
+      "Name": "microsoft.testplatform.objectmodel",
+      "Version": "18.10.1",
+      "Source": "https://www.nuget.org/packages/microsoft.testplatform.objectmodel/18.10.1",
+      "License": "MIT",
+      "SourceDistributed": false,
+      "BinaryDistributed": false,
+      "ReferencedInSource": true,
+      "Copyright": "© Microsoft Corporation. All rights reserved.",
+      "Notice": "Keep applicable license texts and upstream notices; NuGet binaries are not vendored into the source ZIP.",
+      "LicenseEvidence": "docs/legal/nuget-dependencies.json; xunit.abstractions additionally uses docs/legal/legacy-license-resolution.json",
+      "LicenseFiles": []
+    },
+    {
+      "Name": "microsoft.testplatform.testhost",
+      "Version": "18.10.1",
+      "Source": "https://www.nuget.org/packages/microsoft.testplatform.testhost/18.10.1",
+      "License": "MIT",
+      "SourceDistributed": false,
+      "BinaryDistributed": false,
+      "ReferencedInSource": true,
+      "Copyright": "© Microsoft Corporation. All rights reserved.",
+      "Notice": "Keep applicable license texts and upstream notices; NuGet binaries are not vendored into the source ZIP.",
+      "LicenseEvidence": "docs/legal/nuget-dependencies.json; xunit.abstractions additionally uses docs/legal/legacy-license-resolution.json",
+      "LicenseFiles": []
+    },
+    {
+      "Name": "microsoft.windowsdesktop.app.runtime.win-x64",
+      "Version": "10.0.12",
+      "Source": "https://www.nuget.org/packages/microsoft.windowsdesktop.app.runtime.win-x64/10.0.12",
+      "License": "MIT",
+      "SourceDistributed": false,
+      "BinaryDistributed": true,
+      "ReferencedInSource": true,
+      "Copyright": "© Microsoft Corporation. All rights reserved.",
+      "Notice": "Keep applicable license texts and upstream notices; NuGet binaries are not vendored into the source ZIP.",
+      "LicenseEvidence": "docs/legal/nuget-dependencies.json; xunit.abstractions additionally uses docs/legal/legacy-license-resolution.json",
+      "LicenseFiles": [
+        "resources/licenses/WindowsDesktop-MIT.txt",
+        "resources/licenses/DotNet-ThirdPartyNotices.txt"
+      ]
+    },
+    {
+      "Name": "sqlitepclraw.bundle_e_sqlite3",
+      "Version": "2.1.12",
+      "Source": "https://www.nuget.org/packages/sqlitepclraw.bundle_e_sqlite3/2.1.12",
+      "License": "Apache-2.0",
+      "SourceDistributed": false,
+      "BinaryDistributed": true,
+      "ReferencedInSource": true,
+      "Copyright": "Copyright 2014-2024 SourceGear, LLC",
+      "Notice": "Keep applicable license texts and upstream notices; NuGet binaries are not vendored into the source ZIP.",
+      "LicenseEvidence": "docs/legal/nuget-dependencies.json; xunit.abstractions additionally uses docs/legal/legacy-license-resolution.json",
+      "LicenseFiles": [
+        "resources/licenses/SQLitePCLRaw-Apache-2.0.txt"
+      ]
+    },
+    {
+      "Name": "sqlitepclraw.core",
+      "Version": "2.1.12",
+      "Source": "https://www.nuget.org/packages/sqlitepclraw.core/2.1.12",
+      "License": "Apache-2.0",
+      "SourceDistributed": false,
+      "BinaryDistributed": true,
+      "ReferencedInSource": true,
+      "Copyright": "Copyright 2014-2024 SourceGear, LLC",
+      "Notice": "Keep applicable license texts and upstream notices; NuGet binaries are not vendored into the source ZIP.",
+      "LicenseEvidence": "docs/legal/nuget-dependencies.json; xunit.abstractions additionally uses docs/legal/legacy-license-resolution.json",
+      "LicenseFiles": [
+        "resources/licenses/SQLitePCLRaw-Apache-2.0.txt"
+      ]
+    },
+    {
+      "Name": "sqlitepclraw.lib.e_sqlite3",
+      "Version": "2.1.12",
+      "Source": "https://www.nuget.org/packages/sqlitepclraw.lib.e_sqlite3/2.1.12",
+      "License": "Apache-2.0",
+      "SourceDistributed": false,
+      "BinaryDistributed": true,
+      "ReferencedInSource": true,
+      "Copyright": "Copyright 2014-2024 SourceGear, LLC",
+      "Notice": "Keep applicable license texts and upstream notices; NuGet binaries are not vendored into the source ZIP.",
+      "LicenseEvidence": "docs/legal/nuget-dependencies.json; xunit.abstractions additionally uses docs/legal/legacy-license-resolution.json",
+      "LicenseFiles": [
+        "resources/licenses/SQLitePCLRaw-Apache-2.0.txt"
+      ]
+    },
+    {
+      "Name": "sqlitepclraw.provider.e_sqlite3",
+      "Version": "2.1.12",
+      "Source": "https://www.nuget.org/packages/sqlitepclraw.provider.e_sqlite3/2.1.12",
+      "License": "Apache-2.0",
+      "SourceDistributed": false,
+      "BinaryDistributed": true,
+      "ReferencedInSource": true,
+      "Copyright": "Copyright 2014-2024 SourceGear, LLC",
+      "Notice": "Keep applicable license texts and upstream notices; NuGet binaries are not vendored into the source ZIP.",
+      "LicenseEvidence": "docs/legal/nuget-dependencies.json; xunit.abstractions additionally uses docs/legal/legacy-license-resolution.json",
+      "LicenseFiles": [
+        "resources/licenses/SQLitePCLRaw-Apache-2.0.txt"
+      ]
+    },
+    {
+      "Name": "xunit",
+      "Version": "2.9.3",
+      "Source": "https://www.nuget.org/packages/xunit/2.9.3",
+      "License": "Apache-2.0",
+      "SourceDistributed": false,
+      "BinaryDistributed": false,
+      "ReferencedInSource": true,
+      "Copyright": "Copyright (C) .NET Foundation",
+      "Notice": "Keep applicable license texts and upstream notices; NuGet binaries are not vendored into the source ZIP.",
+      "LicenseEvidence": "docs/legal/nuget-dependencies.json; xunit.abstractions additionally uses docs/legal/legacy-license-resolution.json",
+      "LicenseFiles": []
+    },
+    {
+      "Name": "xunit.abstractions",
+      "Version": "2.0.3",
+      "Source": "https://www.nuget.org/packages/xunit.abstractions/2.0.3",
+      "License": "Apache-2.0",
+      "SourceDistributed": false,
+      "BinaryDistributed": false,
+      "ReferencedInSource": true,
+      "Copyright": "James Newkirk,Brad Wilson",
+      "Notice": "Keep applicable license texts and upstream notices; NuGet binaries are not vendored into the source ZIP.",
+      "LicenseEvidence": "docs/legal/nuget-dependencies.json; xunit.abstractions additionally uses docs/legal/legacy-license-resolution.json",
+      "LicenseFiles": []
+    },
+    {
+      "Name": "xunit.analyzers",
+      "Version": "1.18.0",
+      "Source": "https://www.nuget.org/packages/xunit.analyzers/1.18.0",
+      "License": "Apache-2.0",
+      "SourceDistributed": false,
+      "BinaryDistributed": false,
+      "ReferencedInSource": true,
+      "Copyright": "Copyright (C) .NET Foundation",
+      "Notice": "Keep applicable license texts and upstream notices; NuGet binaries are not vendored into the source ZIP.",
+      "LicenseEvidence": "docs/legal/nuget-dependencies.json; xunit.abstractions additionally uses docs/legal/legacy-license-resolution.json",
+      "LicenseFiles": []
+    },
+    {
+      "Name": "xunit.assert",
+      "Version": "2.9.3",
+      "Source": "https://www.nuget.org/packages/xunit.assert/2.9.3",
+      "License": "Apache-2.0",
+      "SourceDistributed": false,
+      "BinaryDistributed": false,
+      "ReferencedInSource": true,
+      "Copyright": "Copyright (C) .NET Foundation",
+      "Notice": "Keep applicable license texts and upstream notices; NuGet binaries are not vendored into the source ZIP.",
+      "LicenseEvidence": "docs/legal/nuget-dependencies.json; xunit.abstractions additionally uses docs/legal/legacy-license-resolution.json",
+      "LicenseFiles": []
+    },
+    {
+      "Name": "xunit.core",
+      "Version": "2.9.3",
+      "Source": "https://www.nuget.org/packages/xunit.core/2.9.3",
+      "License": "Apache-2.0",
+      "SourceDistributed": false,
+      "BinaryDistributed": false,
+      "ReferencedInSource": true,
+      "Copyright": "Copyright (C) .NET Foundation",
+      "Notice": "Keep applicable license texts and upstream notices; NuGet binaries are not vendored into the source ZIP.",
+      "LicenseEvidence": "docs/legal/nuget-dependencies.json; xunit.abstractions additionally uses docs/legal/legacy-license-resolution.json",
+      "LicenseFiles": []
+    },
+    {
+      "Name": "xunit.extensibility.core",
+      "Version": "2.9.3",
+      "Source": "https://www.nuget.org/packages/xunit.extensibility.core/2.9.3",
+      "License": "Apache-2.0",
+      "SourceDistributed": false,
+      "BinaryDistributed": false,
+      "ReferencedInSource": true,
+      "Copyright": "Copyright (C) .NET Foundation",
+      "Notice": "Keep applicable license texts and upstream notices; NuGet binaries are not vendored into the source ZIP.",
+      "LicenseEvidence": "docs/legal/nuget-dependencies.json; xunit.abstractions additionally uses docs/legal/legacy-license-resolution.json",
+      "LicenseFiles": []
+    },
+    {
+      "Name": "xunit.extensibility.execution",
+      "Version": "2.9.3",
+      "Source": "https://www.nuget.org/packages/xunit.extensibility.execution/2.9.3",
+      "License": "Apache-2.0",
+      "SourceDistributed": false,
+      "BinaryDistributed": false,
+      "ReferencedInSource": true,
+      "Copyright": "Copyright (C) .NET Foundation",
+      "Notice": "Keep applicable license texts and upstream notices; NuGet binaries are not vendored into the source ZIP.",
+      "LicenseEvidence": "docs/legal/nuget-dependencies.json; xunit.abstractions additionally uses docs/legal/legacy-license-resolution.json",
+      "LicenseFiles": []
+    },
+    {
+      "Name": "xunit.runner.visualstudio",
+      "Version": "4.0.1",
+      "Source": "https://www.nuget.org/packages/xunit.runner.visualstudio/4.0.1",
+      "License": "Apache-2.0",
+      "SourceDistributed": false,
+      "BinaryDistributed": false,
+      "ReferencedInSource": true,
+      "Copyright": "Copyright (C) .NET Foundation",
+      "Notice": "Keep applicable license texts and upstream notices; NuGet binaries are not vendored into the source ZIP.",
+      "LicenseEvidence": "docs/legal/nuget-dependencies.json; xunit.abstractions additionally uses docs/legal/legacy-license-resolution.json",
+      "LicenseFiles": []
+    },
+    {
+      "Name": "skill:ui-ux-pro-max",
+      "Version": "7246805992a42b7bba37d4cac83b01416f0c6c44",
+      "Source": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill",
+      "License": "MIT",
+      "SourceDistributed": true,
+      "BinaryDistributed": false,
+      "Notice": "Preserve UPSTREAM-LICENSE; Impeccable additionally preserves NOTICE and nested MIT texts.",
+      "LicenseFiles": [
+        ".agents/skills/ui-ux-pro-max/UPSTREAM-LICENSE"
+      ]
+    },
+    {
+      "Name": "skill:impeccable",
+      "Version": "245ad82def45831dc56a21b683c7a1ff530b06cc",
+      "Source": "https://github.com/pbakaus/impeccable",
+      "License": "Apache-2.0",
+      "SourceDistributed": true,
+      "BinaryDistributed": false,
+      "Notice": "Preserve UPSTREAM-LICENSE; Impeccable additionally preserves NOTICE and nested MIT texts.",
+      "LicenseFiles": [
+        ".agents/skills/impeccable/UPSTREAM-LICENSE",
+        ".agents/skills/impeccable/UPSTREAM-NOTICE.md",
+        "docs/legal/third-party/modern-screenshot-MIT.txt",
+        "docs/legal/third-party/platform-design-skills-MIT.txt"
+      ]
+    },
+    {
+      "Name": "skill:redesign-skill",
+      "Version": "d237dd399d57524945c0c81327da5da19f7a468d",
+      "Source": "https://github.com/Leonxlnx/taste-skill",
+      "License": "MIT",
+      "SourceDistributed": true,
+      "BinaryDistributed": false,
+      "Notice": "Preserve UPSTREAM-LICENSE; Impeccable additionally preserves NOTICE and nested MIT texts.",
+      "LicenseFiles": [
+        ".agents/skills/redesign-skill/UPSTREAM-LICENSE"
+      ]
+    },
+    {
+      "Name": "skill:soft-skill",
+      "Version": "d237dd399d57524945c0c81327da5da19f7a468d",
+      "Source": "https://github.com/Leonxlnx/taste-skill",
+      "License": "MIT",
+      "SourceDistributed": true,
+      "BinaryDistributed": false,
+      "Notice": "Preserve UPSTREAM-LICENSE; Impeccable additionally preserves NOTICE and nested MIT texts.",
+      "LicenseFiles": [
+        ".agents/skills/soft-skill/UPSTREAM-LICENSE"
+      ]
+    },
+    {
+      "Name": "skill:make-interfaces-feel-better",
+      "Version": "35545ea1512ad59fa463e6b1f95ca9c052981fe6",
+      "Source": "https://github.com/jakubkrehel/make-interfaces-feel-better",
+      "License": "MIT",
+      "SourceDistributed": true,
+      "BinaryDistributed": false,
+      "Notice": "Preserve UPSTREAM-LICENSE; Impeccable additionally preserves NOTICE and nested MIT texts.",
+      "LicenseFiles": [
+        ".agents/skills/make-interfaces-feel-better/UPSTREAM-LICENSE"
+      ]
+    },
+    {
+      "Name": "skill:run-tests",
+      "Version": "9de888b8ce55da34e76a113bd7b2d463d6b3e1e6",
+      "Source": "https://github.com/dotnet/skills",
+      "License": "MIT",
+      "SourceDistributed": true,
+      "BinaryDistributed": false,
+      "Notice": "Keep accompanying LICENSE.txt; WPF reference retains docs/skills/awesome-copilot-LICENSE.txt.",
+      "LicenseFiles": [
+        ".agents/skills/run-tests/LICENSE.txt"
+      ]
+    },
+    {
+      "Name": "skill:coverage-analysis",
+      "Version": "9de888b8ce55da34e76a113bd7b2d463d6b3e1e6",
+      "Source": "https://github.com/dotnet/skills",
+      "License": "MIT",
+      "SourceDistributed": true,
+      "BinaryDistributed": false,
+      "Notice": "Keep accompanying LICENSE.txt; WPF reference retains docs/skills/awesome-copilot-LICENSE.txt.",
+      "LicenseFiles": [
+        ".agents/skills/coverage-analysis/LICENSE.txt"
+      ]
+    },
+    {
+      "Name": "skill:breakdown-feature-prd",
+      "Version": "f25421d3f1b8b3bb217f78a7c0567cf7ec117cd8",
+      "Source": "https://github.com/github/awesome-copilot",
+      "License": "MIT",
+      "SourceDistributed": true,
+      "BinaryDistributed": false,
+      "Notice": "Keep accompanying LICENSE.txt; WPF reference retains docs/skills/awesome-copilot-LICENSE.txt.",
+      "LicenseFiles": [
+        ".agents/skills/breakdown-feature-prd/LICENSE.txt"
+      ]
+    },
+    {
+      "Name": "skill:winui-ui-testing",
+      "Version": "d399e3151db3a6e549ca4ac9d9cbeefa21260ed8",
+      "Source": "https://github.com/microsoft/winappCli",
+      "License": "MIT",
+      "SourceDistributed": true,
+      "BinaryDistributed": false,
+      "Notice": "Keep accompanying LICENSE.txt; WPF reference retains docs/skills/awesome-copilot-LICENSE.txt.",
+      "LicenseFiles": [
+        ".agents/skills/winui-ui-testing/LICENSE.txt"
+      ]
+    },
+    {
+      "Name": "Windows system fonts",
+      "Version": "Windows 11 system installation",
+      "Source": "https://learn.microsoft.com/en-us/typography/fonts/font-faq",
+      "License": "Windows system-font usage terms; no font-file redistribution",
+      "SourceDistributed": false,
+      "BinaryDistributed": false,
+      "Notice": "Only reference Segoe UI/Variable and Microsoft YaHei UI by name; do not extract or bundle font files.",
+      "LicenseFiles": []
+    },
+    {
+      "Name": "Windows application system icon",
+      "Version": "SystemIcons.Application",
+      "Source": "https://learn.microsoft.com/en-us/dotnet/api/system.drawing.systemicons.application",
+      "License": "Windows/.NET provided resource usage; no extracted icon file",
+      "SourceDistributed": false,
+      "BinaryDistributed": false,
+      "Notice": "No ICO/SVG/PNG file is bundled; own navigation paths are separate original code.",
+      "LicenseFiles": []
+    },
+    {
+      "Name": "org.yanji.reference.408",
+      "Version": "1.0.0",
+      "Source": [
+        {
+          "Id": "neea-index",
+          "Title": "教育考试院大纲索引：仅作历史考试范围入口",
+          "Url": "https://yankao.neea.edu.cn/html1/category/1509/6235-2.htm"
+        },
+        {
+          "Id": "mit-algorithms",
+          "Title": "MIT 6.006 基础算法课程：主题参考",
+          "Url": "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/pages/syllabus/"
+        },
+        {
+          "Id": "cmu-systems",
+          "Title": "CMU 15-213 系统课程：主题参考",
+          "Url": "https://www.cs.cmu.edu/~213/schedule.html"
+        },
+        {
+          "Id": "mit-os",
+          "Title": "MIT 6.1810 操作系统课程：主题参考",
+          "Url": "https://pdos.csail.mit.edu/6.1810/2025/schedule.html"
+        },
+        {
+          "Id": "stanford-network",
+          "Title": "Stanford CS144 网络课程：主题参考",
+          "Url": "https://cs144.github.io/"
+        }
+      ],
+      "License": "CC0-1.0",
+      "SourceDistributed": true,
+      "BinaryDistributed": true,
+      "Notice": "CC0 applies to original reference-directory metadata only; external course/textbook content and official exam coverage are not licensed or certified.",
+      "LicenseFiles": [
+        "resources/licenses/KnowledgePack-CC0-1.0.txt"
+      ],
+      "ContentLicenseDescription": "本包原创目录结构与元数据采用 CC0-1.0；外部来源的内容与许可不包含在授权中，未复制其正文或题目。"
+    },
+    {
+      "Name": "org.yanji.reference.blank",
+      "Version": "1.0.0",
+      "Source": [
+        {
+          "Id": "yanji-original",
+          "Title": "YanJi 原创空白模板",
+          "Url": null
+        }
+      ],
+      "License": "CC0-1.0",
+      "SourceDistributed": true,
+      "BinaryDistributed": true,
+      "Notice": "CC0 applies to original reference-directory metadata only; external course/textbook content and official exam coverage are not licensed or certified.",
+      "LicenseFiles": [
+        "resources/licenses/KnowledgePack-CC0-1.0.txt"
+      ],
+      "ContentLicenseDescription": "本包原创目录结构与元数据采用 CC0-1.0；外部来源的内容与许可不包含在授权中，未复制其正文或题目。"
+    },
+    {
+      "Name": "org.yanji.reference.english1",
+      "Version": "1.0.0",
+      "Source": [
+        {
+          "Id": "neea-index",
+          "Title": "教育考试院大纲索引：英语一二历史入口",
+          "Url": "https://yankao.neea.edu.cn/html1/category/1509/6235-2.htm"
+        }
+      ],
+      "License": "CC0-1.0",
+      "SourceDistributed": true,
+      "BinaryDistributed": true,
+      "Notice": "CC0 applies to original reference-directory metadata only; external course/textbook content and official exam coverage are not licensed or certified.",
+      "LicenseFiles": [
+        "resources/licenses/KnowledgePack-CC0-1.0.txt"
+      ],
+      "ContentLicenseDescription": "本包原创目录结构与元数据采用 CC0-1.0；外部来源的内容与许可不包含在授权中，未复制其正文或题目。"
+    },
+    {
+      "Name": "org.yanji.reference.english2",
+      "Version": "1.0.0",
+      "Source": [
+        {
+          "Id": "neea-index",
+          "Title": "教育考试院大纲索引：英语一二历史入口",
+          "Url": "https://yankao.neea.edu.cn/html1/category/1509/6235-2.htm"
+        }
+      ],
+      "License": "CC0-1.0",
+      "SourceDistributed": true,
+      "BinaryDistributed": true,
+      "Notice": "CC0 applies to original reference-directory metadata only; external course/textbook content and official exam coverage are not licensed or certified.",
+      "LicenseFiles": [
+        "resources/licenses/KnowledgePack-CC0-1.0.txt"
+      ],
+      "ContentLicenseDescription": "本包原创目录结构与元数据采用 CC0-1.0；外部来源的内容与许可不包含在授权中，未复制其正文或题目。"
+    },
+    {
+      "Name": "org.yanji.reference.math1",
+      "Version": "1.0.0",
+      "Source": [
+        {
+          "Id": "neea-index",
+          "Title": "教育考试院大纲索引：不声明最新范围",
+          "Url": "https://yankao.neea.edu.cn/html1/category/1509/6235-2.htm"
+        },
+        {
+          "Id": "mit-math",
+          "Title": "MIT OCW 基础数学课程入口",
+          "Url": "https://ocw.mit.edu/collections/ocw-scholar/"
+        }
+      ],
+      "License": "CC0-1.0",
+      "SourceDistributed": true,
+      "BinaryDistributed": true,
+      "Notice": "CC0 applies to original reference-directory metadata only; external course/textbook content and official exam coverage are not licensed or certified.",
+      "LicenseFiles": [
+        "resources/licenses/KnowledgePack-CC0-1.0.txt"
+      ],
+      "ContentLicenseDescription": "本包原创目录结构与元数据采用 CC0-1.0；外部来源的内容与许可不包含在授权中，未复制其正文或题目。"
+    },
+    {
+      "Name": "org.yanji.reference.math2",
+      "Version": "1.0.0",
+      "Source": [
+        {
+          "Id": "neea-index",
+          "Title": "教育考试院大纲索引：不声明最新范围",
+          "Url": "https://yankao.neea.edu.cn/html1/category/1509/6235-2.htm"
+        },
+        {
+          "Id": "mit-math",
+          "Title": "MIT OCW 基础数学课程入口",
+          "Url": "https://ocw.mit.edu/collections/ocw-scholar/"
+        }
+      ],
+      "License": "CC0-1.0",
+      "SourceDistributed": true,
+      "BinaryDistributed": true,
+      "Notice": "CC0 applies to original reference-directory metadata only; external course/textbook content and official exam coverage are not licensed or certified.",
+      "LicenseFiles": [
+        "resources/licenses/KnowledgePack-CC0-1.0.txt"
+      ],
+      "ContentLicenseDescription": "本包原创目录结构与元数据采用 CC0-1.0；外部来源的内容与许可不包含在授权中，未复制其正文或题目。"
+    },
+    {
+      "Name": "org.yanji.reference.politics",
+      "Version": "1.0.0",
+      "Source": [
+        {
+          "Id": "neea-politics",
+          "Title": "教育考试院2017历史大纲入口；非当前年度说明",
+          "Url": "https://yankao.neea.edu.cn/html1/report/16103/1369-1.htm"
+        }
+      ],
+      "License": "CC0-1.0",
+      "SourceDistributed": true,
+      "BinaryDistributed": true,
+      "Notice": "CC0 applies to original reference-directory metadata only; external course/textbook content and official exam coverage are not licensed or certified.",
+      "LicenseFiles": [
+        "resources/licenses/KnowledgePack-CC0-1.0.txt"
+      ],
+      "ContentLicenseDescription": "本包原创目录结构与元数据采用 CC0-1.0；外部来源的内容与许可不包含在授权中，未复制其正文或题目。"
+    }
+  ],
+  "LicenseFiles": [
+    {
+      "SourcePath": "resources/licenses/CommunityToolkit-MIT.md",
+      "BinaryPath": "licenses/CommunityToolkit-MIT.md",
+      "Sha256": "651997EF19DBB9ECB8DD660DBC86444A65AF21F18CFE08DAA69BF201CD5CFDFC"
+    },
+    {
+      "SourcePath": "resources/licenses/CommunityToolkit-NOTICES.txt",
+      "BinaryPath": "licenses/CommunityToolkit-NOTICES.txt",
+      "Sha256": "7774F8B0AB66BFB47EC154CE24A2D6D574FEBC44A74D940B8A037D1C56756163"
+    },
+    {
+      "SourcePath": "resources/licenses/DotNet-Runtime-MIT.txt",
+      "BinaryPath": "licenses/DotNet-Runtime-MIT.txt",
+      "Sha256": "D7A68596AB69B06F51CA278A6545148E4269A9381C26D597C13DF5D88E08CF5B"
+    },
+    {
+      "SourcePath": "resources/licenses/DotNet-ThirdPartyNotices.txt",
+      "BinaryPath": "licenses/DotNet-ThirdPartyNotices.txt",
+      "Sha256": "6D15E10A101C6BFFF2AB4429ED061BF76C456FC4B23AD6B03E0D0F8377148A21"
+    },
+    {
+      "SourcePath": "resources/licenses/EFCore-Sqlite-MIT.txt",
+      "BinaryPath": "licenses/EFCore-Sqlite-MIT.txt",
+      "Sha256": "AE48DF11A335DC1A615F4F938B69CBA73BCF4485C4F97AF49B38EFB0F216353B"
+    },
+    {
+      "SourcePath": "resources/licenses/KnowledgePack-CC0-1.0.txt",
+      "BinaryPath": "licenses/KnowledgePack-CC0-1.0.txt",
+      "Sha256": "A2010F343487D3F7618AFFE54F789F5487602331C0A8D03F49E9A7C547CF0499"
+    },
+    {
+      "SourcePath": "resources/licenses/SQLitePCLRaw-Apache-2.0.txt",
+      "BinaryPath": "licenses/SQLitePCLRaw-Apache-2.0.txt",
+      "Sha256": "CFC7749B96F63BD31C3C42B5C471BF756814053E847C10F3EB003417BC523D30"
+    },
+    {
+      "SourcePath": "resources/licenses/WindowsDesktop-MIT.txt",
+      "BinaryPath": "licenses/WindowsDesktop-MIT.txt",
+      "Sha256": "A89886665765362EB77E0F8E26602C924520041D1711B2EEDC136434FE4D01AB"
+    },
+    {
+      "SourcePath": ".agents/skills/breakdown-feature-prd/LICENSE.txt",
+      "BinaryPath": null,
+      "Sha256": "E32449D23085399ADC1222F7A17408B730550258E51627C153CB108CA9955823"
+    },
+    {
+      "SourcePath": ".agents/skills/coverage-analysis/LICENSE.txt",
+      "BinaryPath": null,
+      "Sha256": "CFC21F5E8BD655AE997EEC916138B707B1D290B83272C02A95C9F821B8C87310"
+    },
+    {
+      "SourcePath": ".agents/skills/impeccable/UPSTREAM-LICENSE",
+      "BinaryPath": null,
+      "Sha256": "02BB8C3B4E70190E3986C0404AD2FD8D639B4F534252D82379CC1B502B6D1812"
+    },
+    {
+      "SourcePath": ".agents/skills/impeccable/UPSTREAM-NOTICE.md",
+      "BinaryPath": null,
+      "Sha256": "C60A093C2845FD9FB82F9C6F742ECE31F379F8190B535309D32D66C45CCFFDCB"
+    },
+    {
+      "SourcePath": ".agents/skills/make-interfaces-feel-better/UPSTREAM-LICENSE",
+      "BinaryPath": null,
+      "Sha256": "ED1DFE988FC40511B4845CCD9050A143A2002FEE3BEDC8064C47FA342B5D8D4F"
+    },
+    {
+      "SourcePath": ".agents/skills/redesign-skill/UPSTREAM-LICENSE",
+      "BinaryPath": null,
+      "Sha256": "4575A543AB88DAD12CCEA7D97E563D0BCE5B448B06072E65D3264497DAD326DF"
+    },
+    {
+      "SourcePath": ".agents/skills/run-tests/LICENSE.txt",
+      "BinaryPath": null,
+      "Sha256": "CFC21F5E8BD655AE997EEC916138B707B1D290B83272C02A95C9F821B8C87310"
+    },
+    {
+      "SourcePath": ".agents/skills/soft-skill/UPSTREAM-LICENSE",
+      "BinaryPath": null,
+      "Sha256": "4575A543AB88DAD12CCEA7D97E563D0BCE5B448B06072E65D3264497DAD326DF"
+    },
+    {
+      "SourcePath": ".agents/skills/ui-ux-pro-max/UPSTREAM-LICENSE",
+      "BinaryPath": null,
+      "Sha256": "738F69DFA83DB5C347C678FB9D90E560877059F0DE93A327C39001BFF92DC014"
+    },
+    {
+      "SourcePath": ".agents/skills/winui-ui-testing/LICENSE.txt",
+      "BinaryPath": null,
+      "Sha256": "C421B2A5E0EE627BB1C5D859BBCA37D7654C02F63D626E753644484A9054C2D1"
+    },
+    {
+      "SourcePath": "docs/legal/third-party/modern-screenshot-MIT.txt",
+      "BinaryPath": null,
+      "Sha256": "1DAAE2DB27DABA18A7E21BB56E12E19B8DE6C1197658921F09BBE550F7106579"
+    },
+    {
+      "SourcePath": "docs/legal/third-party/platform-design-skills-MIT.txt",
+      "BinaryPath": null,
+      "Sha256": "1126322E2CC8D165ADC4C792EEB195717DE2BCC7B39BE1CE77959D78E87EF685"
+    },
+    {
+      "SourcePath": "docs/legal/third-party/xunit-abstractions-Apache-2.0.txt",
+      "BinaryPath": null,
+      "Sha256": "165B8B82CD9DD1076DF2720C5CB60659DA48EFACFE944872E7B0F3B041EBD4C4"
+    },
+    {
+      "SourcePath": "docs/skills/awesome-copilot-LICENSE.txt",
+      "BinaryPath": null,
+      "Sha256": "E32449D23085399ADC1222F7A17408B730550258E51627C153CB108CA9955823"
+    },
+    {
+      "SourcePath": "docs/skills/openai-skill-creator-LICENSE.txt",
+      "BinaryPath": null,
+      "Sha256": "CFC7749B96F63BD31C3C42B5C471BF756814053E847C10F3EB003417BC523D30"
+    }
+  ],
+  "RightsBoundary": "Third-party materials keep their original terms. Knowledge packages retain their own content licenses. User learning data is never made public by this software license."
+}

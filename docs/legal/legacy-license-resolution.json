@@ -1,0 +1,11 @@
+{
+  "Id": "xunit.abstractions",
+  "Version": "2.0.3",
+  "OriginalNuspecHasLicenseExpression": false,
+  "Resolution": "Apache-2.0",
+  "Basis": "Official frozen abstractions.xunit repository notice; exact 2018 package build commit not recovered",
+  "File": "docs\\legal\\third-party\\xunit-abstractions-Apache-2.0.txt",
+  "Sha256": "165B8B82CD9DD1076DF2720C5CB60659DA48EFACFE944872E7B0F3B041EBD4C4",
+  "Status": "READY FOR FINAL APPROVAL",
+  "NugetRowPreserved": true
+}

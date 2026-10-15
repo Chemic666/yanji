@@ -1,0 +1,403 @@
+[
+  {
+    "Id": "communitytoolkit.mvvm",
+    "Version": "8.4.2",
+    "UsedBy": [
+      "RC1 distributed runtime audit",
+      "design/YanJi.DesignLab/packages.lock.json",
+      "src/YanJi.App/packages.lock.json"
+    ],
+    "License": "MIT",
+    "LicenseType": "expression",
+    "LicenseUrl": "https://licenses.nuget.org/MIT",
+    "Authors": "Microsoft",
+    "Copyright": "(c) .NET Foundation and Contributors. All rights reserved.",
+    "NuspecSha256": "F527C8B88468974B36805A629DB57129DCC8D6397E57EADFF3FDBA0FB4B6D740",
+    "BundledLicenseTexts": [
+      {
+        "Path": "License.md",
+        "Bytes": 1158,
+        "Sha256": "651997EF19DBB9ECB8DD660DBC86444A65AF21F18CFE08DAA69BF201CD5CFDFC"
+      },
+      {
+        "Path": "ThirdPartyNotices.txt",
+        "Bytes": 8600,
+        "Sha256": "7774F8B0AB66BFB47EC154CE24A2D6D574FEBC44A74D940B8A037D1C56756163"
+      }
+    ],
+    "Status": "READY FOR FINAL APPROVAL"
+  },
+  {
+    "Id": "microsoft.codecoverage",
+    "Version": "18.10.1",
+    "UsedBy": [
+      "tests/YanJi.Tests/packages.lock.json"
+    ],
+    "License": "MIT",
+    "LicenseType": "expression",
+    "LicenseUrl": "https://licenses.nuget.org/MIT",
+    "Authors": "Microsoft",
+    "Copyright": "© Microsoft Corporation. All rights reserved.",
+    "NuspecSha256": "E7473877D0450D94C304469A0E89932731F4BA498EDD3583211A0CDA6CA68C57",
+    "BundledLicenseTexts": [
+      {
+        "Path": "ThirdPartyNotices.txt",
+        "Bytes": 1813,
+        "Sha256": "4FC4244935BBE3516164402C573F053A5D246571ED4D357E6CCCD8EBEC296BBC"
+      },
+      {
+        "Path": "build/netstandard2.0/ThirdPartyNotices.txt",
+        "Bytes": 1813,
+        "Sha256": "4FC4244935BBE3516164402C573F053A5D246571ED4D357E6CCCD8EBEC296BBC"
+      }
+    ],
+    "Status": "READY FOR FINAL APPROVAL"
+  },
+  {
+    "Id": "microsoft.data.sqlite",
+    "Version": "10.0.12",
+    "UsedBy": [
+      "RC1 distributed runtime audit",
+      "design/YanJi.DesignLab/packages.lock.json",
+      "src/YanJi.App/packages.lock.json",
+      "src/YanJi.Data/packages.lock.json",
+      "tests/YanJi.Tests/packages.lock.json",
+      "tools/YanJi.MigrationProbe/packages.lock.json",
+      "tools/YanJi.Probe/packages.lock.json"
+    ],
+    "License": "MIT",
+    "LicenseType": "expression",
+    "LicenseUrl": "https://licenses.nuget.org/MIT",
+    "Authors": "Microsoft",
+    "Copyright": "© Microsoft Corporation. All rights reserved.",
+    "NuspecSha256": "8E1C47C77197DAAAC1584979B7BB42A9A8F6DEAFF9F6D18029B3A689A2107C6C",
+    "BundledLicenseTexts": [],
+    "Status": "READY FOR FINAL APPROVAL"
+  },
+  {
+    "Id": "microsoft.data.sqlite.core",
+    "Version": "10.0.12",
+    "UsedBy": [
+      "RC1 distributed runtime audit",
+      "design/YanJi.DesignLab/packages.lock.json",
+      "src/YanJi.App/packages.lock.json",
+      "src/YanJi.Data/packages.lock.json",
+      "tests/YanJi.Tests/packages.lock.json",
+      "tools/YanJi.MigrationProbe/packages.lock.json",
+      "tools/YanJi.Probe/packages.lock.json"
+    ],
+    "License": "MIT",
+    "LicenseType": "expression",
+    "LicenseUrl": "https://licenses.nuget.org/MIT",
+    "Authors": "Microsoft",
+    "Copyright": "© Microsoft Corporation. All rights reserved.",
+    "NuspecSha256": "56030907327BA858664E4C2CBC6547AD56D766D900BC323C14408FCD42FC46A0",
+    "BundledLicenseTexts": [],
+    "Status": "READY FOR FINAL APPROVAL"
+  },
+  {
+    "Id": "microsoft.net.test.sdk",
+    "Version": "18.10.1",
+    "UsedBy": [
+      "RC1 test audit",
+      "tests/YanJi.Tests/packages.lock.json"
+    ],
+    "License": "MIT",
+    "LicenseType": "expression",
+    "LicenseUrl": "https://licenses.nuget.org/MIT",
+    "Authors": "Microsoft",
+    "Copyright": "© Microsoft Corporation. All rights reserved.",
+    "NuspecSha256": "84C823B74B806F5B1F4CCE2BDAF81BA78ABBE0AE93C9828F578205F3D48ABCA8",
+    "BundledLicenseTexts": [],
+    "Status": "READY FOR FINAL APPROVAL"
+  },
+  {
+    "Id": "microsoft.netcore.app.runtime.win-x64",
+    "Version": "10.0.12",
+    "UsedBy": [
+      "RC1 distributed runtime audit"
+    ],
+    "License": "MIT",
+    "LicenseType": "expression",
+    "LicenseUrl": "https://licenses.nuget.org/MIT",
+    "Authors": "Microsoft",
+    "Copyright": "© Microsoft Corporation. All rights reserved.",
+    "NuspecSha256": "2649FC5FCB95C80F991B6D47AD8E10B772923249E87D98F409CA54CEE548C379",
+    "BundledLicenseTexts": [
+      {
+        "Path": "LICENSE.TXT",
+        "Bytes": 1139,
+        "Sha256": "D7A68596AB69B06F51CA278A6545148E4269A9381C26D597C13DF5D88E08CF5B"
+      },
+      {
+        "Path": "THIRD-PARTY-NOTICES.TXT",
+        "Bytes": 78041,
+        "Sha256": "6D15E10A101C6BFFF2AB4429ED061BF76C456FC4B23AD6B03E0D0F8377148A21"
+      }
+    ],
+    "Status": "READY FOR FINAL APPROVAL"
+  },
+  {
+    "Id": "microsoft.testplatform.objectmodel",
+    "Version": "18.10.1",
+    "UsedBy": [
+      "tests/YanJi.Tests/packages.lock.json"
+    ],
+    "License": "MIT",
+    "LicenseType": "expression",
+    "LicenseUrl": "https://licenses.nuget.org/MIT",
+    "Authors": "Microsoft",
+    "Copyright": "© Microsoft Corporation. All rights reserved.",
+    "NuspecSha256": "3AF65B097B8D4C5BC7C1242E3F56FDB3578A38B313F3BDD7472257F1CDD8D98B",
+    "BundledLicenseTexts": [],
+    "Status": "READY FOR FINAL APPROVAL"
+  },
+  {
+    "Id": "microsoft.testplatform.testhost",
+    "Version": "18.10.1",
+    "UsedBy": [
+      "tests/YanJi.Tests/packages.lock.json"
+    ],
+    "License": "MIT",
+    "LicenseType": "expression",
+    "LicenseUrl": "https://licenses.nuget.org/MIT",
+    "Authors": "Microsoft",
+    "Copyright": "© Microsoft Corporation. All rights reserved.",
+    "NuspecSha256": "801559164F0AB5079BAD2F8BFA206046919F6A97AE2AF8EF77D7A0BC80317457",
+    "BundledLicenseTexts": [
+      {
+        "Path": "ThirdPartyNotices.txt",
+        "Bytes": 4054,
+        "Sha256": "E2CE7628E0F67D0D724EEA9D9286A6938BF1EEDD253FC84B23D72AE54778A5F7"
+      }
+    ],
+    "Status": "READY FOR FINAL APPROVAL"
+  },
+  {
+    "Id": "microsoft.windowsdesktop.app.runtime.win-x64",
+    "Version": "10.0.12",
+    "UsedBy": [
+      "RC1 distributed runtime audit"
+    ],
+    "License": "MIT",
+    "LicenseType": "expression",
+    "LicenseUrl": "https://licenses.nuget.org/MIT",
+    "Authors": "Microsoft",
+    "Copyright": "© Microsoft Corporation. All rights reserved.",
+    "NuspecSha256": "07565A5CD782179E3B8C356CECA851796D8353C10A1EF14A400D43AC1ADD00CF",
+    "BundledLicenseTexts": [
+      {
+        "Path": "LICENSE",
+        "Bytes": 1137,
+        "Sha256": "A89886665765362EB77E0F8E26602C924520041D1711B2EEDC136434FE4D01AB"
+      }
+    ],
+    "Status": "READY FOR FINAL APPROVAL"
+  },
+  {
+    "Id": "sqlitepclraw.bundle_e_sqlite3",
+    "Version": "2.1.12",
+    "UsedBy": [
+      "RC1 distributed runtime audit",
+      "design/YanJi.DesignLab/packages.lock.json",
+      "src/YanJi.App/packages.lock.json",
+      "src/YanJi.Data/packages.lock.json",
+      "tests/YanJi.Tests/packages.lock.json",
+      "tools/YanJi.MigrationProbe/packages.lock.json",
+      "tools/YanJi.Probe/packages.lock.json"
+    ],
+    "License": "Apache-2.0",
+    "LicenseType": "expression",
+    "LicenseUrl": "https://licenses.nuget.org/Apache-2.0",
+    "Authors": "Eric Sink",
+    "Copyright": "Copyright 2014-2024 SourceGear, LLC",
+    "NuspecSha256": "2FAA9F418C3B8831EFDF92DF6ACA8322FFA9F7A556E915B46E5DAA8E1F8E3233",
+    "BundledLicenseTexts": [],
+    "Status": "READY FOR FINAL APPROVAL"
+  },
+  {
+    "Id": "sqlitepclraw.core",
+    "Version": "2.1.12",
+    "UsedBy": [
+      "RC1 distributed runtime audit",
+      "design/YanJi.DesignLab/packages.lock.json",
+      "src/YanJi.App/packages.lock.json",
+      "src/YanJi.Data/packages.lock.json",
+      "tests/YanJi.Tests/packages.lock.json",
+      "tools/YanJi.MigrationProbe/packages.lock.json",
+      "tools/YanJi.Probe/packages.lock.json"
+    ],
+    "License": "Apache-2.0",
+    "LicenseType": "expression",
+    "LicenseUrl": "https://licenses.nuget.org/Apache-2.0",
+    "Authors": "Eric Sink",
+    "Copyright": "Copyright 2014-2024 SourceGear, LLC",
+    "NuspecSha256": "8AB9189071AEF856B12A9A3D68AC055A01EC6F8FC51B85AC1029E7C5BA12EECC",
+    "BundledLicenseTexts": [],
+    "Status": "READY FOR FINAL APPROVAL"
+  },
+  {
+    "Id": "sqlitepclraw.lib.e_sqlite3",
+    "Version": "2.1.12",
+    "UsedBy": [
+      "RC1 distributed runtime audit",
+      "design/YanJi.DesignLab/packages.lock.json",
+      "src/YanJi.App/packages.lock.json",
+      "src/YanJi.Data/packages.lock.json",
+      "tests/YanJi.Tests/packages.lock.json",
+      "tools/YanJi.MigrationProbe/packages.lock.json",
+      "tools/YanJi.Probe/packages.lock.json"
+    ],
+    "License": "Apache-2.0",
+    "LicenseType": "expression",
+    "LicenseUrl": "https://licenses.nuget.org/Apache-2.0",
+    "Authors": "Eric Sink",
+    "Copyright": "Copyright 2014-2024 SourceGear, LLC",
+    "NuspecSha256": "0E82E5CDA14CCB8C546596D39393A6A9BA94146FFEEAC86069DF29CE9D57A731",
+    "BundledLicenseTexts": [],
+    "Status": "READY FOR FINAL APPROVAL"
+  },
+  {
+    "Id": "sqlitepclraw.provider.e_sqlite3",
+    "Version": "2.1.12",
+    "UsedBy": [
+      "RC1 distributed runtime audit",
+      "design/YanJi.DesignLab/packages.lock.json",
+      "src/YanJi.App/packages.lock.json",
+      "src/YanJi.Data/packages.lock.json",
+      "tests/YanJi.Tests/packages.lock.json",
+      "tools/YanJi.MigrationProbe/packages.lock.json",
+      "tools/YanJi.Probe/packages.lock.json"
+    ],
+    "License": "Apache-2.0",
+    "LicenseType": "expression",
+    "LicenseUrl": "https://licenses.nuget.org/Apache-2.0",
+    "Authors": "Eric Sink",
+    "Copyright": "Copyright 2014-2024 SourceGear, LLC",
+    "NuspecSha256": "7E5B604B8AD8121FA75F01EEC61F56989B717FADFD530188A57D35759D93F573",
+    "BundledLicenseTexts": [],
+    "Status": "READY FOR FINAL APPROVAL"
+  },
+  {
+    "Id": "xunit",
+    "Version": "2.9.3",
+    "UsedBy": [
+      "RC1 test audit",
+      "tests/YanJi.Tests/packages.lock.json"
+    ],
+    "License": "Apache-2.0",
+    "LicenseType": "expression",
+    "LicenseUrl": "https://licenses.nuget.org/Apache-2.0",
+    "Authors": "jnewkirk,bradwilson",
+    "Copyright": "Copyright (C) .NET Foundation",
+    "NuspecSha256": "8F3373C5260B2ACEC2874A280640E0FBB9AC538D754880D7ABAA4473C3497D25",
+    "BundledLicenseTexts": [],
+    "Status": "READY FOR FINAL APPROVAL"
+  },
+  {
+    "Id": "xunit.abstractions",
+    "Version": "2.0.3",
+    "UsedBy": [
+      "tests/YanJi.Tests/packages.lock.json"
+    ],
+    "License": null,
+    "LicenseType": null,
+    "LicenseUrl": "https://raw.githubusercontent.com/xunit/xunit/master/license.txt",
+    "Authors": "James Newkirk,Brad Wilson",
+    "Copyright": null,
+    "NuspecSha256": "E59191DF9E3047DD953B695C886597786AC2771F66897BAA40877F643DA9F7B1",
+    "BundledLicenseTexts": [],
+    "Status": "NOT TESTED"
+  },
+  {
+    "Id": "xunit.analyzers",
+    "Version": "1.18.0",
+    "UsedBy": [
+      "tests/YanJi.Tests/packages.lock.json"
+    ],
+    "License": "Apache-2.0",
+    "LicenseType": "expression",
+    "LicenseUrl": "https://licenses.nuget.org/Apache-2.0",
+    "Authors": "jnewkirk,bradwilson,marcind",
+    "Copyright": "Copyright (C) .NET Foundation",
+    "NuspecSha256": "270FFB0DCE41126154F16BAD2EE025DA605185FB5308247877745E5EEF97689E",
+    "BundledLicenseTexts": [],
+    "Status": "READY FOR FINAL APPROVAL"
+  },
+  {
+    "Id": "xunit.assert",
+    "Version": "2.9.3",
+    "UsedBy": [
+      "tests/YanJi.Tests/packages.lock.json"
+    ],
+    "License": "Apache-2.0",
+    "LicenseType": "expression",
+    "LicenseUrl": "https://licenses.nuget.org/Apache-2.0",
+    "Authors": "jnewkirk,bradwilson",
+    "Copyright": "Copyright (C) .NET Foundation",
+    "NuspecSha256": "E3F99045088C262B14A62DD93CF025912E9E653F5CE1D77E7F858238E0BCB508",
+    "BundledLicenseTexts": [],
+    "Status": "READY FOR FINAL APPROVAL"
+  },
+  {
+    "Id": "xunit.core",
+    "Version": "2.9.3",
+    "UsedBy": [
+      "tests/YanJi.Tests/packages.lock.json"
+    ],
+    "License": "Apache-2.0",
+    "LicenseType": "expression",
+    "LicenseUrl": "https://licenses.nuget.org/Apache-2.0",
+    "Authors": "jnewkirk,bradwilson",
+    "Copyright": "Copyright (C) .NET Foundation",
+    "NuspecSha256": "08C844D40924A386D7600E2523C57F1A2A1D6A77C03B8C0001501831944A0691",
+    "BundledLicenseTexts": [],
+    "Status": "READY FOR FINAL APPROVAL"
+  },
+  {
+    "Id": "xunit.extensibility.core",
+    "Version": "2.9.3",
+    "UsedBy": [
+      "tests/YanJi.Tests/packages.lock.json"
+    ],
+    "License": "Apache-2.0",
+    "LicenseType": "expression",
+    "LicenseUrl": "https://licenses.nuget.org/Apache-2.0",
+    "Authors": "jnewkirk,bradwilson",
+    "Copyright": "Copyright (C) .NET Foundation",
+    "NuspecSha256": "0C5886E9320C6DD828E50048C27CF355314FE20E2D8D4026B4A3A9FE42D4A359",
+    "BundledLicenseTexts": [],
+    "Status": "READY FOR FINAL APPROVAL"
+  },
+  {
+    "Id": "xunit.extensibility.execution",
+    "Version": "2.9.3",
+    "UsedBy": [
+      "tests/YanJi.Tests/packages.lock.json"
+    ],
+    "License": "Apache-2.0",
+    "LicenseType": "expression",
+    "LicenseUrl": "https://licenses.nuget.org/Apache-2.0",
+    "Authors": "jnewkirk,bradwilson",
+    "Copyright": "Copyright (C) .NET Foundation",
+    "NuspecSha256": "9C5498549B5200B65BA0C7E0D4597C269C6BBB2E374EA8F1C28D76DC3F3A0BDD",
+    "BundledLicenseTexts": [],
+    "Status": "READY FOR FINAL APPROVAL"
+  },
+  {
+    "Id": "xunit.runner.visualstudio",
+    "Version": "4.0.1",
+    "UsedBy": [
+      "RC1 test audit",
+      "tests/YanJi.Tests/packages.lock.json"
+    ],
+    "License": "Apache-2.0",
+    "LicenseType": "expression",
+    "LicenseUrl": "https://licenses.nuget.org/Apache-2.0",
+    "Authors": "jnewkirk,bradwilson",
+    "Copyright": "Copyright (C) .NET Foundation",
+    "NuspecSha256": "B304952A072D1E6280180B2C2077CE138E499CD341A3AF67C5ACE65DF27B9975",
+    "BundledLicenseTexts": [],
+    "Status": "READY FOR FINAL APPROVAL"
+  }
+]

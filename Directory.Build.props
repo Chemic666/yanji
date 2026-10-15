@@ -5,7 +5,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>latest</LangVersion>
     <Deterministic>true</Deterministic>
-    <Version>0.4.0-rc.1</Version>
+    <Version>0.4.0-rc.final.1</Version>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
     <Authors>YanJi</Authors>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>

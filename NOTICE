@@ -1,0 +1,35 @@
+YanJi 研迹 — V0.4.0 RC-Final
+
+Original YanJi software contributions are licensed under Apache License 2.0.
+Copyright remains with the respective copyright holders; no single legal
+entity or personal identity is inferred from repository account names.
+See LICENSE, COPYRIGHT.md and THIRD-PARTY-NOTICES.md for scope and exceptions.
+This NOTICE is informational and does not replace any license.
+
+Runtime distribution: .NET/WindowsDesktop, CommunityToolkit.Mvvm,
+Microsoft.Data.Sqlite, SQLitePCLRaw and native SQLite retain their own terms.
+Their complete applicable license texts/notices are in licenses/.
+
+The built-in reference knowledge-directory metadata retains its CC0-1.0
+content license. It is not an official annual exam syllabus. External
+reference materials and user learning data are not relicensed by YanJi.
+
+Source-distribution materials (not runtime components): the vendored
+Impeccable skill includes modern-screenshot (Copyright (c) 2021-present wxm,
+MIT) and platform-design-skills-derived guidance. Complete nested MIT texts
+are in docs/legal/third-party/ and their attribution is described in
+docs/legal/THIRD-PARTY-SUPPLEMENT.md. Other vendored Skills retain the
+licenses provided next to their source. The following upstream notice is
+reproduced without changing its contents:
+
+# Third-Party Notices
+
+This project includes content derived from third-party work, used under the terms of its original license.
+
+## Platform Design Skills
+
+The `skill/reference/ios.md` and `skill/reference/android.md` platform reference files are distilled from ehmo's `platform-design-skills` (Apple Human Interface Guidelines and Material Design 3 rules), rewritten in Impeccable's voice.
+
+**Original work:** https://github.com/ehmo/platform-design-skills
+**Original license:** MIT
+**Author:** ehmo

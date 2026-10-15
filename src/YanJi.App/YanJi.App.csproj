@@ -7,5 +7,18 @@
   </PropertyGroup>
   <ItemGroup><ProjectReference Include="../YanJi.Data/YanJi.Data.csproj" /><PackageReference Include="CommunityToolkit.Mvvm" /></ItemGroup>
   <ItemGroup><None Include="../../resources/licenses/**/*" Link="licenses/%(RecursiveDir)%(Filename)%(Extension)" CopyToPublishDirectory="PreserveNewest" /></ItemGroup>
+  <ItemGroup>
+    <None Include="../../LICENSE" Link="LICENSE" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <None Include="../../NOTICE" Link="NOTICE" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <None Include="../../COPYRIGHT.md" Link="COPYRIGHT.md" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <None Include="../../THIRD-PARTY-NOTICES.md" Link="THIRD-PARTY-NOTICES.md" CopyToPublishDirectory="PreserveNewest" />
+    <None Include="../../resources/legal/third-party-licenses.json" Link="third-party-licenses.json" CopyToPublishDirectory="PreserveNewest" />
+    <None Include="../../docs/V04-RCFINAL-START.md" Link="START-HERE.md" CopyToPublishDirectory="PreserveNewest" />
+    <None Include="../../docs/V04-RCFINAL-USER-GUIDE.md" Link="USER-GUIDE.md" CopyToPublishDirectory="PreserveNewest" />
+    <None Include="../../docs/V04-RCFINAL-UPGRADE.md" Link="UPGRADE-ROLLBACK.md" CopyToPublishDirectory="PreserveNewest" />
+    <None Include="../../docs/V04-RCFINAL-MANUAL.md" Link="MANUAL-ACCEPTANCE.md" CopyToPublishDirectory="PreserveNewest" />
+    <None Include="../../docs/V04-M2-TEMPLATE-SOURCES.md" Link="KNOWLEDGE-SOURCES.md" CopyToPublishDirectory="PreserveNewest" />
+    <None Include="../../docs/V04-RCFINAL-RELEASE-NOTES.md" Link="RELEASE-NOTES.md" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
   <ItemGroup><None Include="../../resources/knowledge-packages/**/*.json" Link="knowledge-packages/%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" /></ItemGroup>
 </Project>

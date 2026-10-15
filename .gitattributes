@@ -4,3 +4,9 @@
 *.md text eol=lf
 *.json text eol=lf
 *.ps1 text eol=crlf
+# License texts are reviewed and hashed as upstream bytes.
+LICENSE -text
+NOTICE -text
+resources/licenses/** -text
+docs/legal/third-party/** -text
+docs/skills/*LICENSE.txt -text
