@@ -3,10 +3,18 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using YanJi.Core;
 
 namespace YanJi.App;
 public partial class KnowledgeWorkspace : UserControl
 {
+    private MainWindow OwnerWindow=>(MainWindow)Window.GetWindow(this);
+    private async void StartStudy_Click(object sender,RoutedEventArgs e){if(Model?.Selected is {} row)await Model.Owner.StartKnowledgeAsync(row.Node.Id);}
+    private async void AddNodeTask_Click(object sender,RoutedEventArgs e){if(Model?.Selected is {} row){await OwnerWindow.AddNodeTaskAsync(row.Node);await Model.ReloadAsync(row.Node.Id);}}
+    private async void AddNodeWeak_Click(object sender,RoutedEventArgs e){if(Model?.Selected is {} row){await OwnerWindow.AddNodeWeakAsync(row.Node);await Model.ReloadAsync(row.Node.Id);}}
+    private void StudyRecord_Click(object sender,RoutedEventArgs e){var row=(KnowledgeRecordRow)((Button)sender).Tag;Model!.Owner.OpenKnowledgeRecord(row.Record);}
+    private async void StudyTask_Click(object sender,RoutedEventArgs e)=>await Model!.Owner.StartTaskCommand.ExecuteAsync((LearningTask)((Button)sender).Tag);
+    private async void StudyWeak_Click(object sender,RoutedEventArgs e){await OwnerWindow.EditNodeWeakAsync((WeakPoint)((Button)sender).Tag);if(Model?.Selected is {} row)await Model.ReloadAsync(row.Node.Id);}
     public KnowledgeWorkspaceViewModel? Model { get; private set; }
     private bool _detail;
     public KnowledgeWorkspace() { InitializeComponent(); PreviewKeyDown += Keys; }

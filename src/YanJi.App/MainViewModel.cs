@@ -23,8 +23,9 @@ public sealed record RecordRow(StudyRecord Record,string Subject,string Chapter,
     public string DisplayDuration=>DurationText.Compact(Contribution??Record.DurationMs);
     public string DisplayScope=>Contribution is long ms&&ms!=Record.DurationMs?"本页贡献 · 整次 "+DurationText.Compact(Record.DurationMs):Source+" · "+State;
     public string ScopeLabel=>Contribution!=null?"本页贡献 "+ScopedDuration+" · 整次 "+Duration:"整次 "+Duration;
+    public string LearningEvidence=>"学习时路径："+(Record.Context?.NodePath??"历史未采集 / 未指定")+"\n任务："+(Record.Context?.TaskId==null?"未关联":Record.Context.TaskTitle)+"\n薄弱点："+string.Join("、",Record.Context?.WeakPoints?.Select(w=>w.Title)??[]);
     public string Dates=>string.Join("、",Record.Parts.Select(p=>p.Date).Distinct().Order().Select(d=>d.ToString("yyyy-MM-dd")));
-    public string Summary=>Source+" · "+State+" · "+Record.Parts.Count+" 个片段 · "+Dates+(Record.Focus is {} f?" · "+(f.Mode==FocusMode.Pomodoro?"番茄钟":f.Mode==FocusMode.Countdown?"倒计时":"自由计时")+(f.TaskId!=null?" · 任务 "+f.TaskTitle:""):"");
+    public string Summary=>Source+" · "+State+" · "+Record.Parts.Count+" 个片段 · "+Dates+(Record.Focus is {} f?" · "+(f.Mode==FocusMode.Pomodoro?"番茄钟":f.Mode==FocusMode.Countdown?"倒计时":"自由计时")+(Record.Context!=null?(Record.Context.TaskId!=null?" · 任务 "+Record.Context.TaskTitle:""):(f.TaskId!=null?" · 任务 "+f.TaskTitle:"")):"");
 }
 public sealed record CalendarDay(DateTime Date,string Day,string Duration,bool InMonth,bool Selected,string Status="尚无记录",string Color="#EDF3F5",long Milliseconds=0)
 { public bool IsPending=>Status.Contains("待核对");public string Label=>Day+"\n"+(Duration.Length>0?Duration:Status=="尚无记录"?"无记录":Status);public string Description=>$"{Date:yyyy-MM-dd} · {Status}"+(Duration.Length>0?" · "+Duration:"");public string DisplayDuration=>Milliseconds>0?DurationText.Compact(Milliseconds):Status=="尚无记录"?"—":Status; }
@@ -130,7 +131,7 @@ public sealed partial class MainViewModel : ObservableObject
         if(active)TimerNote=snapshot.Note;
         ManualSubject=Subjects.FirstOrDefault(s=>s.Id==manualId)??Subjects.FirstOrDefault();
         LoadChapters(ManualChapters,ManualSubject?.Id);ManualChapter=ManualChapters.FirstOrDefault(c=>c.Id==manualChapterId)??ManualChapters.FirstOrDefault();
-        Replace(Tasks,Database.Tasks());Replace(WeakPoints,Database.WeakPoints());RefreshFocusTasks();
+        Replace(Tasks,Database.Tasks());Replace(WeakPoints,Database.WeakPoints());RefreshFocusTasks();RefreshLearning();
         ZoneId=Database.Setting("zone","Asia/Shanghai");TimeParts.ResolveZone(ZoneId);
         ExamDate=Database.Setting("exam-date","") is string date&&date.Length>0?"考试日期 "+date:"2028 年入学 · 考试日期待定";
         var today=LocalToday();var week=today.AddDays(-(((int)today.DayOfWeek+6)%7));var month=new DateOnly(today.Year,today.Month,1);
@@ -162,13 +163,13 @@ public sealed partial class MainViewModel : ObservableObject
     {
         var snapshot=_timer.Snapshot;
         var justCompleted=snapshot.State==TimerState.Completed&&_durable?.IsActive==true;
-        try{var clock=Stopwatch.StartNew();var saved=await Task.Run(()=>Database.SaveTimer(snapshot,reason));TimerSaveCount++;TimerSaveTotalMilliseconds+=clock.Elapsed.TotalMilliseconds;_timer.ConfirmSaved(saved.Version);_durable=saved;_lastCheckpoint=DateTimeOffset.UtcNow;_timerRetryAt=DateTimeOffset.MinValue;}
+        try{var clock=Stopwatch.StartNew();var saved=await Task.Run(()=>Database.SaveTimer(snapshot,reason));TimerSaveCount++;TimerSaveTotalMilliseconds+=clock.Elapsed.TotalMilliseconds;_timer.ConfirmSaved(saved.Version,saved.Context);_durable=saved;_lastCheckpoint=DateTimeOffset.UtcNow;_timerRetryAt=DateTimeOffset.MinValue;}
         catch
         {
             _timer=new();if(_durable?.IsActive==true){_timer.Restore(_durable,WindowsClock.Sample());_timer.MarkUncertain("保存失败；仅保留上次成功检查点，请核对未保存时间。");}
             throw;
         }
-        if(justCompleted)OnFocusSaved(snapshot);
+        if(justCompleted){CompletedStudy=Database.Records().Single(r=>r.Id==snapshot.SessionId);OnFocusSaved(snapshot);}
     }
     public async Task TickAsync()
     {
@@ -197,7 +198,7 @@ public sealed partial class MainViewModel : ObservableObject
     [RelayCommand] private async Task StartAsync()
     {
         if(Busy||TimerSubject==null||TimerActive)return;Busy=true;
-        try{var focus=CreateFocus();_timer.Start(TimerSubject.Id,ChapterId(TimerChapter),TimerNote,ZoneId,WindowsClock.Sample(),focus);await PersistTimerAsync("开始计时");BreakActive=false;_break=null;Status="专注已开始；关闭窗口会进入托盘。";
+        try{var focus=CreateFocus();_timer.Start(TimerSubject.Id,ChapterId(TimerChapter),TimerNote,ZoneId,WindowsClock.Sample(),focus,ContextFor(ChapterId(TimerChapter),FocusTask));CompletedStudy=null;await PersistTimerAsync("开始计时");BreakActive=false;_break=null;Status="专注已开始；关闭窗口会进入托盘。";
             try{Database.SaveSetting("focus-mode",FocusModeIndex.ToString());Database.SaveSetting("focus-minutes",FocusMinutes);Database.SaveSetting("break-minutes",BreakMinutes);}catch{Status="计时已开始，偏好未能保存。";}}
         catch(Exception e){Status=e.Message;Error?.Invoke(Status);}finally{Busy=false;UpdateTimer();}
     }
@@ -244,7 +245,7 @@ public sealed partial class MainViewModel : ObservableObject
         if(!double.TryParse(ManualMinutes,NumberStyles.Number,CultureInfo.CurrentCulture,out var minutes)||!double.IsFinite(minutes)||minutes<=0||minutes>1440){Status="请输入大于 0、最多 1440 的分钟数。";return;}
         try
         {await FlushTimerAsync();var record=new StudyRecord(Guid.NewGuid().ToString("N"),ManualSubject.Id,ChapterId(ManualChapter),SessionSource.Manual,ManualNote,
-            [TimeParts.Duration(DateOnly.FromDateTime(ManualDate),TimeSpan.FromMinutes(minutes),ZoneId)]);
+            [TimeParts.Duration(DateOnly.FromDateTime(ManualDate),TimeSpan.FromMinutes(minutes),ZoneId)],Context:ContextFor(ChapterId(ManualChapter),ManualTask));
             if(await RunAsync(()=>Database.SaveRecord(record,"追加学习时长"),"补录已追加；已有记录可在每日详情中修正。"))ManualNote="";}
         catch(Exception e){Status="补录未完成："+e.Message;Error?.Invoke(Status);}
     }

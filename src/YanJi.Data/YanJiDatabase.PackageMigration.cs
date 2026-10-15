@@ -23,7 +23,7 @@ public sealed partial class YanJiDatabase
             var before=Schema2Fingerprint(old.DatabasePath);var rollback=Path.Combine(evidence,"rollback-schema2.sqlite");string after="";
             void Stage(string stage){using var f=new FileStream(Path.Combine(evidence,"operation.json"),FileMode.Create,FileAccess.Write,FileShare.Read);f.Write(Encoding.UTF8.GetBytes(Json(new{Stage=stage,Before=before,After=after,Backup=backup,Rollback=rollback})));f.Flush(true);}
             Stage("backup-validated");checkpoint?.Invoke("backup-validated");
-            using(var c=old.Open(candidate)){using(var tx=c.BeginTransaction()){ApplySchema3(c,tx);checkpoint?.Invoke("after-ddl");tx.Commit();}CheckIdentity(c);CheckIntegrity(c);CheckAllData(c);}
+            using(var c=old.Open(candidate)){using(var tx=c.BeginTransaction()){ApplySchema3(c,tx);ApplySchema4(c,tx);checkpoint?.Invoke("after-ddl");tx.Commit();}CheckIdentity(c);CheckIntegrity(c);CheckAllData(c);}
             after=Schema2Fingerprint(candidate);if(before!=after)throw new InvalidDataException("迁移改变了Schema2原有内容。");Stage("candidate-validated");checkpoint?.Invoke("candidate-validated");
             using(var c=old.Open())CheckpointBeforeReplace(c);if(Schema2Fingerprint(old.DatabasePath)!=before)throw new IOException("迁移期间源数据变化。");
             Stage("before-replace");checkpoint?.Invoke("before-replace");File.Replace(candidate,old.DatabasePath,rollback,true);

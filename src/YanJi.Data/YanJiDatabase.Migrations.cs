@@ -81,7 +81,7 @@ public sealed partial class YanJiDatabase
             Stage("backup-validated"); checkpoint?.Invoke("backup-validated");
             using (var c = legacy.Open(candidate))
             {
-                using (var tx = c.BeginTransaction()) { ApplySchema2(c, tx); ApplySchema3(c,tx); checkpoint?.Invoke("after-ddl"); tx.Commit(); }
+                using (var tx = c.BeginTransaction()) { ApplySchema2(c, tx); ApplySchema3(c,tx); ApplySchema4(c,tx); checkpoint?.Invoke("after-ddl"); tx.Commit(); }
                 CheckIdentity(c); CheckIntegrity(c); CheckAllData(c); after = LegacyFactFingerprint(c);
                 if (after != before) throw new InvalidDataException("迁移改变了旧学习事实，未替换源数据库。");
             }

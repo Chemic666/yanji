@@ -302,6 +302,11 @@
 
                   </StackPanel>
                 </Border>
+                <Border Style="{StaticResource SectionSurface}" Visibility="{Binding HasCompletedStudy,Converter={StaticResource BoolVisibility}}">
+                  <StackPanel><TextBlock Text="本次已保存 · 可以直接离开" Style="{StaticResource Subheading}" />
+                    <TextBlock Text="可选补充备注、薄弱点或学习进度，不会自动判断掌握。" TextWrapping="Wrap" Style="{StaticResource MutedText}" />
+                    <WrapPanel><Button Content="补充本次学习" Click="CompleteStudy_Click" Style="{StaticResource QuietButton}" /><Button Content="跳过" Command="{Binding DismissCompletedStudyCommand}" Style="{StaticResource QuietButton}" /></WrapPanel>
+                  </StackPanel></Border>
                 <Border Style="{StaticResource SectionSurface}">
                   <StackPanel>
                     <DockPanel>
@@ -344,7 +349,9 @@
                 </Border>
                 <Border Style="{StaticResource DenseSurface}">
                   <StackPanel>
-                    <TextBlock Text="最近七日" Style="{StaticResource Subheading}" />
+                    <TextBlock Text="最近学习 · 继续一段新学习" Style="{StaticResource Subheading}" />
+                    <ItemsControl ItemsSource="{Binding RecentLearningItems}"><ItemsControl.ItemTemplate><DataTemplate><Button Content="{Binding Label}" ToolTip="{Binding Label}" Command="{Binding DataContext.ContinueRecentCommand,RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}" Style="{StaticResource QuietButton}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" MaxHeight="50" /></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+                    <TextBlock Text="最近七日" Style="{StaticResource Subheading}" Margin="0,12,0,0" />
                     <local:StudyChart x:Name="RecentTrend" Data="{Binding MiniTrend}" Mode="Sparkline" Height="44" PointInvoked="Chart_Drill" />
                     <TextBlock Text="悬停查看时长，点击回到原始记录。" Style="{StaticResource MutedText}" Margin="0,4,0,0" />
                   </StackPanel>
@@ -937,7 +944,7 @@
             </StackPanel>
           </DockPanel>
           <WrapPanel DockPanel.Dock="Bottom" Margin="0,12,0,0">
-            <Button Content="编辑整次记录" Tag="{Binding SelectedRecord}" Click="EditRecord_Click" Style="{StaticResource Primary}" />
+            <Button Content="知识节点 →" Click="RecordKnowledge_Click" Style="{StaticResource QuietButton}" /><Button Content="薄弱点关联" Click="RecordWeakLinks_Click" Style="{StaticResource QuietButton}" /><Button Content="编辑整次记录" Tag="{Binding SelectedRecord}" Click="EditRecord_Click" Style="{StaticResource Primary}" />
             <Button Content="删除整次记录" Tag="{Binding SelectedRecord}" Click="DeleteRecord_Click" Style="{StaticResource DangerButton}" IsEnabled="{Binding SelectedRecord.Deleted,Converter={StaticResource Inverse}}" />
             <Button Content="恢复整次记录" Tag="{Binding SelectedRecord}" Click="RestoreRecord_Click" Visibility="{Binding SelectedRecord.Deleted,Converter={StaticResource BoolVisibility}}" Style="{StaticResource FocusButton}" />
           </WrapPanel>
@@ -946,6 +953,7 @@
               <TextBlock Text="{Binding SelectedRecord.ScopeLabel}" Foreground="{DynamicResource Accent}" FontWeight="SemiBold" Margin="0,12" Style="{StaticResource FocusTextBlock}" />
               <TextBlock Text="{Binding SelectedRecord.Summary}" Style="{StaticResource MutedText}" />
               <TextBlock Text="{Binding SelectedRecord.Chapter}" Style="{StaticResource MutedText}" />
+              <TextBlock Text="{Binding SelectedRecord.LearningEvidence}" Style="{StaticResource MutedText}" TextWrapping="Wrap" Margin="0,8,0,12" />
               <TextBlock Text="{Binding SelectedRecord.Record.Note}" Margin="0,0,0,16" Style="{StaticResource FocusTextBlock}" />
               <TextBlock Text="有效学习片段" Style="{StaticResource Subheading}" />
               <TextBlock Text="排除仅影响选中片段与对应日期；最后一段请使用整次软删除。" Style="{StaticResource MutedText}" />

@@ -50,6 +50,7 @@ public sealed partial class YanJiDatabase
         HashSet<string> used=[];
         using(var cmd=Command(c,null,"SELECT chapter FROM sessions WHERE chapter IS NOT NULL"))using(var r=cmd.ExecuteReader())while(r.Read())used.Add(r.GetString(0));
         using(var cmd=Command(c,null,"SELECT payload FROM weakpoints"))using(var r=cmd.ExecuteReader())while(r.Read()){var weak=Parse<WeakPoint>(r.GetString(0));if(weak.ChapterId!=null)used.Add(weak.ChapterId);}
+        using(var cmd=Command(c,null,"SELECT payload FROM tasks"))using(var r=cmd.ExecuteReader())while(r.Read()){var task=Parse<LearningTask>(r.GetString(0));if(task.ChapterId!=null)used.Add(task.ChapterId);}
         return used;
     }
     private static PackagePreview WithReferenceCounts(SqliteConnection c,PackagePreview preview)
@@ -57,6 +58,7 @@ public sealed partial class YanJiDatabase
         Dictionary<string,int> counts=[];
         using(var cmd=Command(c,null,"SELECT chapter,COUNT(*) FROM sessions WHERE chapter IS NOT NULL GROUP BY chapter"))using(var r=cmd.ExecuteReader())while(r.Read())counts[r.GetString(0)]=r.GetInt32(1);
         using(var cmd=Command(c,null,"SELECT payload FROM weakpoints"))using(var r=cmd.ExecuteReader())while(r.Read()){var weak=Parse<WeakPoint>(r.GetString(0));if(weak.ChapterId!=null)counts[weak.ChapterId]=counts.GetValueOrDefault(weak.ChapterId)+1;}
+        using(var cmd=Command(c,null,"SELECT payload FROM tasks"))using(var r=cmd.ExecuteReader())while(r.Read()){var task=Parse<LearningTask>(r.GetString(0));if(task.ChapterId!=null)counts[task.ChapterId]=counts.GetValueOrDefault(task.ChapterId)+1;}
         return preview with{Changes=preview.Changes.Select(change=>change with{HistoricalReferences=counts.GetValueOrDefault(change.After.Id)}).ToList()};
     }
     private static KnowledgeNode TemplateNode(PackageNode source,string profile,IReadOnlyDictionary<string,string> targets,IReadOnlyDictionary<string,PackageBinding> bindings)

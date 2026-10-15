@@ -54,6 +54,7 @@
           <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Visibility="{Binding HasSelection,Converter={StaticResource Visible}}">
             <StackPanel IsEnabled="{Binding KnowledgeBusy,Converter={StaticResource Inverse}}">
               <TextBlock Text="{Binding PathLabel}" Style="{StaticResource MutedText}" Margin="0,6,0,12" TextWrapping="Wrap" />
+              <WrapPanel Margin="0,0,0,12"><Button Content="开始学习 →" Click="StartStudy_Click" Style="{StaticResource Primary}" AutomationProperties.Name="从知识节点开始学习" /><Button Content="添加任务" Click="AddNodeTask_Click" Style="{StaticResource QuietButton}" /><Button Content="记录薄弱点" Click="AddNodeWeak_Click" Style="{StaticResource QuietButton}" /></WrapPanel>
               <TextBox x:Name="NameBox" Text="{Binding NodeName,UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource FocusTextBox}" FontSize="16" TextWrapping="Wrap" MaxHeight="96" AutomationProperties.Name="知识节点名称" />
               <WrapPanel Margin="0,10,0,0">
                 <StackPanel Width="140" Margin="0,0,12,8"><TextBlock Text="学习状态" Style="{StaticResource MutedText}" /><ComboBox ItemsSource="{x:Static local:KnowledgeWorkspaceViewModel.StateLabels}" SelectedIndex="{Binding StateIndex}" ToolTip="未开始置0%；已学习置100%；学习中最多99%；暂缓保留进度。掌握程度独立。" Style="{StaticResource FocusComboBox}" /></StackPanel>
@@ -62,6 +63,10 @@
               </WrapPanel>
               <TextBlock Text="学习状态由你确认；时长、完成任务、自评掌握与验收彼此独立。" Style="{StaticResource MutedText}" FontSize="11" TextWrapping="Wrap" Margin="0,2,0,12" />
               <TextBlock Text="{Binding DurationLabel}" Style="{StaticResource FocusTextBlock}" Foreground="{DynamicResource Accent}" FontWeight="Medium" Margin="0,0,0,12" TextWrapping="Wrap" />
+              <TextBlock Text="{Binding StudySummary}" Style="{StaticResource MutedText}" TextWrapping="Wrap" Margin="0,0,0,12" />
+              <Expander Header="相关学习记录 · 含后代" Style="{StaticResource FocusExpander}"><ItemsControl ItemsSource="{Binding LinkedRecords}"><ItemsControl.ItemTemplate><DataTemplate><Button Tag="{Binding}" Click="StudyRecord_Click" Style="{StaticResource QuietButton}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"><StackPanel><TextBlock Text="{Binding Label}" TextWrapping="Wrap" MaxHeight="48" /><TextBlock Text="{Binding Context}" TextWrapping="Wrap" FontSize="11" /></StackPanel></Button></DataTemplate></ItemsControl.ItemTemplate></ItemsControl></Expander>
+              <Expander Header="相关任务" Style="{StaticResource FocusExpander}"><ItemsControl ItemsSource="{Binding LinkedTasks}"><ItemsControl.ItemTemplate><DataTemplate><Button Content="{Binding Title}" Tag="{Binding}" Click="StudyTask_Click" Style="{StaticResource QuietButton}" ToolTip="开始未完成任务" /></DataTemplate></ItemsControl.ItemTemplate></ItemsControl></Expander>
+              <Expander Header="相关薄弱点" Style="{StaticResource FocusExpander}"><ItemsControl ItemsSource="{Binding LinkedWeakPoints}"><ItemsControl.ItemTemplate><DataTemplate><Button Content="{Binding Title}" Tag="{Binding}" Click="StudyWeak_Click" Style="{StaticResource QuietButton}" ToolTip="查看、编辑或改变复习状态" /></DataTemplate></ItemsControl.ItemTemplate></ItemsControl></Expander>
               <TextBlock Text="说明 / 学习重点" Style="{StaticResource MutedText}" />
               <TextBox Text="{Binding Description,UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource FocusTextBox}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="70" MaxHeight="130" VerticalScrollBarVisibility="Auto" />
               <Expander Header="目录结构 · 移动与排序" Style="{StaticResource FocusExpander}" Margin="0,12,0,0">

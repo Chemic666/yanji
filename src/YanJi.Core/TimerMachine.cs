@@ -3,16 +3,16 @@ namespace YanJi.Core;
 public sealed class TimerMachine
 {
     private TimerSnapshot _snapshot = new("", "", null, "", "Asia/Shanghai", TimerState.Idle, [], null, null);
-    public TimerSnapshot Snapshot => _snapshot with { Parts = [.. _snapshot.Parts] };
-    public void ConfirmSaved(long version) => _snapshot = _snapshot with { Version = version };
-    public void Start(string subjectId, string? chapterId, string note, string zoneId, ClockSample now, FocusContext? focus = null)
+    public TimerSnapshot Snapshot => _snapshot with { Parts = [.. _snapshot.Parts],Context=_snapshot.Context?.Copy() };
+    public void ConfirmSaved(long version,LearningContext? context=null) => _snapshot = _snapshot with { Version = version,Context=context?.Copy()??_snapshot.Context };
+    public void Start(string subjectId, string? chapterId, string note, string zoneId, ClockSample now, FocusContext? focus = null,LearningContext? context=null)
     {
         if (_snapshot.IsActive) throw new InvalidOperationException("已有活动计时。");
         ArgumentException.ThrowIfNullOrWhiteSpace(subjectId);
         TimeParts.ResolveZone(zoneId);
         focus?.Validate();
         _snapshot = new(Guid.NewGuid().ToString("N"), subjectId, chapterId, note, zoneId,
-            TimerState.Running, [], now, now.Utc.ToUnixTimeMilliseconds(), Focus: focus);
+            TimerState.Running, [], now, now.Utc.ToUnixTimeMilliseconds(), Focus: focus,Context:context?.Copy());
     }
     public void Advance(ClockSample now)
     {

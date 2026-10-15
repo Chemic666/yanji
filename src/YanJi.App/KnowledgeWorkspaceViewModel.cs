@@ -12,6 +12,11 @@ using YanJi.Core;
 namespace YanJi.App;
 
 public sealed record ParentChoice(string? Id, string Label);
+public sealed record KnowledgeRecordRow(StudyRecord Record)
+{
+    public string Label=>DurationText.Format(Record.DurationMs)+" · "+string.Join("、",Record.Parts.Select(p=>p.Date).Distinct());
+    public string Context=>Record.Context?.NodePath??"历史未采集路径";
+}
 public sealed class KnowledgeTreeRow : ObservableObject
 {
     public KnowledgeNode Node { get; }
@@ -63,6 +68,10 @@ public sealed partial class KnowledgeWorkspaceViewModel : ObservableObject
     [ObservableProperty] private string pathLabel = "尚未选择节点";
     [ObservableProperty] private string durationLabel = "";
     [ObservableProperty] private string historyText = "";
+    [ObservableProperty] private string studySummary = "";
+    [ObservableProperty] private IReadOnlyList<KnowledgeRecordRow> linkedRecords = Array.Empty<KnowledgeRecordRow>();
+    [ObservableProperty] private IReadOnlyList<LearningTask> linkedTasks = Array.Empty<LearningTask>();
+    [ObservableProperty] private IReadOnlyList<WeakPoint> linkedWeakPoints = Array.Empty<WeakPoint>();
     [ObservableProperty] private IReadOnlyList<KnowledgeTreeRow> roots = Array.Empty<KnowledgeTreeRow>();
     [ObservableProperty] private IReadOnlyList<KnowledgeTreeRow> searchResults = Array.Empty<KnowledgeTreeRow>();
     [ObservableProperty] private IReadOnlyList<ParentChoice> parents = Array.Empty<ParentChoice>();
@@ -113,14 +122,15 @@ public sealed partial class KnowledgeWorkspaceViewModel : ObservableObject
         {
             var details = await Task.Run(() =>
             {
-                var own = Owner.Database.KnowledgeDuration([n.Id], DateOnly.MinValue, DateOnly.MaxValue, false);
-                var total = Owner.Database.KnowledgeDuration([n.Id], DateOnly.MinValue, DateOnly.MaxValue);
+                var study = Owner.Database.KnowledgeStudy(n.Id, DateOnly.MinValue, DateOnly.MaxValue);
                 var history = string.Join("\n", Owner.Database.History(n.Id).Where(r => r.EntityKind is "chapter" or "knowledge-node").TakeLast(8)
                     .Select(r => r.At.ToLocalTime().ToString("MM-dd HH:mm") + " · " + r.Reason));
-                return (own, total, history);
+                return (study, history);
             });
             if (Selected?.Node.Id != n.Id) return;
-            DurationLabel = "自身 " + DurationText.Format(details.own) + " · 含后代 " + DurationText.Format(details.total);
+            DurationLabel = "自身 " + DurationText.Format(details.study.OwnDurationMs) + " · 含后代 " + DurationText.Format(details.study.SubtreeDurationMs);
+            StudySummary = details.study.SessionCount + " 次有效学习 · 最近 " + (details.study.LastStudyDate?.ToString("yyyy-MM-dd")??"尚无记录") + "\n本科目未关联节点 " + DurationText.Format(details.study.UnlinkedDurationMs) + " · 含后代按片段去重，非掌握评价";
+            LinkedRecords = details.study.Records.Select(r=>new KnowledgeRecordRow(r)).ToArray(); LinkedTasks = details.study.Tasks; LinkedWeakPoints = details.study.WeakPoints;
             HistoryText = details.history.Length == 0 ? "尚无修改历史。" : details.history;
         }
         catch (Exception e) { Feedback = e.Message; }

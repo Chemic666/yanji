@@ -12,7 +12,7 @@ namespace YanJi.Data;
 public sealed partial class YanJiDatabase : IDisposable
 {
     private const int ApplicationId = 0x594A4931;
-    private const int SchemaVersion = 3;
+    private const int SchemaVersion = 4;
     private readonly int _expectedVersion;
     private const string SchemaSql = """
                 CREATE TABLE subjects(id TEXT PRIMARY KEY, name TEXT NOT NULL, archived INTEGER NOT NULL CHECK(archived IN(0,1)));
@@ -50,7 +50,7 @@ public sealed partial class YanJiDatabase : IDisposable
         else
         {
             using var tx = c.BeginTransaction();
-            Exec(c, tx, $"PRAGMA application_id={ApplicationId}; PRAGMA user_version={expectedVersion};");Exec(c, tx, SchemaSql); if(expectedVersion>=2)ApplySchema2(c,tx); if(expectedVersion>=3)ApplySchema3(c,tx); tx.Commit();
+            Exec(c, tx, $"PRAGMA application_id={ApplicationId}; PRAGMA user_version={expectedVersion};");Exec(c, tx, SchemaSql); if(expectedVersion>=2)ApplySchema2(c,tx); if(expectedVersion>=3)ApplySchema3(c,tx); if(expectedVersion>=4)ApplySchema4(c,tx); tx.Commit();
         }
         Exec(c, null, "PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL;");
     }
@@ -84,7 +84,7 @@ public sealed partial class YanJiDatabase : IDisposable
         }
         using var expected=new SqliteConnection("Data Source=:memory:;Pooling=False");expected.Open();Exec(expected,null,SchemaSql);
         var version=Convert.ToInt32(Scalar(c,null,"PRAGMA user_version"));
-        if(version is 2 or 3){using var tx=expected.BeginTransaction();ApplySchema2(expected,tx);if(version==3)ApplySchema3(expected,tx);tx.Commit();}
+        if(version is 2 or 3 or 4){using var tx=expected.BeginTransaction();ApplySchema2(expected,tx);if(version>=3)ApplySchema3(expected,tx);if(version>=4)ApplySchema4(expected,tx);tx.Commit();}
         else if(version!=1)throw new InvalidDataException("数据库Schema版本不兼容。");
         if(!Definitions(c).SequenceEqual(Definitions(expected)))throw new InvalidDataException("数据库表、索引或约束与 V0.1 不兼容。");
     }
@@ -125,8 +125,9 @@ public sealed partial class YanJiDatabase : IDisposable
     private static List<StudyRecord> ReadRecords(SqliteConnection c, SqliteTransaction? tx = null)
     {
         List<StudyRecord> records=[];
+        var contexts=Convert.ToInt32(Scalar(c,tx,"PRAGMA user_version"))>=4?ReadStudyContexts(c,tx):new Dictionary<string,LearningContext>();
         using(var cmd=Command(c,tx,"SELECT s.id,s.subject,s.chapter,s.source,s.note,s.version,s.deleted,s.created,f.payload FROM sessions s LEFT JOIN settings f ON f.id='focus-session:'||s.id ORDER BY s.created DESC,s.rowid DESC"))
-        using(var r=cmd.ExecuteReader()) while(r.Read()) records.Add(new(r.GetString(0),r.GetString(1),r.IsDBNull(2)?null:r.GetString(2),(SessionSource)r.GetInt32(3),r.GetString(4),[],r.GetInt64(5),r.GetBoolean(6),DateTimeOffset.Parse(r.GetString(7),CultureInfo.InvariantCulture),r.IsDBNull(8)?null:Parse<FocusContext>(Parse<string>(r.GetString(8)))));
+        using(var r=cmd.ExecuteReader()) while(r.Read()) records.Add(new(r.GetString(0),r.GetString(1),r.IsDBNull(2)?null:r.GetString(2),(SessionSource)r.GetInt32(3),r.GetString(4),[],r.GetInt64(5),r.GetBoolean(6),DateTimeOffset.Parse(r.GetString(7),CultureInfo.InvariantCulture),r.IsDBNull(8)?null:Parse<FocusContext>(Parse<string>(r.GetString(8))),contexts.GetValueOrDefault(r.GetString(0))));
         var map=records.ToDictionary(x=>x.Id);
         using(var cmd=Command(c,tx,"SELECT id,session,date,duration,zone,kind,start,end FROM parts ORDER BY date,start,rowid"))
         using(var r=cmd.ExecuteReader())while(r.Read())map[r.GetString(1)].Parts.Add(new(r.GetString(0),DateOnly.ParseExact(r.GetString(2),"yyyy-MM-dd",CultureInfo.InvariantCulture),r.GetInt64(3),r.GetString(4),(PartKind)r.GetInt32(5),r.IsDBNull(6)?null:r.GetInt64(6),r.IsDBNull(7)?null:r.GetInt64(7)));
@@ -173,6 +174,7 @@ public sealed partial class YanJiDatabase : IDisposable
         Exec(c,tx,"DELETE FROM parts WHERE session=$id",("$id",record.Id));
         foreach(var p in record.Parts)Exec(c,tx,"INSERT INTO parts VALUES($id,$session,$date,$duration,$zone,$kind,$start,$end)",
             ("$id",p.Id),("$session",record.Id),("$date",p.Date.ToString("yyyy-MM-dd",CultureInfo.InvariantCulture)),("$duration",p.DurationMs),("$zone",p.ZoneId),("$kind",(int)p.Kind),("$start",p.StartUtcMs),("$end",p.EndUtcMs));
+        if(record.Context!=null)WriteStudyContext(c,tx,record.Id,record.Context);
         if(record.Focus!=null)Exec(c,tx,"INSERT INTO settings VALUES($id,$payload) ON CONFLICT(id) DO UPDATE SET payload=excluded.payload",("$id","focus-session:"+record.Id),("$payload",Json(Json(record.Focus))));
     }
     public StudyRecord SaveRecord(StudyRecord record, string reason)
@@ -180,6 +182,7 @@ public sealed partial class YanJiDatabase : IDisposable
         lock(_gate) {using var c=Open();using var tx=c.BeginTransaction();
             if(Scalar(c,tx,"SELECT payload FROM active_timer") is string active && Parse<TimerSnapshot>(active).SessionId==record.Id)throw new InvalidOperationException("活动计时记录请先结束再修正。");
             var before=ReadRecords(c,tx).Find(x=>x.Id==record.Id);
+            record=PrepareStudyContext(c,tx,record,before,ContextCapture.Manual);
             if(before!=null&&before.Focus!=record.Focus)throw new ArgumentException("历史修正须保留原计时模式与任务关联。");
             if(before!=null && record.Version==0 && before.Version==1 && Equivalent(before,record))return before;
             if((before?.Version??0)!=record.Version)throw new InvalidOperationException("记录已变化，请刷新后再修改。");
@@ -234,33 +237,36 @@ public sealed partial class YanJiDatabase : IDisposable
         lock(_gate){using var c=Open();using var tx=c.BeginTransaction();var active=Scalar(c,tx,"SELECT payload FROM active_timer") as string;
             if(active!=null&&Parse<TimerSnapshot>(active).SessionId!=snapshot.SessionId)throw new InvalidOperationException("已有另一活动计时。");
             var before=ReadRecords(c,tx).Find(x=>x.Id==snapshot.SessionId);
+            if(before!=null&&(before.SubjectId!=snapshot.SubjectId||before.ChapterId!=snapshot.ChapterId||snapshot.Context!=null&&Json(snapshot.Context)!=Json(before.Context)))throw new ArgumentException("活动计时的学习上下文不能被替换。");
+            var requestedRecord=new StudyRecord(snapshot.SessionId,snapshot.SubjectId,snapshot.ChapterId,SessionSource.Timer,snapshot.Note,snapshot.Parts,Focus:snapshot.Focus,Context:snapshot.Context);
+            var prepared=PrepareStudyContext(c,tx,requestedRecord,before,ContextCapture.Started,snapshot.LastSample?.Utc);snapshot=snapshot with{Context=prepared.Context};
             if(before!=null&&before.Focus!=snapshot.Focus)throw new ArgumentException("活动计时的模式与任务关联不能被替换。");
             if(active!=null)
             {var saved=Parse<TimerSnapshot>(active);if(Json(saved)==Json(snapshot with{Version=saved.Version}))return saved;}
             if(before!=null && active==null)
-            {if(snapshot.State==TimerState.Completed&&Equivalent(before,new(snapshot.SessionId,snapshot.SubjectId,snapshot.ChapterId,SessionSource.Timer,snapshot.Note,snapshot.Parts,Focus:snapshot.Focus)))return snapshot with{Version=before.Version};
+            {if(snapshot.State==TimerState.Completed&&Equivalent(before,new(snapshot.SessionId,snapshot.SubjectId,snapshot.ChapterId,SessionSource.Timer,snapshot.Note,snapshot.Parts,Focus:snapshot.Focus,Context:snapshot.Context)))return snapshot with{Version=before.Version};
                 throw new InvalidOperationException("该计时已结束，不能重新覆盖。");}
             if((before?.Version??0)!=snapshot.Version)throw new InvalidOperationException("计时检查点版本过期。");
-            var record=new StudyRecord(snapshot.SessionId,snapshot.SubjectId,snapshot.ChapterId,SessionSource.Timer,snapshot.Note,[..snapshot.Parts],(before?.Version??0)+1,false,before?.CreatedAt??DateTimeOffset.UtcNow,snapshot.Focus);
+            var record=new StudyRecord(snapshot.SessionId,snapshot.SubjectId,snapshot.ChapterId,SessionSource.Timer,snapshot.Note,[..snapshot.Parts],(before?.Version??0)+1,false,before?.CreatedAt??DateTimeOffset.UtcNow,snapshot.Focus,snapshot.Context);
             ValidateRecord(c,tx,record,true);WriteRecord(c,tx,record);
             if(reason!=null)Audit(c,tx,"session",record.Id,record.Version,reason,before==null?null:Json(before),Json(record));
             if(snapshot.IsActive)Exec(c,tx,"INSERT INTO active_timer VALUES(1,$payload) ON CONFLICT(slot) DO UPDATE SET payload=excluded.payload",("$payload",Json(snapshot with{Version=record.Version})));
-            else Exec(c,tx,"DELETE FROM active_timer");tx.Commit();return snapshot with{Version=record.Version};}
+            else Exec(c,tx,"DELETE FROM active_timer");LearningCheckpoint?.Invoke("timer-before-commit");tx.Commit();return snapshot with{Version=record.Version};}
     }
     public TimerSnapshot? LoadTimer(){lock(_gate){using var c=Open();return Scalar(c,null,"SELECT payload FROM active_timer") is string text?Parse<TimerSnapshot>(text):null;}}
     private List<T> Entities<T>(string table)
     {lock(_gate){using var c=Open();using var cmd=Command(c,null,$"SELECT payload FROM {table} ORDER BY rowid DESC");using var r=cmd.ExecuteReader();List<T> list=[];while(r.Read())list.Add(Parse<T>(r.GetString(0)));return list;}}
-    private void SaveEntity<T>(string table,string id,T value,string reason)
+    private void SaveEntity<T>(string table,string id,T value,string reason,Action<SqliteConnection,SqliteTransaction>? validate=null)
     {lock(_gate){using var c=Open();using var tx=c.BeginTransaction();var before=Scalar(c,tx,$"SELECT payload FROM {table} WHERE id=$id",("$id",id)) as string;
-        var after=Json(value);if(before==after)return;Exec(c,tx,$"INSERT INTO {table} VALUES($id,$payload) ON CONFLICT(id) DO UPDATE SET payload=excluded.payload",("$id",id),("$payload",after));
+        validate?.Invoke(c,tx);var after=Json(value);if(before==after)return;Exec(c,tx,$"INSERT INTO {table} VALUES($id,$payload) ON CONFLICT(id) DO UPDATE SET payload=excluded.payload",("$id",id),("$payload",after));
         Audit(c,tx,table,id,0,reason,before,after);tx.Commit();}}
     public List<LearningTask> Tasks()=>Entities<LearningTask>("tasks");
-    public void SaveTask(LearningTask task){ArgumentException.ThrowIfNullOrWhiteSpace(task.Title);if(task.SubjectId!=null&&!Subjects(true).Any(s=>s.Id==task.SubjectId))throw new ArgumentException("任务科目不存在。");SaveEntity("tasks",task.Id,task,"任务修改");}
+    public void SaveTask(LearningTask task){ArgumentException.ThrowIfNullOrWhiteSpace(task.Title);if(task.SubjectId!=null&&!Subjects(true).Any(s=>s.Id==task.SubjectId))throw new ArgumentException("任务科目不存在。");SaveEntity("tasks",task.Id,task,"任务修改",(c,tx)=>ValidateLearningTarget(c,tx,task.ProfileId,task.SubjectId,task.ChapterId));}
     public List<WeakPoint> WeakPoints()=>Entities<WeakPoint>("weakpoints");
     public void SaveWeakPoint(WeakPoint point)
     {ArgumentException.ThrowIfNullOrWhiteSpace(point.Title);if(!Enum.IsDefined(point.State))throw new ArgumentException("薄弱点状态无效。");
         if(point.SubjectId!=null&&!Subjects(true).Any(s=>s.Id==point.SubjectId))throw new ArgumentException("科目不存在。");
-        if(point.ChapterId!=null&&!Chapters(null,true).Any(s=>s.Id==point.ChapterId&&s.SubjectId==point.SubjectId))throw new ArgumentException("章节不属于该科目。");SaveEntity("weakpoints",point.Id,point,"薄弱点修改");}
+        if(point.ChapterId!=null&&!Chapters(null,true).Any(s=>s.Id==point.ChapterId&&s.SubjectId==point.SubjectId))throw new ArgumentException("章节不属于该科目。");SaveEntity("weakpoints",point.Id,point,"薄弱点修改",(c,tx)=>ValidateLearningTarget(c,tx,point.ProfileId,point.SubjectId,point.ChapterId));}
     public string Reflection(DateOnly date)=>Entities<ReflectionEntry>("reflections").Find(x=>x.Date==date)?.Text??"";
     public Dictionary<DateOnly,string> Reflections()=>Entities<ReflectionEntry>("reflections").ToDictionary(r=>r.Date,r=>r.Text);
     public void SaveReflection(DateOnly date,string text)=>SaveEntity("reflections",date.ToString("yyyy-MM-dd",CultureInfo.InvariantCulture),new ReflectionEntry(date,text),"每日感想修改");
@@ -350,7 +356,8 @@ public sealed partial class YanJiDatabase : IDisposable
         };
         var schema=Convert.ToInt32(Scalar(c,null,"PRAGMA user_version"));
         if(schema>=2){expected["chapters"]=["id","subject","name","progress","mastery","archived","profile_id","parent_id","node_kind","description","sort_order","learning_state","row_version"];CheckKnowledgeData(c);}
-        if(schema==3)CheckPackageData(c);
+        if(schema>=3)CheckPackageData(c);
+        if(schema>=4)CheckLearningData(c);
         foreach(var (table,columns) in expected)
         {
             using var cmd=Command(c,null,$"PRAGMA table_info({table})");using var r=cmd.ExecuteReader();List<string> actual=[];
@@ -384,7 +391,7 @@ public sealed partial class YanJiDatabase : IDisposable
         if(Scalar(c,null,"SELECT payload FROM active_timer") is string timerJson)
         {
             var timer=Parse<TimerSnapshot>(timerJson);TimeParts.ResolveZone(timer.ZoneId);var current=records.Find(x=>x.Id==timer.SessionId);
-            if(!timer.IsActive||current==null||current.Deleted||current.Source!=SessionSource.Timer||current.Version!=timer.Version||current.SubjectId!=timer.SubjectId||current.ChapterId!=timer.ChapterId||current.Note!=timer.Note||current.Focus!=timer.Focus||Json(current.Parts.OrderBy(p=>p.Id))!=Json(timer.Parts.OrderBy(p=>p.Id))||timer.LastSample==null||timer.TrustedEndUtcMs==null)
+            if(!timer.IsActive||current==null||current.Deleted||current.Source!=SessionSource.Timer||current.Version!=timer.Version||current.SubjectId!=timer.SubjectId||current.ChapterId!=timer.ChapterId||current.Note!=timer.Note||current.Focus!=timer.Focus||schema>=4&&Json(current.Context)!=Json(timer.Context)||Json(current.Parts.OrderBy(p=>p.Id))!=Json(timer.Parts.OrderBy(p=>p.Id))||timer.LastSample==null||timer.TrustedEndUtcMs==null)
                 throw new InvalidDataException("活动计时与学习记录不一致。");
         }
     }
@@ -409,7 +416,7 @@ public sealed partial class YanJiDatabase : IDisposable
                 if(db.Length>512L*1024*1024||meta.Length>65536)throw new InvalidDataException("备份超过校验大小限制。");
                 BackupManifest manifest;using(var r=new StreamReader(meta.Open()))manifest=Parse<BackupManifest>(r.ReadToEnd());
                 var candidate=Path.Combine(scratch,"database.sqlite");db.ExtractToFile(candidate);
-                if(manifest.Format!=manifest.Schema||manifest.Schema is not(1 or 2 or 3)||manifest.Application!=ApplicationId||manifest.Sha256!=Hash(candidate))throw new InvalidDataException("备份版本或校验值无效。");
+                if(manifest.Format!=manifest.Schema||manifest.Schema is not(1 or 2 or 3 or 4)||manifest.Application!=ApplicationId||manifest.Sha256!=Hash(candidate))throw new InvalidDataException("备份版本或校验值无效。");
                 using var c=Open(candidate,true);CheckIdentity(c,manifest.Schema);CheckIntegrity(c);CheckAllData(c);var inventory=Inventory(c);
                 if(inventory.Count!=manifest.Sessions||inventory.Duration!=manifest.DurationMs)throw new InvalidDataException("备份记录总量校验失败。");
                 if(manifest.Schema>=2&&(manifest.KnowledgeNodes!=Convert.ToInt64(Scalar(c,null,"SELECT COUNT(*) FROM chapters"))||manifest.Profiles!=Convert.ToInt64(Scalar(c,null,"SELECT COUNT(*) FROM exam_profiles"))))throw new InvalidDataException("备份知识目录总量校验失败。");
@@ -429,7 +436,7 @@ public sealed partial class YanJiDatabase : IDisposable
                     if(db.Length>512*1024*1024||meta.Length>65536)throw new InvalidDataException("备份超过 V0.1 校验大小限制。");
                     using(var r=new StreamReader(meta.Open()))manifest=Parse<BackupManifest>(r.ReadToEnd());db.ExtractToFile(candidate);
                 }
-                if(manifest.Format!=manifest.Schema||manifest.Schema is not(1 or 2 or 3)||manifest.Application!=ApplicationId||manifest.Sha256!=Hash(candidate))throw new InvalidDataException("备份版本或校验值无效。");
+                if(manifest.Format!=manifest.Schema||manifest.Schema is not(1 or 2 or 3 or 4)||manifest.Application!=ApplicationId||manifest.Sha256!=Hash(candidate))throw new InvalidDataException("备份版本或校验值无效。");
                 using(var c=Open(candidate,true))
                 {CheckIdentity(c,manifest.Schema);CheckIntegrity(c);CheckAllData(c);var inventory=Inventory(c);if(inventory.Count!=manifest.Sessions||inventory.Duration!=manifest.DurationMs)throw new InvalidDataException("备份记录总量校验失败。");
                 if(manifest.Schema>=2&&(manifest.KnowledgeNodes!=Convert.ToInt64(Scalar(c,null,"SELECT COUNT(*) FROM chapters"))||manifest.Profiles!=Convert.ToInt64(Scalar(c,null,"SELECT COUNT(*) FROM exam_profiles"))))throw new InvalidDataException("备份知识目录总量校验失败。");
@@ -438,7 +445,7 @@ public sealed partial class YanJiDatabase : IDisposable
                     for(var i=1;i<known.Count;i++)if(TimeParts.Overlaps(known[i-1],known[i]))throw new InvalidDataException("备份包含重叠时间区间。");
                     foreach(var record in records)if(record.ChapterId!=null&&!Equals(Scalar(c,null,"SELECT subject FROM chapters WHERE id=$id",("$id",record.ChapterId)),record.SubjectId))throw new InvalidDataException("备份章节引用无效。");
                 }
-                if(manifest.Schema<3){using var legacy=Open(candidate);using var tx=legacy.BeginTransaction();if(manifest.Schema==1)ApplySchema2(legacy,tx);ApplySchema3(legacy,tx);tx.Commit();CheckIdentity(legacy);CheckAllData(legacy);}
+                if(manifest.Schema<4){using var legacy=Open(candidate);using var tx=legacy.BeginTransaction();if(manifest.Schema==1)ApplySchema2(legacy,tx);if(manifest.Schema<3)ApplySchema3(legacy,tx);ApplySchema4(legacy,tx);tx.Commit();CheckIdentity(legacy);CheckAllData(legacy);}
                 var backups=Path.Combine(DirectoryPath,"backups");Directory.CreateDirectory(backups);
                 var stamp=DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmss",CultureInfo.InvariantCulture)+"-"+Guid.NewGuid().ToString("N")[..8];
                 Backup(Path.Combine(backups,"before-restore-"+stamp+".yanjibak"));
