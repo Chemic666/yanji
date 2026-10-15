@@ -8,10 +8,12 @@ review evidence. No build, cleanup, Git mutation or network access is performed.
 from pathlib import Path, PurePosixPath
 import argparse
 import hashlib
+import html
 import importlib.util
 import io
 import json
 import subprocess
+import struct
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -130,6 +132,33 @@ def final():
     assert provenance['Assembly'] == VERSION + '+' + code
     assert provenance['BinarySha256'] == candidate['BuildInfo']['DllSha256']
     assert read(ART / 'isolation-and-restore.json')['Status'] == 'READY FOR FINAL APPROVAL'
+    # Check the original screenshot manifest, not only the new archive index.
+    screenshots = read(ART / 'window-accepted/screenshots.json')
+    assert len(screenshots) == 7
+    assert len({r['File'].casefold() for r in screenshots}) == 7
+    assert {p.name for p in (ART / 'window-accepted').glob('*.png')} == {r['File'] for r in screenshots}
+    gallery = ['<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>RC-Final 真实 WPF 截图</title>',
+               '<style>body{font:16px system-ui;max-width:1100px;margin:32px auto;padding:16px;background:#f5f4ef;color:#24382e}img{width:100%;height:auto}figure{margin:28px 0}figcaption{margin:10px 0}</style>',
+               '<h1>RC-Final · 真实 WPF 窗口</h1><p>原生客户端截图；尺寸按截图元数据标注。不是网页模拟效果。物理输入法及其他物理 DPI 尚未验收。</p>']
+    for row in screenshots:
+        name = row['File']
+        assert PurePosixPath(name).name == name and '\\' not in name
+        data = (ART / 'window-accepted' / name).read_bytes()
+        assert len(data) == row['Bytes'] and sha(data) == row['Sha256']
+        assert data[:8] == b'\x89PNG\r\n\x1a\n' and data[12:16] == b'IHDR'
+        assert struct.unpack('>II', data[16:24]) == (row['PixelWidth'], row['PixelHeight'])
+        assert row['PixelWidth'] == row['Width'] * row['Dpi'] / 96
+        assert row['PixelHeight'] == row['Height'] * row['Dpi'] / 96
+        caption = f"{name} · {row['Width']}×{row['Height']} DIP · {row['PixelWidth']}×{row['PixelHeight']} px · DPI {row['Dpi']}"
+        if name == 'package-conflict-dark-900.png':
+            caption += '；历史文件名含900，实际窗口为1200×800，以元数据为准'
+        gallery.append(f'<figure><figcaption>{html.escape(caption)}</figcaption><img src="{html.escape(name, quote=True)}" alt="{html.escape(caption, quote=True)}"></figure>')
+    gallery.append('</html>')
+    new(ART / 'window-accepted/index.html', '\n'.join(gallery).encode())
+    dump(ART / 'screenshots-verified.json', {'Status': 'READY FOR FINAL APPROVAL', 'Files': 7,
+         'OriginalManifestBytesAndSha256': True, 'PngDimensionsAndDpi': True,
+         'GalleryReferences': 'window-accepted/index.html; seven relative PNG paths verified',
+         'FilenameCaveat': 'package-conflict-dark-900.png actually 1200x800 DIP; original evidence preserved'})
     release = Path(candidate['ReleaseDirectory'])
     win_path = release / candidate['Archive']['File']
     assert sha(win_path.read_bytes()) == candidate['Archive']['Sha256']
