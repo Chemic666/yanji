@@ -73,7 +73,8 @@ internal static class M2WindowValidation
                 owner.Model.FocusModeIndex=mode;await owner.Model.StartCommand.ExecuteAsync(null);
                 for(var second=1;second<=3;second++)
                 {
-                    await Task.Delay(1100);await Task.Run(()=>db.PreviewPackage(large,"legacy-default",new Dictionary<string,string>{{"408","408"}}));owner.UpdateLayout();owner.MiniTimer!.UpdateLayout();
+                    var deadline=Stopwatch.StartNew();while(owner.Model.Timer.DurationMs<second*1000&&deadline.ElapsedMilliseconds<6000)await Task.Delay(50);
+                    await Task.Run(()=>db.PreviewPackage(large,"legacy-default",new Dictionary<string,string>{{"408","408"}}));owner.UpdateLayout();owner.MiniTimer!.UpdateLayout();
                     var main=TimerText(owner);var mini=TimerText(owner.MiniTimer);samples.Add(new{Mode=mode,Second=second,Utc=DateTimeOffset.UtcNow,Main=main,Mini=mini,Vm=owner.Model.TimerText,RawMs=owner.Model.Timer.DurationMs,Ticks=owner.ValidationTickCount});Write("timer-samples.json",samples);
                     Check(main==mini&&main==owner.Model.TimerText&&main!="00:00:00",$"mode {mode} second {second}: main/mini render synchronized trusted time during package preview");
                 }

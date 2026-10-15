@@ -22,12 +22,12 @@ public sealed partial class YanJiDatabase
     {
         lock(_gate){using var c=Open();using var cmd=Command(c,null,"SELECT payload FROM knowledge_package_operations WHERE install_id=$id ORDER BY at DESC,rowid DESC",("$id",installId));using var r=cmd.ExecuteReader();List<PackageOperation> list=[];while(r.Read())list.Add(Parse<PackageOperation>(r.GetString(0)));return list;}
     }
-    private static void ValidateTargets(SqliteConnection c,SqliteTransaction? tx,KnowledgePackage p,string profileId,IReadOnlyDictionary<string,string> targets)
+    private static void ValidateTargets(SqliteConnection c,SqliteTransaction? tx,KnowledgePackage p,string profileId,IReadOnlyDictionary<string,string> targets,bool allowArchived=false)
     {
         using var cmd=Command(c,tx,"SELECT exam_key,admission_year FROM exam_profiles WHERE id=$id",("$id",profileId));using var r=cmd.ExecuteReader();
         if(!r.Read()||r.GetString(0)!=p.ExamKey||p.AdmissionYears.Count>0&&!p.AdmissionYears.Contains(r.GetInt32(1)))throw new InvalidDataException("知识包不适用于所选考试档案或入学年度。");r.Close();
         if(!p.Subjects.Select(s=>s.Key).Order().SequenceEqual(targets.Keys.Order())||targets.Values.Distinct().Count()!=targets.Count)throw new InvalidDataException("请为每个包科目选择不同的目标科目。");
-        foreach(var id in targets.Values)if(Scalar(c,tx,"SELECT 1 FROM exam_subjects e JOIN subjects s ON e.subject_id=s.id WHERE e.profile_id=$p AND e.subject_id=$s AND s.archived=0",("$p",profileId),("$s",id))==null)throw new InvalidDataException("目标科目不属于档案或已归档。");
+        foreach(var id in targets.Values)if(Scalar(c,tx,"SELECT 1 FROM exam_subjects e JOIN subjects s ON e.subject_id=s.id WHERE e.profile_id=$p AND e.subject_id=$s AND ($archived=1 OR s.archived=0)",("$p",profileId),("$s",id),("$archived",allowArchived))==null)throw new InvalidDataException("目标科目不属于档案或已归档。");
     }
     private string PackageToken(SqliteConnection c,SqliteTransaction? tx=null)
     {
@@ -104,6 +104,10 @@ public sealed partial class YanJiDatabase
                 var local=StableId("kn-",id+"/"+n.Id);if(map.ContainsKey(local))throw new InvalidDataException("目标节点身份已存在但未绑定，不能自动合并。");bindings.Add(n.Id,new(n.Id,local,true));
             }
             List<PackageNodeChange> changes=[];List<PackageConflict> conflicts=[];var used=UsedNodes(c);var incomingIds=p.Nodes.Select(n=>n.Id).ToHashSet();var oldSources=baseline?.Nodes.ToDictionary(n=>n.Id)??[];
+            Dictionary<string,PackageNode> previousSources=[];
+            if(p.Nodes.Any(n=>bindings.TryGetValue(n.Id,out var binding)&&map.ContainsKey(binding.NodeId)&&!oldSources.ContainsKey(n.Id)))
+                foreach(var op in PackageHistory(id))foreach(var snapshot in new[]{op.AfterPayload,op.BeforePayload}.Where(text=>text!=null))
+                    foreach(var sourceNode in KnowledgePackageFile.Parse(Encoding.UTF8.GetBytes(snapshot!)).Nodes)previousSources.TryAdd(sourceNode.Id,sourceNode);
             foreach(var n in p.Nodes)
             {
                 var b=bindings[n.Id];var incoming=TemplateNode(n,profileId,targets,bindings);
@@ -123,8 +127,15 @@ public sealed partial class YanJiDatabase
                 }
                 else
                 {
-                    // Reintroduced node from a tombstone keeps identity and all local data.
-                    var merged=MergeNode(local,local,incoming,n.Id,conflicts,choices);
+                    // Rebinding is not consent to replace personal metadata. Recover the last template baseline.
+                    KnowledgeNode merged;
+                    if(previousSources.TryGetValue(n.Id,out var previous))merged=MergeNode(TemplateNode(previous,profileId,targets,bindings),local,incoming,n.Id,conflicts,choices);
+                    else
+                    {
+                        merged=local;
+                        foreach(var field in PackageFields)if(Field(local,field)!=Field(incoming,field))
+                        {var key=n.Id+":"+field;conflicts.Add(new(key,local.Name,field,"基线不可用",Field(local,field),Field(incoming,field)));if(choices?.GetValueOrDefault(key)==PackageChoice.UseTemplate)merged=WithField(merged,field,Field(incoming,field));}
+                    }
                     if(!SameMetadata(local,merged))changes.Add(new(local,merged,"重新纳入"));
                 }
                 bindings[n.Id]=b with{Active=true};
@@ -196,6 +207,7 @@ public sealed partial class YanJiDatabase
             var p=KnowledgePackageFile.Parse(Encoding.UTF8.GetBytes(preview.Payload));
             var current=preview.RollbackOperationId==null?PreviewPackage(p,preview.ProfileId,preview.Targets,choices):PreviewPackageRollback(preview.InstallId,choices);
             if(current.RollbackOperationId!=preview.RollbackOperationId||current.InstallId!=preview.InstallId||current.Token!=preview.Token)throw new InvalidOperationException("预览已失效。");
+            p=KnowledgePackageFile.Parse(Encoding.UTF8.GetBytes(current.Payload));
             if(current.Error!=null)throw new InvalidDataException(current.Error);
             if(current.NoOp)return new(current.InstallId,null,null,true);
             if(LoadTimer()!=null)throw new InvalidOperationException("请先结束或核对活动计时再安装或更新知识包。");

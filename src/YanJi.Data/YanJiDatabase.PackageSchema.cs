@@ -31,9 +31,10 @@ public sealed partial class YanJiDatabase
         }
         if(versions.Values.GroupBy(p=>p.PackageId).Any(g=>g.Select(SourceIdentity).Distinct().Count()!=1))throw new InvalidDataException("知识包来源身份冲突。");
         var nodes=ReadKnowledgeNodes(c).ToDictionary(n=>n.Id);
-        foreach(var install in ReadInstalls(c))
+        var installs=ReadInstalls(c);var installMap=installs.ToDictionary(i=>i.Id);
+        foreach(var install in installs)
         {
-            var p=versions[(install.PackageId,install.Version)];ValidateTargets(c,null,p,install.ProfileId,install.Targets);
+            var p=versions[(install.PackageId,install.Version)];ValidateTargets(c,null,p,install.ProfileId,install.Targets,true);
             var bindings=ReadBindings(c,install.Id);var sources=p.Nodes.ToDictionary(n=>n.Id);var bindingIds=bindings.Select(b=>b.SourceId).ToHashSet();
             foreach(var b in bindings)
                 if(!nodes.TryGetValue(b.NodeId,out var n)||n.ProfileId!=install.ProfileId||b.Active&&(!sources.TryGetValue(b.SourceId,out var s)||install.Targets[s.SubjectKey]!=n.SubjectId))throw new InvalidDataException("知识包节点映射不一致。");
@@ -43,9 +44,25 @@ public sealed partial class YanJiDatabase
         {
             var op=Parse<PackageOperation>(r.GetString(4));
             if(op.Id!=r.GetString(0)||op.InstallId!=r.GetString(1)||op.At.ToString("O")!=r.GetString(2)||op.RolledBack!=r.GetBoolean(3)||op.Kind is not("install" or "update" or "rollback"))throw new InvalidDataException("知识包操作历史无效。");
-            var after=KnowledgePackageFile.Parse(Encoding.UTF8.GetBytes(op.AfterPayload));if(after.PackageVersion!=op.ToVersion)throw new InvalidDataException("知识包操作版本无效。");
-            if(op.BeforePayload!=null){var before=KnowledgePackageFile.Parse(Encoding.UTF8.GetBytes(op.BeforePayload));if(before.PackageVersion!=op.FromVersion||before.PackageId!=after.PackageId)throw new InvalidDataException("知识包操作基线无效。");}
-            if(op.Changes.Any(change=>!nodes.TryGetValue(change.After.Id,out var node)||node.SubjectId!=change.After.SubjectId||node.ProfileId!=change.After.ProfileId||change.After.Version<=0||change.Before!=null&&(change.Before.Id!=change.After.Id||change.Before.SubjectId!=node.SubjectId||change.Before.ProfileId!=node.ProfileId)))throw new InvalidDataException("知识包操作引用无效。");
+            if(!installMap.TryGetValue(op.InstallId,out var owner)||op.BeforeBindings==null||op.AfterBindings==null||op.Changes==null)throw new InvalidDataException("知识包操作集合或安装身份无效。");
+            var after=KnowledgePackageFile.Parse(Encoding.UTF8.GetBytes(op.AfterPayload));
+            if(after.PackageVersion!=op.ToVersion||after.PackageId!=owner.PackageId||!versions.TryGetValue((after.PackageId,after.PackageVersion),out var storedAfter)||storedAfter.ContentHash!=after.ContentHash)throw new InvalidDataException("知识包操作版本无效。");
+            KnowledgePackage? before=null;
+            if(op.BeforePayload!=null){before=KnowledgePackageFile.Parse(Encoding.UTF8.GetBytes(op.BeforePayload));if(before.PackageVersion!=op.FromVersion||before.PackageId!=owner.PackageId||!versions.TryGetValue((before.PackageId,before.PackageVersion),out var storedBefore)||storedBefore.ContentHash!=before.ContentHash)throw new InvalidDataException("知识包操作基线无效。");}
+            else if(op.FromVersion!=null||op.Kind!="install"||op.BeforeBindings.Count!=0)throw new InvalidDataException("首次安装基线无效。");
+            var permanent=ReadBindings(c,owner.Id).ToDictionary(b=>b.SourceId);
+            void CheckBindings(List<PackageBinding> bindings,KnowledgePackage? snapshot)
+            {
+                if(bindings.Any(b=>b==null)||bindings.Select(b=>b.SourceId).Distinct().Count()!=bindings.Count||bindings.Select(b=>b.NodeId).Distinct().Count()!=bindings.Count)throw new InvalidDataException("知识包历史绑定重复或为空。");
+                var sources=snapshot?.Nodes.ToDictionary(n=>n.Id)??[];
+                foreach(var binding in bindings)
+                    if(!permanent.TryGetValue(binding.SourceId,out var saved)||saved.NodeId!=binding.NodeId||!nodes.TryGetValue(binding.NodeId,out var node)||node.ProfileId!=owner.ProfileId||binding.Active&&(!sources.TryGetValue(binding.SourceId,out var sourceNode)||!owner.Targets.TryGetValue(sourceNode.SubjectKey,out var subject)||subject!=node.SubjectId))throw new InvalidDataException("知识包历史绑定身份或作用域无效。");
+                var ids=bindings.Select(b=>b.SourceId).ToHashSet();if(sources.Keys.Any(id=>!ids.Contains(id)))throw new InvalidDataException("知识包历史绑定缺失。");
+            }
+            CheckBindings(op.BeforeBindings,before);CheckBindings(op.AfterBindings,after);
+            var ownedIds=permanent.Values.Select(b=>b.NodeId).ToHashSet();
+            if(op.Changes.Any(change=>change==null||change.After==null)||op.Changes.Select(change=>change.After.Id).Distinct().Count()!=op.Changes.Count)throw new InvalidDataException("知识包历史变更重复或为空。");
+            if(op.Changes.Any(change=>!ownedIds.Contains(change.After.Id)||!nodes.TryGetValue(change.After.Id,out var node)||node.SubjectId!=change.After.SubjectId||node.ProfileId!=change.After.ProfileId||change.After.Version<=0||change.Before!=null&&(change.Before.Id!=change.After.Id||change.Before.SubjectId!=node.SubjectId||change.Before.ProfileId!=node.ProfileId)))throw new InvalidDataException("知识包操作引用无效。");
         }
     }
     private static bool MigrationDigestMatches(string sql,object? stored)
