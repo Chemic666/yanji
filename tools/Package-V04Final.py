@@ -18,6 +18,13 @@ ROOT = Path(__file__).resolve().parents[1]
 ART = ROOT / 'artifacts/v04-rc-final'
 VERSION = '0.4.0-rc.final.1'
 TAG = 'v' + VERSION
+LICENSE_EOL_FIXES = {
+    'resources/licenses/CommunityToolkit-MIT.md',
+    'resources/licenses/CommunityToolkit-NOTICES.txt',
+    'resources/licenses/DotNet-Runtime-MIT.txt',
+    'resources/licenses/DotNet-ThirdPartyNotices.txt',
+    'resources/licenses/WindowsDesktop-MIT.txt',
+}
 spec = importlib.util.spec_from_file_location('licenses', ROOT / 'tools/Check-ReleaseLicenses.py')
 licenses = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(licenses)
@@ -116,7 +123,7 @@ def final():
     candidate = read(ART / 'windows-candidate.json')
     code = candidate['CodeHead']; head = git('rev-parse', 'HEAD')
     assert git('rev-parse', TAG + '^{commit}') == code
-    assert not git('diff', code, head, '--', 'src', 'resources', 'Directory.Build.props')
+    assert not git('diff', code, head, '--', 'src', 'resources/knowledge-packages', 'resources/legal', 'Directory.Build.props')
     accepted = read(ART / 'window-accepted/result.json')
     provenance = read(ART / 'window-accepted/provenance.json')
     assert accepted['Status'] == 'PASS' and accepted['Checks'] == 37 and accepted['Samples'] == 9
@@ -126,6 +133,16 @@ def final():
     release = Path(candidate['ReleaseDirectory'])
     win_path = release / candidate['Archive']['File']
     assert sha(win_path.read_bytes()) == candidate['Archive']['Sha256']
+    # A reviewed source-only repair preserves upstream CRLF license bytes that
+    # pre-existing Git blobs had normalized to LF. No runtime input may change.
+    eol_fixes = git('diff', '--name-only', code, head, '--', 'resources/licenses').splitlines()
+    assert set(eol_fixes).issubset(LICENSE_EOL_FIXES)
+    with zipfile.ZipFile(win_path) as z:
+        for name in eol_fixes:
+            original = subprocess.check_output(['git', 'show', code + ':' + name], cwd=ROOT)
+            current = (ROOT / name).read_bytes()
+            assert current.replace(b'\r\n', b'\n') == original
+            assert current == z.read('licenses/' + PurePosixPath(name).name)
     source_bytes = io.BytesIO(subprocess.check_output(['git', 'archive', '--format=zip', head], cwd=ROOT))
     def source():
         with zipfile.ZipFile(source_bytes) as z:
@@ -156,7 +173,8 @@ def final():
                 'CodeHead': code, 'DocumentationHead': head, 'Tag': TAG, 'Assembly': provenance['Assembly'],
                 'BinarySha256': provenance['BinarySha256'], 'Archives': archives,
                 'PhysicalIME': 'NOT TESTED', 'CleanMachineOffline': 'NOT TESTED', 'RealUserUpgrade': 'NOT TESTED',
-                'NoPublicRelease': True, 'RootProjectLicense': 'Apache-2.0; original-code scope', 'SelfContainedCopiesCreated': 1}
+                'NoPublicRelease': True, 'RootProjectLicense': 'Apache-2.0; original-code scope', 'SelfContainedCopiesCreated': 1,
+                'SourceOnlyLicenseByteRepairs': eol_fixes, 'CompiledSourceAndKnowledgePackagesUnchanged': True}
     dump(release / 'release-manifest.json', manifest)
     sums = '\n'.join(row['Sha256'] + '  ' + row['File'] for row in archives) + '\n'
     new(release / 'SHA256SUMS.txt', sums.encode())
