@@ -23,7 +23,13 @@ internal static class M3WindowValidation
         Directory.CreateDirectory(output);var app=(App)Application.Current;List<object> checks=[],images=[],samples=[];bool failed=false;var model=owner.Model;var db=model.Database;
         void Write(string file,object value)=>File.WriteAllText(Path.Combine(output,file),JsonSerializer.Serialize(value,new JsonSerializerOptions{WriteIndented=true}));
         void Check(bool pass,string name){checks.Add(new{Name=name,Status=pass?"PASS":"FAIL"});failed|=!pass;Write("checks.json",checks);}
-        async Task Shot(string name){owner.UpdateLayout();await Task.Delay(180);var path=Path.Combine(output,name+".png");NativeCapture.Save(owner,path);images.Add(new{File=Path.GetFileName(path),Bytes=new FileInfo(path).Length,Sha256=Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(path))),Width=owner.ActualWidth,Height=owner.ActualHeight,Dark=ThemeService.Dark,Dpi=VisualTreeHelper.GetDpi(owner).PixelsPerInchX});Write("screenshots.json",images);}
+        async Task Shot(string name)
+        {
+            owner.Show();owner.WindowState=WindowState.Normal;owner.UpdateLayout();await Task.Delay(250);
+            var path=Path.Combine(output,name+".png");NativeCapture.Save(owner,path);using var bitmap=System.Drawing.Image.FromFile(path);
+            var dpi=VisualTreeHelper.GetDpi(owner);if(bitmap.Width<owner.ActualWidth*dpi.DpiScaleX*.9||bitmap.Height<owner.ActualHeight*dpi.DpiScaleY*.9)throw new InvalidDataException("Capture was minimized or smaller than the actual WPF window; retain failed image, do not accept it.");
+            images.Add(new{File=Path.GetFileName(path),Bytes=new FileInfo(path).Length,Sha256=Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(path))),Width=owner.ActualWidth,Height=owner.ActualHeight,PixelWidth=bitmap.Width,PixelHeight=bitmap.Height,WindowState=owner.WindowState.ToString(),Dark=ThemeService.Dark,Dpi=dpi.PixelsPerInchX});Write("screenshots.json",images);
+        }
         async Task Reach(long milliseconds){var watch=Stopwatch.StartNew();while(model.Timer.DurationMs<milliseconds&&model.Timer.State==TimerState.Running&&watch.ElapsedMilliseconds<8000)await Task.Delay(40);}
         try
         {
@@ -34,7 +40,7 @@ internal static class M3WindowValidation
             await Task.Run(()=>db.SaveKnowledgeNodes(nodes,"M3 synthetic tree"));db.SaveTask(new("m3-task","复习微分学 · 完成基础练习",model.LocalToday(),SubjectId:"math",ChapterId:"m3-leaf"));model.Refresh();knowledge.Subject=knowledge.Subjects.Single(s=>s.Id=="math");await knowledge.ReloadAsync("m3-leaf");await Task.Delay(180);
             await Shot("knowledge-detail-light-1200");model.DarkTheme=true;await Shot("knowledge-detail-dark-1200");owner.Width=900;owner.Height=600;await Shot("knowledge-detail-dark-900");model.DarkTheme=false;
             Check(knowledge.Selected?.Node.Id=="m3-leaf"&&knowledge.Roots.Count==3,"10k tree retains selected stable ID with lazy roots");
-            owner.UpdateLayout();await Task.Delay(120);var start=Children(owner.KnowledgeView).OfType<Button>().Single(b=>b.Content?.ToString()=="开始学习 →");start.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            owner.UpdateLayout();await Task.Delay(120);var start=Children(owner.KnowledgeView).OfType<Button>().Single(b=>b.Content?.ToString()=="开始学习 →");Check(start.Focus()&&start.MoveFocus(new System.Windows.Input.TraversalRequest(System.Windows.Input.FocusNavigationDirection.Next)),"native controls support focus and scripted Tab navigation");start.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             var timeout=Stopwatch.StartNew();while(!model.TimerActive&&timeout.ElapsedMilliseconds<5000)await Task.Delay(40);
             Check(model.Timer.ChapterId=="m3-leaf"&&model.Timer.Context?.TaskId==null,"native knowledge action starts correct node without stale task");
             await Reach(1200);await model.FinishCommand.ExecuteAsync(null);Check(model.CompletedStudy?.ChapterId=="m3-leaf"&&model.HasCompletedStudy,"optional completion appears after durable save");await Shot("completion-light-900");
