@@ -44,18 +44,20 @@ def final():
     candidate=candidates[0];head=git('rev-parse','HEAD');release=Path(candidate['ReleaseDirectory'])
     assert git('rev-parse',TAG+'^{commit}')==code
     assert not git('diff',code,head,'--','src','resources','Directory.Build.props','Directory.Packages.props','global.json')
-    result=read(ART/'native-accepted/result.json');provenance=read(ART/'native-accepted/provenance.json')
+    native_matches=[p.parent for p in ART.glob('native-*/provenance.json') if read(p)['Assembly']==VERSION+'+'+code and (p.parent/'result.json').is_file() and read(p.parent/'result.json')['Status']=='PASS']
+    assert len(native_matches)==1,'Select exactly one successful native run of the tagged program'
+    native=native_matches[0];result=read(native/'result.json');provenance=read(native/'provenance.json')
     assert result['Status']=='PASS' and result['Samples']==9 and result['Images']==8
     assert provenance['Assembly']==VERSION+'+'+code and provenance['BinarySha256']==candidate['BuildInfo']['DllSha256']
-    shots=read(ART/'native-accepted/screenshots.json');assert len(shots)==8 and len({r['File'].casefold() for r in shots})==8
+    shots=read(native/'screenshots.json');assert len(shots)==8 and len({r['File'].casefold() for r in shots})==8
     gallery=['<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>RC-Simple · 真实WPF</title><style>body{font:16px system-ui;max-width:1200px;margin:32px auto;background:#f5f3ec;color:#28372e;padding:20px}img{max-width:100%;height:auto}figure{margin:24px 0}</style><h1>YanJi RC-Simple · 原生窗口</h1><p>本候选ZIP解压程序；实际200%DPI。不是网页模拟。物理IME、其他DPI与电源实验未执行。</p>']
     for row in shots:
         name=row['File'];assert PurePosixPath(name).name==name and '\\' not in name
-        data=(ART/'native-accepted'/name).read_bytes();assert len(data)==row['Bytes'] and sha(data)==row['Sha256']
+        data=(native/name).read_bytes();assert len(data)==row['Bytes'] and sha(data)==row['Sha256']
         assert data[:8]==b'\x89PNG\r\n\x1a\n' and struct.unpack('>II',data[16:24])==(row['PixelWidth'],row['PixelHeight'])
         caption=f"{name} · {row['Width']}×{row['Height']} DIP · {row['PixelWidth']}×{row['PixelHeight']} px · DPI {row['Dpi']}"
         gallery.append('<figure><figcaption>'+html.escape(caption)+'</figcaption><img src="'+name+'" alt="'+html.escape(caption,quote=True)+'"></figure>')
-    new(ART/'native-accepted/comparison.html','\n'.join(gallery+['</html>']).encode())
+    new(native/'comparison.html','\n'.join(gallery+['</html>']).encode())
     raw=io.BytesIO(subprocess.check_output(['git','archive','--format=zip',head],cwd=ROOT))
     def source():
         with zipfile.ZipFile(raw) as z:
@@ -68,7 +70,7 @@ def final():
     archives.append(pack(release/('YanJi-v'+VERSION+'-source.zip'),source(),code,head,'source'))
     def evidence():
         for name,data in files(ART):
-            if PurePosixPath(name).parts[0] in ('publish','core-data','native-preview-data','native-rendered-data','native-final-data','native-accepted-data','progress-test-data','references-test-data'):continue
+            if PurePosixPath(name).parts[0]=='publish' or PurePosixPath(name).parts[0].endswith('-data'):continue
             yield 'evidence/'+name,data
         for p in sorted((ROOT/'docs').glob('V04-SIMPLE-*.md')):yield 'docs/'+p.name,p.read_bytes()
         yield 'resources/legal/third-party-licenses.json',(ROOT/'resources/legal/third-party-licenses.json').read_bytes()
@@ -81,6 +83,7 @@ def final():
             for name,row in index.items():data=z.read(name);assert len(data)==row['Bytes'] and sha(data)==row['Sha256']
     dump(release/'release-manifest.json',{'Status':'READY FOR FINAL APPROVAL','Version':VERSION,'Branch':git('branch','--show-current'),'CodeHead':code,'DocumentationHead':head,'Tag':TAG,'Assembly':provenance['Assembly'],'BinarySha256':provenance['BinarySha256'],'Archives':archives,'CoreTests':216,'NativeChecks':result['Checks'],'NativeImages':8,'NativeTimerSamples':9,'RealUserDataAccessed':False,'NoPublicRelease':True,'NotTested':result['NotTested']})
     new(release/'SHA256SUMS.txt',''.join(r['Sha256']+'  '+r['File']+'\n' for r in archives).encode())
+    new(release/'MANUAL-SIMPLE.md',(ROOT/'docs/V04-SIMPLE-MANUAL.md').read_bytes())
     dump(release/'space-summary.json',{'ReleaseBytes':sum(p.stat().st_size for p in release.rglob('*') if p.is_file()),'ArtifactsBytes':sum(p.stat().st_size for p in ART.rglob('*') if p.is_file()),'SelfContainedCopiesCreated':1,'HistoricalFilesDeleted':0})
     print((release/'release-manifest.json').read_text())
 

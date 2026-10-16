@@ -27,7 +27,7 @@ public static class SmokeRunner
         void NotTested(string name,string reason)=>results.Add(new{Name=name,Status="NOT TESTED",Details=reason});
         try
         {
-            var vm=window.Model;Assert(!vm.Busy&&vm.Subjects.Count>=4,"WPF startup and SQLite initialization");
+            var vm=window.Model;Assert(!vm.Busy&&vm.Subjects.Count>0&&vm.Database.Integrity()=="ok","WPF startup and SQLite initialization");
             if(((App)Application.Current).StartupOnly)
             {window.UpdateLayout();await window.Dispatcher.InvokeAsync(()=>{},DispatcherPriority.ApplicationIdle);
                 var controls=Descendants(window).OfType<ComboBox>().Select(c=>new{Name=System.Windows.Automation.AutomationProperties.GetName(c),Width=c.ActualWidth,Height=c.ActualHeight,TemplateSource=DependencyPropertyHelper.GetValueSource(c,Control.TemplateProperty).BaseValueSource.ToString(),Toggle=(c.Template.FindName("Toggle",c) as FrameworkElement)?.ActualWidth,ToggleAlignment=(c.Template.FindName("Toggle",c) as FrameworkElement)?.HorizontalAlignment.ToString(),Visuals=Descendants(c).OfType<FrameworkElement>().Select(v=>new{Type=v.GetType().Name,v.Name,v.ActualWidth,v.ActualHeight,Alignment=v.HorizontalAlignment.ToString()}).Take(12)}).Where(c=>c.Width>0);
