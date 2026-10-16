@@ -8,6 +8,7 @@ import subprocess
 import zipfile
 import html
 import struct
+import xml.etree.ElementTree as ET
 
 ROOT=Path(__file__).resolve().parents[1]
 ART=ROOT/'artifacts/v04-rc-simple'
@@ -49,12 +50,16 @@ def final():
     native=native_matches[0];result=read(native/'result.json');provenance=read(native/'provenance.json')
     assert result['Status']=='PASS' and result['Samples']==9 and result['Images']==8
     assert provenance['Assembly']==VERSION+'+'+code and provenance['BinarySha256']==candidate['BuildInfo']['DllSha256']
+    counters=next(e for e in ET.parse(ART/'core/core-simple.trx').iter() if e.tag.endswith('Counters'))
+    assert counters.attrib['passed']=='216' and counters.attrib['failed']=='0'
+    assert read(ART/'final-data-and-retention.json')['Status']=='READY FOR FINAL APPROVAL'
     shots=read(native/'screenshots.json');assert len(shots)==8 and len({r['File'].casefold() for r in shots})==8
     gallery=['<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>RC-Simple · 真实WPF</title><style>body{font:16px system-ui;max-width:1200px;margin:32px auto;background:#f5f3ec;color:#28372e;padding:20px}img{max-width:100%;height:auto}figure{margin:24px 0}</style><h1>YanJi RC-Simple · 原生窗口</h1><p>本候选ZIP解压程序；实际200%DPI。不是网页模拟。物理IME、其他DPI与电源实验未执行。</p>']
     for row in shots:
         name=row['File'];assert PurePosixPath(name).name==name and '\\' not in name
         data=(native/name).read_bytes();assert len(data)==row['Bytes'] and sha(data)==row['Sha256']
         assert data[:8]==b'\x89PNG\r\n\x1a\n' and struct.unpack('>II',data[16:24])==(row['PixelWidth'],row['PixelHeight'])
+        assert abs(row['PixelWidth']-row['Width']*row['Dpi']/96)<=2 and abs(row['PixelHeight']-row['Height']*row['Dpi']/96)<=2
         caption=f"{name} · {row['Width']}×{row['Height']} DIP · {row['PixelWidth']}×{row['PixelHeight']} px · DPI {row['Dpi']}"
         gallery.append('<figure><figcaption>'+html.escape(caption)+'</figcaption><img src="'+name+'" alt="'+html.escape(caption,quote=True)+'"></figure>')
     new(native/'comparison.html','\n'.join(gallery+['</html>']).encode())
