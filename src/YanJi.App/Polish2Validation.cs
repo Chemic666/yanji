@@ -101,6 +101,8 @@ internal static class Polish2Validation
     {
         var root=new StackPanel{Margin=new Thickness(30),Focusable=true};root.Children.Add(new TextBlock{Text="Quiet Focus · Soft Depth",FontSize=22,Margin=new Thickness(0,0,0,24)});
         var sample=new Button{Content="开始学习",Style=(Style)main.FindResource("Primary"),Width=150,HorizontalAlignment=HorizontalAlignment.Left};System.Windows.Automation.AutomationProperties.SetAutomationId(sample,"StateSample");root.Children.Add(sample);
+        var lab=new Window{Owner=main,Title="研迹 · 按钮验收",Width=600,Height=300,Content=root,WindowStartupLocation=WindowStartupLocation.CenterOwner};
+        var saved=new HashSet<string>();var events=new List<object>();
         var row=new WrapPanel{Margin=new Thickness(0,18,0,0)};
         var disable=new Button{Content="禁用 / 启用样本",Style=(Style)main.FindResource("SecondaryButton")};disable.Click+=(_,_)=>sample.IsEnabled=!sample.IsEnabled;row.Children.Add(disable);
         var dark=new Button{Content="浅色 / 深色",Style=(Style)main.FindResource("GhostButton")};dark.Click+=(_,_)=>{main.Model.DarkTheme=!main.Model.DarkTheme;root.Focus();root.Dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle,new Action(()=>Capture("normal")));};row.Children.Add(dark);root.Children.Add(row);
@@ -113,8 +115,7 @@ internal static class Polish2Validation
             swap.Click+=(_,_)=>{darkBackground=!darkBackground;background.Background=new SolidColorBrush(darkBackground?Color.FromRgb(21,37,30):Color.FromRgb(243,233,211));};
             var backing=new Window{Owner=main,Title="研迹 · 悬浮材质验收",Width=640,Height=420,Content=background,WindowStartupLocation=WindowStartupLocation.CenterOwner};backing.Show();main.ShowMiniTimer();main.MiniTimer!.Topmost=true;main.MiniTimer.Left=backing.Left+80;main.MiniTimer.Top=backing.Top+100;
         };
-        var lab=new Window{Owner=main,Title="研迹 · 按钮验收",Width=600,Height=300,Content=root,WindowStartupLocation=WindowStartupLocation.CenterOwner};
-        var saved=new HashSet<string>();var events=new List<object>();
+
         void Capture(string state)
         {
             if(!lab.IsVisible||!saved.Add((ThemeService.Dark?"dark-":"light-")+state))return;
