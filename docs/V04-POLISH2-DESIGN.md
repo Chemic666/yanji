@@ -9,3 +9,9 @@
 针对性Skill审核先于实现：ui-ux-pro-max查询“button states animation”无匹配，按指南重试“state setters”获得WPF显式Key/BasedOn建议，落实共享模板及派生等级；原CanExecute/IsEnabled语义保留，不为套用建议重写计时命令。make-interfaces-feel-better采用光学层次、可中断轻反馈、数字等宽和明确状态，拒绝CSS/GSAP/macOS字体平滑等Web专属实现。yanji-domain-rules保护事实/ID/事务，systematic-debugging以基线Alt+F4实机失败和实际Catalog列表定位。以上为实际读取和本地查询，不宣称运行Web设计引擎。
 
 设计参考：Apple HIG [Materials](https://developer.apple.com/design/human-interface-guidelines/materials)与[Buttons](https://developer.apple.com/design/human-interface-guidelines/buttons)提炼少量材质、前景可读和清晰按压状态；不复刻Liquid Glass，不使用Apple资源。[Windows layering/elevation](https://learn.microsoft.com/en-us/windows/apps/design/signature-experiences/layering)用于主次层级及按下时降低深度，非直接调用WinUI ThemeShadow。WPF约束依据[Closing](https://learn.microsoft.com/en-us/dotnet/api/system.windows.window.closing)及[AllowsTransparency](https://learn.microsoft.com/en-us/dotnet/api/system.windows.window.allowstransparency)。
+
+退出确认出现前临时隐藏置顶迷你窗；取消、后台继续或保存失败后恢复，不改变位置/置顶偏好。此规则来自真实原生窗口发现的遮挡缺陷。迷你底部操作提示提升至12DIP。
+
+按钮验收：真实Windows输入触发IsMouseOver/IsPressed/键盘焦点；为避免自动化down/up快于合成帧，仅无业务动作的验收样本延迟释放140ms，正式按钮不延迟。九张状态图来自1dc7484，最终d992fb3未修改Styles.xaml/ButtonFeedback.cs，两提交Git blob一致；浅色Normal替换为最终候选的无悬停/无焦点截图。原始图和属性元数据保留，来源不冒充最终程序。
+
+未开始的学习备注草稿与知识目录编辑均在退出前确认；取消保留输入，已保存会话备注不会重复提醒。每日感想继续执行已有退出保存及失败保护。
