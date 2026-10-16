@@ -35,6 +35,10 @@ public static class ThemeService
             foreach(var key in new[]{"Danger","Warning"})Application.Current.Resources[key]=SystemColors.WindowTextBrush;
             foreach(var key in new[]{"DangerSoft","WarningSoft"})Application.Current.Resources[key]=SystemColors.WindowBrush;
         }
+        var mini=((SolidColorBrush)Application.Current.Resources["CardBackground"]).Color;
+        mini.A=highContrast?(byte)255:(byte)230;
+        Application.Current.Resources["MiniSurface"]=new SolidColorBrush(mini);
+        Application.Current.Resources["MiniEdge"]=new SolidColorBrush(highContrast?SystemColors.WindowTextColor:dark?Color.FromArgb(110,150,175,153):Color.FromArgb(180,255,255,255));
         _highContrast=highContrast;
         _initialized=true;
         Changed?.Invoke();

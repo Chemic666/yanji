@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -77,7 +77,7 @@ internal static class SimpleInteractionValidation
                 }
                 await m.PauseResumeCommand.ExecuteAsync(null);var paused=m.Timer.DurationMs;var text=Digits(owner);await Task.Delay(2100);
                 Check(m.Timer.DurationMs==paused&&Digits(owner)==text&&Digits(owner.MiniTimer!)==text,"pause display and raw duration frozen mode "+mode);await m.PauseResumeCommand.ExecuteAsync(null);
-                if(mode==0){owner.Close();Check(!owner.IsVisible&&m.TimerRunning,"close continues via tray");owner.ShowFromTray();owner.WindowState=WindowState.Minimized;await Task.Delay(1100);owner.ShowFromTray();m.Page=2;await owner.SimpleProgressView.RefreshAsync();m.Page=0;Check(m.TimerRunning,"minimize restore and page switch preserve running timer");}
+                if(mode==0){owner.TestDialogShown=w=>{async Task Choose(){await Task.Delay(80);Children(w).OfType<Button>().Single(b=>b.Content?.ToString()=="继续在后台运行").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));}_=Choose();};owner.Close();await Wait(()=>!owner.IsVisible);owner.TestDialogShown=null;Check(m.TimerRunning,"explicit close choice continues via tray");owner.ShowFromTray();owner.WindowState=WindowState.Minimized;await Task.Delay(1100);owner.ShowFromTray();m.Page=2;await owner.SimpleProgressView.RefreshAsync();m.Page=0;Check(m.TimerRunning,"minimize restore and page switch preserve running timer");}
                 await m.FinishCommand.ExecuteAsync(null);
                 Check(d.Records().Single(r=>r.Id==m.Timer.SessionId).DurationMs==m.Timer.DurationMs&&m.FocusSubjectLabel.StartsWith("上一段已保存")&&m.FocusStartLabel=="开始下一段"&&Digits(owner)==Digits(owner.MiniTimer!),"saved exact milliseconds and unambiguous completed state mode "+mode);
             }

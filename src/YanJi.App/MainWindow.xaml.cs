@@ -39,7 +39,7 @@ public partial class MainWindow : Window
         _tick.Tick+=async(_,_)=>{if(((App)Application.Current).V031Probe||((App)Application.Current).V031Check||((App)Application.Current).M1Check||((App)Application.Current).M2Check||((App)Application.Current).M3Check||((App)Application.Current).M4Check||((App)Application.Current).SimpleCheck)ValidationTickCount++;try{await Model.TickAsync();_tray.Text="研迹 · "+(Model.NeedsReview?"待核对":Model.BreakActive?"休息":Model.TimerRunning?"学习":Model.TimerActive?"暂停":"就绪")+" · "+Model.TimerText;}catch(Exception e){Model.Status="自动保存未完成："+e.Message;}};
         Model.Error+=text=>{var smoke=((App)Application.Current).SmokePath;if(smoke!=null){Directory.CreateDirectory(smoke);File.AppendAllText(Path.Combine(smoke,"operation-errors.txt"),text+"\n");}else MessageBox.Show(this,text,"研迹",MessageBoxButton.OK,MessageBoxImage.Information);};
         SourceInitialized+=(_,_)=>{var handle=new WindowInteropHelper(this).Handle;_source=HwndSource.FromHwnd(handle);_source.AddHook(HandleMessage);WTSRegisterSessionNotification(handle,0);((App)Application.Current).RecordWindow(handle);};
-        Loaded+=async(_,_)=>{await Model.InitializeAsync();_tick.Start();if(((App)Application.Current).SmokePath==null&&Model.Database.Setting("onboarding-complete","")!="true")ConfigureExamProfile_Click(this,new RoutedEventArgs());if(((App)Application.Current).PolishShortcutsOnly){((App)Application.Current).ValidationFailed=!await PolishUiChecks.RunAsync(this,((App)Application.Current).SmokePath!);SmokeClose();}else if(((App)Application.Current).PolishPerf)await PolishPerformance.RunAsync(this,((App)Application.Current).SmokePath!);else if(((App)Application.Current).SimpleInteractionCheck)await SimpleInteractionValidation.RunAsync(this,((App)Application.Current).SmokePath!);else if(((App)Application.Current).SimpleCheck)await SimpleWindowValidation.RunAsync(this,((App)Application.Current).SmokePath!);else if(((App)Application.Current).M4Check)await M4WindowValidation.RunAsync(this,((App)Application.Current).SmokePath!);else if(((App)Application.Current).M3ReviewCheck)await M3ReviewValidation.RunAsync(this,((App)Application.Current).SmokePath!);else if(((App)Application.Current).M3Check)await M3WindowValidation.RunAsync(this,((App)Application.Current).SmokePath!);else if(((App)Application.Current).M2Check)await M2WindowValidation.RunAsync(this,((App)Application.Current).SmokePath!);else if(((App)Application.Current).M1Check)await M1WindowValidation.RunAsync(this,((App)Application.Current).SmokePath!);else if(((App)Application.Current).V031Probe||((App)Application.Current).V031Check)await TimerDisplayValidation.RunAsync(this,((App)Application.Current).SmokePath!,((App)Application.Current).V031Probe);else if(((App)Application.Current).V03Capture||((App)Application.Current).V03Reopen||((App)Application.Current).V03Layout||((App)Application.Current).V03Recover)await V03CaptureRunner.RunAsync(this,((App)Application.Current).SmokePath!);else if(((App)Application.Current).V023Capture)await V023CaptureRunner.RunAsync(this,((App)Application.Current).SmokePath!);else if(((App)Application.Current).V022Capture)await V022CaptureRunner.RunAsync(this,((App)Application.Current).SmokePath!);else if(((App)Application.Current).V021Capture)await V021CaptureRunner.RunAsync(this,((App)Application.Current).SmokePath!,((App)Application.Current).V021Fixture!);else if(((App)Application.Current).SmokePath!=null)await SmokeRunner.RunAsync(this,((App)Application.Current).SmokePath!);};
+        Loaded+=async(_,_)=>{await Model.InitializeAsync();_tick.Start();if(((App)Application.Current).SmokePath==null&&Model.Database.Setting("onboarding-complete","")!="true")ConfigureExamProfile_Click(this,new RoutedEventArgs());if(((App)Application.Current).Polish2Probe){await Polish2Validation.ProbeAsync(this,((App)Application.Current).SmokePath!);SmokeClose();}else if(((App)Application.Current).Polish2Check){await Polish2Validation.RunAsync(this,((App)Application.Current).SmokePath!);}else if(((App)Application.Current).PolishShortcutsOnly){((App)Application.Current).ValidationFailed=!await PolishUiChecks.RunAsync(this,((App)Application.Current).SmokePath!);SmokeClose();}else if(((App)Application.Current).PolishPerf)await PolishPerformance.RunAsync(this,((App)Application.Current).SmokePath!);else if(((App)Application.Current).SimpleInteractionCheck)await SimpleInteractionValidation.RunAsync(this,((App)Application.Current).SmokePath!);else if(((App)Application.Current).SimpleCheck)await SimpleWindowValidation.RunAsync(this,((App)Application.Current).SmokePath!);else if(((App)Application.Current).M4Check)await M4WindowValidation.RunAsync(this,((App)Application.Current).SmokePath!);else if(((App)Application.Current).M3ReviewCheck)await M3ReviewValidation.RunAsync(this,((App)Application.Current).SmokePath!);else if(((App)Application.Current).M3Check)await M3WindowValidation.RunAsync(this,((App)Application.Current).SmokePath!);else if(((App)Application.Current).M2Check)await M2WindowValidation.RunAsync(this,((App)Application.Current).SmokePath!);else if(((App)Application.Current).M1Check)await M1WindowValidation.RunAsync(this,((App)Application.Current).SmokePath!);else if(((App)Application.Current).V031Probe||((App)Application.Current).V031Check)await TimerDisplayValidation.RunAsync(this,((App)Application.Current).SmokePath!,((App)Application.Current).V031Probe);else if(((App)Application.Current).V03Capture||((App)Application.Current).V03Reopen||((App)Application.Current).V03Layout||((App)Application.Current).V03Recover)await V03CaptureRunner.RunAsync(this,((App)Application.Current).SmokePath!);else if(((App)Application.Current).V023Capture)await V023CaptureRunner.RunAsync(this,((App)Application.Current).SmokePath!);else if(((App)Application.Current).V022Capture)await V022CaptureRunner.RunAsync(this,((App)Application.Current).SmokePath!);else if(((App)Application.Current).V021Capture)await V021CaptureRunner.RunAsync(this,((App)Application.Current).SmokePath!,((App)Application.Current).V021Fixture!);else if(((App)Application.Current).SmokePath!=null)await SmokeRunner.RunAsync(this,((App)Application.Current).SmokePath!);};
         Closing+=OnClosing;
         Closed+=(_,_)=>{CloseMiniTimer();ThemeService.Changed-=RefreshChartThemes;_tick.Stop();if(_source!=null){WTSUnRegisterSessionNotification(_source.Handle);_source.RemoveHook(HandleMessage);}_tray.Dispose();Model.Database.Dispose();Application.Current.Shutdown();};
     }
@@ -53,34 +53,61 @@ public partial class MainWindow : Window
         // WM_WTSSESSION_CHANGE lock/unlock intentionally does not change timer state.
         return IntPtr.Zero;
     }
-    private async void OnClosing(object? sender,CancelEventArgs e)
+    private bool _exitQueued;
+    private void OnClosing(object? sender,CancelEventArgs e)
     {
-        if(_exiting)return;e.Cancel=true;
-        if(Model.TimerActive){Hide();return;}
-        await RequestExitAsync();
+        if(_exiting)return;
+        e.Cancel=true;
+        if(_exitQueued||_exitBusy)return;
+        _exitQueued=true;
+        // WPF forbids Close/ShowDialog while the original Closing stack is active.
+        Dispatcher.BeginInvoke(new Action(async()=>{_exitQueued=false;await RequestExitAsync();}));
     }
     public async Task RequestExitAsync()
     {
-        if(_exitBusy||Model.Busy)return;_exitBusy=true;_tick.Stop();
+        if(_exitBusy)return;
+        if(Model.Busy){Model.Status="正在保存，请稍后再关闭。";return;}
+        _exitBusy=true;
         try
         {
+            (System.Windows.Input.Keyboard.FocusedElement as TextBox)?.GetBindingExpression(TextBox.TextProperty)?.UpdateSource();
+            if(KnowledgeView.Model is {HasUnsavedChanges:true})
+            {
+                var unsaved=new ConfirmDialog(this,"尚有未保存的章节修改","退出将放弃当前目录编辑。已保存的学习记录和进度不受影响。","放弃修改并退出",false);
+                TestDialogShown?.Invoke(unsaved);
+                if(unsaved.ShowDialog()!=true)return;
+            }
             if(Model.TimerActive)
             {
-                ShowFromTray();var choice=ExitChoice();if(choice==0)return;
-                if(choice==1&&Model.NeedsReview){MessageBox.Show(this,"请先核对未知时间，再结束保存。","研迹");return;}
-                if(!await Model.PrepareExitAsync(choice==1))return;
-                if(choice==1&&Model.TimerActive)return;
+                ShowFromTray();var choice=ExitChoice();
+                if(choice==0)return;
+                if(choice==2){Hide();Model.Status="计时继续在后台运行，可从托盘返回。";return;}
+                if(Model.NeedsReview){MessageBox.Show(this,"请先核对未知时间，再结束保存。","研迹");return;}
+                // Checkpoint ticks remain active while the choice dialog is open.
+                _tick.Stop();
+                if(!await Model.PrepareExitAsync(true)||Model.TimerActive)return;
             }
-            if(!await Model.SaveReflectionAsync())return;_exiting=true;Close();
+            _tick.Stop();
+            if(!await Model.SaveReflectionAsync())return;
+            if(MiniTimer!=null)await MiniTimer.FlushPreferencesAsync();
+            _exiting=true;Close();
         }
         catch(Exception e){MessageBox.Show(this,"退出前保存未完成："+e.Message,"研迹");}
         finally{_exitBusy=false;if(!_exiting)_tick.Start();}
     }
     private int ExitChoice()
     {
-        var dialog=new Window{Owner=this,Title="退出研迹",Width=520,Height=230,WindowStartupLocation=WindowStartupLocation.CenterOwner,ResizeMode=ResizeMode.NoResize};var stack=new StackPanel{Margin=new Thickness(24)};var result=0;
-        stack.Children.Add(new TextBlock{Text="活动计时尚未结束。请选择如何退出：",Margin=new Thickness(0,0,0,24)});
-        foreach(var (label,value) in new[]{("结束并保存",1),("暂停后退出",2),("取消退出",0)}){var button=new Button{Content=label};button.Click+=(_,_)=>{result=value;dialog.Close();};stack.Children.Add(button);}dialog.Content=stack;dialog.Height=280;dialog.ShowDialog();return result;
+        var dialog=new Window{Owner=this,Title="退出研迹",Width=540,SizeToContent=SizeToContent.Height,WindowStartupLocation=WindowStartupLocation.CenterOwner,ResizeMode=ResizeMode.NoResize};
+        var stack=new StackPanel{Margin=new Thickness(24)};var result=0;
+        stack.Children.Add(new TextBlock{Text="学习正在进行",Style=(Style)FindResource("Subheading")});
+        stack.Children.Add(new TextBlock{Text="选择如何处理本段学习。后台运行时仍会持续计时并保存防丢检查点。",TextWrapping=TextWrapping.Wrap,Margin=new Thickness(0,0,0,18)});
+        foreach(var (label,value,style) in new[]{("结束并保存后退出",1,"Primary"),("继续在后台运行",2,"SecondaryButton"),("取消",0,"GhostButton")})
+        {
+            var button=new Button{Content=label,Style=(Style)FindResource(style),HorizontalAlignment=HorizontalAlignment.Stretch,IsCancel=value==0};
+            System.Windows.Automation.AutomationProperties.SetAutomationId(button,"ExitChoice"+value);
+            button.Click+=(_,_)=>{result=value;dialog.Close();};stack.Children.Add(button);
+        }
+        dialog.Content=stack;TestDialogShown?.Invoke(dialog);dialog.ShowDialog();return result;
     }
     private async void Exit_Click(object sender,RoutedEventArgs e)=>await RequestExitAsync();
     private async void Navigation_Changed(object sender,SelectionChangedEventArgs e){if(DataContext is MainViewModel vm){if(vm.Page==0)await vm.ChangeDayAsync(vm.LocalToday().ToDateTime(TimeOnly.MinValue));else await vm.SaveReflectionAsync();if(vm.Page==2)await SimpleProgressView.RefreshAsync();if(vm.Page==2&&KnowledgeView.Model is {KnowledgeBusy:false} knowledge)await knowledge.ReloadAsync(knowledge.Selected?.Node.Id);MainScroll.ScrollToTop();}}

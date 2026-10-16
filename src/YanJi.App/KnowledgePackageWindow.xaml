@@ -18,16 +18,16 @@
         <Grid Margin="16">
           <Grid.ColumnDefinitions><ColumnDefinition Width="240" /><ColumnDefinition Width="20" /><ColumnDefinition /></Grid.ColumnDefinitions>
           <Grid><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition /></Grid.RowDefinitions>
-            <StackPanel Margin="0,0,0,12"><TextBlock Text="当前科目可用模板" Style="{StaticResource MutedText}" /><ComboBox ItemsSource="{Binding Subjects}" SelectedItem="{Binding FilterSubject}" DisplayMemberPath="Name" Style="{StaticResource FocusComboBox}" AutomationProperties.Name="筛选参考模板科目" /></StackPanel>
+            <StackPanel Margin="0,0,0,12"><TextBlock Text="参考目录 · 可选按科目筛选" Style="{StaticResource MutedText}" /><ComboBox ItemsSource="{Binding CatalogSubjects}" SelectedItem="{Binding FilterSubject}" DisplayMemberPath="Name" Style="{StaticResource FocusComboBox}" AutomationProperties.Name="筛选参考模板科目" /></StackPanel>
             <ListBox Grid.Row="1" ItemsSource="{Binding Catalog}" SelectedItem="{Binding SelectedCatalog}" BorderThickness="0" Background="Transparent" ScrollViewer.HorizontalScrollBarVisibility="Disabled" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling">
-              <ListBox.ItemTemplate><DataTemplate><StackPanel Margin="6,10" MaxWidth="200"><TextBlock Text="{Binding Name}" FontSize="15" FontWeight="Medium" Foreground="{DynamicResource Ink}" TextWrapping="Wrap" /><TextBlock Text="{Binding Detail}" Style="{StaticResource MutedText}" FontSize="12" Margin="0,6,0,0" TextWrapping="Wrap" /></StackPanel></DataTemplate></ListBox.ItemTemplate>
+              <ListBox.ItemTemplate><DataTemplate><StackPanel Margin="6,10" MaxWidth="200"><TextBlock Text="{Binding Name}" FontSize="15" FontWeight="Medium" Foreground="{DynamicResource Ink}" TextWrapping="Wrap" /><TextBlock Text="{Binding Detail}" Style="{StaticResource MutedText}" FontSize="12" Margin="0,6,0,0" TextWrapping="Wrap" /><TextBlock Text="{Binding InstallStatus}" Foreground="{DynamicResource Accent}" FontSize="12" FontWeight="SemiBold" Margin="0,6,0,0" /></StackPanel></DataTemplate></ListBox.ItemTemplate>
             </ListBox>
           </Grid>
           <Grid Grid.Column="2"><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
             <TextBlock Text="{Binding PackageName}" Style="{StaticResource Subheading}" TextWrapping="Wrap" Margin="0,0,0,12" />
             <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
               <StackPanel>
-                <TextBlock Text="{Binding Description}" TextWrapping="Wrap" Foreground="{DynamicResource Ink}" LineHeight="22" Margin="0,0,0,16" />
+                <TextBlock Text="{Binding InstallHint}" Style="{StaticResource MutedText}" /><Button Content="已安装 · 查看目录 →" Command="{Binding ViewDirectoryCommand}" Style="{StaticResource SecondaryButton}" HorizontalAlignment="Left" IsEnabled="{Binding HasInstalledPackage}" Margin="0,0,0,12" /><TextBlock Text="{Binding Description}" TextWrapping="Wrap" Foreground="{DynamicResource Ink}" LineHeight="22" Margin="0,0,0,16" />
                 <TextBlock Text="安装到考试档案" Style="{StaticResource MutedText}" /><ComboBox ItemsSource="{Binding Profiles}" SelectedItem="{Binding Profile}" DisplayMemberPath="Name" Style="{StaticResource FocusComboBox}" AutomationProperties.Name="知识包目标考试档案" />
                 <ItemsControl ItemsSource="{Binding Targets}" Margin="0,8,0,12"><ItemsControl.ItemTemplate><DataTemplate><StackPanel Margin="0,0,0,8"><TextBlock Text="{Binding Label}" Style="{StaticResource MutedText}" /><ComboBox ItemsSource="{Binding Subjects}" SelectedItem="{Binding Selected}" DisplayMemberPath="Name" Style="{StaticResource FocusComboBox}" AutomationProperties.Name="知识包科目安装目标" /></StackPanel></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
                 <TextBlock Text="知识树预览" Style="{StaticResource Subheading}" Margin="0,0,0,8" />
@@ -46,7 +46,7 @@
           </ListBox>
           <Grid Grid.Column="2"><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
             <TextBlock Text="目录操作历史" Style="{StaticResource Subheading}" Margin="0,0,0,12" /><ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto"><TextBlock Text="{Binding HistoryText}" TextWrapping="Wrap" Foreground="{DynamicResource Ink}" LineHeight="24" /></ScrollViewer>
-            <Button Grid.Row="2" Content="预览安全回滚" Command="{Binding RollbackCommand}" Style="{StaticResource QuietButton}" HorizontalAlignment="Left" Margin="0,12,0,0" />
+            <WrapPanel Grid.Row="2"><Button Content="查看目录 →" Command="{Binding ViewInstalledCommand}" Style="{StaticResource SecondaryButton}" /><Button Content="预览安全回滚" Command="{Binding RollbackCommand}" Style="{StaticResource QuietButton}" /></WrapPanel>
           </Grid>
         </Grid>
       </TabItem>

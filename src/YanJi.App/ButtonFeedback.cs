@@ -4,6 +4,9 @@ using System.Windows.Media.Animation;
 namespace YanJi.App;
 public static class ButtonFeedback
 {
+    public static readonly DependencyProperty DepthProperty=DependencyProperty.RegisterAttached("Depth",typeof(bool),typeof(ButtonFeedback),new PropertyMetadata(true));
+    public static bool GetDepth(DependencyObject o)=>(bool)o.GetValue(DepthProperty);
+    public static void SetDepth(DependencyObject o,bool value)=>o.SetValue(DepthProperty,value);
     public static readonly DependencyProperty StateProperty=DependencyProperty.RegisterAttached("State",typeof(string),typeof(ButtonFeedback),new PropertyMetadata("Idle",StateChanged));
     private static readonly DependencyProperty SavedContentProperty=DependencyProperty.RegisterAttached("SavedContent",typeof(object),typeof(ButtonFeedback));
     private static void StateChanged(DependencyObject o,DependencyPropertyChangedEventArgs e)
@@ -25,7 +28,7 @@ public static class ButtonFeedback
         void Update()
         {
             if(b.Template?.FindName("Feedback",b) is not FrameworkElement layer)return;
-            var value=!b.IsEnabled?0:b.IsPressed?.16:b.IsMouseOver?.07:0;
+            var value=!b.IsEnabled?0:b.IsPressed?.18:b.IsMouseOver?.12:0;
             layer.BeginAnimation(UIElement.OpacityProperty,null);
             if(SystemParameters.ClientAreaAnimation&&!SystemParameters.HighContrast)
                 layer.BeginAnimation(UIElement.OpacityProperty,new DoubleAnimation(value,System.TimeSpan.FromMilliseconds(140)){FillBehavior=FillBehavior.HoldEnd});

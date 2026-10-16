@@ -77,6 +77,10 @@ public sealed partial class KnowledgeWorkspaceViewModel : ObservableObject
     [ObservableProperty] private IReadOnlyList<ParentChoice> parents = Array.Empty<ParentChoice>();
     public bool Searching => !string.IsNullOrWhiteSpace(Search);
     public bool HasSelection => Selected != null;
+    public bool HasUnsavedChanges => Selected is {} row && (NodeName!=row.Node.Name || Description!=row.Node.Description ||
+        ProgressText!=row.Node.Progress.ToString(CultureInfo.InvariantCulture) || StateIndex!=(int)row.Node.State ||
+        KindIndex!=(int)row.Node.Kind || MasteryIndex!=(int)row.Node.Mastery || Parent?.Id!=row.Node.ParentId ||
+        OrderText!=row.Node.SortOrder.ToString(CultureInfo.InvariantCulture));
     public string ArchiveAction => Selected?.Node.Archived == true ? "重新启用" : "归档";
     public string NodeId => Selected?.Node.Id ?? "";
     private List<KnowledgeNode> _nodes = [];

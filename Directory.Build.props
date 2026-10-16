@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>latest</LangVersion>
     <Deterministic>true</Deterministic>
-    <Version>0.4.0-rc.polish.1</Version>
+    <Version>0.4.0-rc.polish.2</Version>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
     <Authors>YanJi</Authors>

@@ -10,8 +10,11 @@ using YanJi.Core;
 using YanJi.Data;
 namespace YanJi.App;
 
-public sealed record PackageCatalogItem(KnowledgePackage Package,string Path)
-{public string Name=>Package.Name;public string Detail=>Package.PackageVersion+" · "+Package.Nodes.Count+" 个节点 · 参考目录";}
+public sealed record PackageCatalogItem(KnowledgePackage Package,string Path,string InstallStatus="未安装")
+{
+    public string Name=>Package.PackageId switch{"org.yanji.reference.408"=>"408 计算机学科专业基础","org.yanji.reference.english1"=>"英语一 · 复习模块","org.yanji.reference.english2"=>"英语二 · 复习模块",_=>Package.Name};
+    public string Detail=>Package.PackageVersion+" · "+Package.Nodes.Count+" 个节点 · 参考目录";
+}
 public sealed partial class PackageTargetRow : ObservableObject
 {
     public string Key {get;} public string Label {get;} public IReadOnlyList<Subject> Subjects {get;}
@@ -31,6 +34,10 @@ public sealed partial class KnowledgePackageViewModel : ObservableObject
 {
     public MainViewModel Owner {get;} public Func<string,Task<bool>>? Confirm {get;set;}
     public IReadOnlyList<ExamProfile> Profiles {get;} public IReadOnlyList<Subject> Subjects {get;}
+    public IReadOnlyList<Subject> CatalogSubjects {get;}
+    public Func<string,Task>? OpenDirectory {get;set;}
+    public bool HasInstalledPackage=>_package!=null&&Installed.Any(i=>i.PackageId==_package.PackageId&&i.ProfileId==Profile?.Id);
+    public string InstallHint=>HasInstalledPackage?"已安装 · 目录和学习历史保留，可查看目录或生成更新预览。":"未安装 · 先预览再确认，不会自动导入。";
     private List<PackageCatalogItem> _catalog=[];
     [ObservableProperty] private IReadOnlyList<PackageCatalogItem> catalog=[];
     [ObservableProperty] private PackageCatalogItem? selectedCatalog;
@@ -53,20 +60,27 @@ public sealed partial class KnowledgePackageViewModel : ObservableObject
     [ObservableProperty] private bool canApply;
     private KnowledgePackage? _package; private PackagePreview? _preview;
     public KnowledgePackageViewModel(MainViewModel owner,Subject? current)
-    {Owner=owner;Profiles=owner.Database.ExamProfiles();Subjects=owner.Database.Subjects();profile=Profiles.FirstOrDefault();filterSubject=current??Subjects.FirstOrDefault();}
+    {Owner=owner;Profiles=owner.Database.ExamProfiles();Subjects=owner.Database.Subjects();CatalogSubjects=new[]{new Subject("","全部科目")}.Concat(Subjects).ToArray();profile=Profiles.FirstOrDefault();filterSubject=CatalogSubjects[0];}
     public async Task InitializeAsync()
     {
         await RunAsync(async()=>
         {
             _catalog=await Task.Run(()=>Directory.EnumerateFiles(Path.Combine(AppContext.BaseDirectory,"knowledge-packages"),"*.yanji-knowledge.json",SearchOption.AllDirectories)
                 .Select(f=>new PackageCatalogItem(KnowledgePackageFile.Parse(File.ReadAllBytes(f)),f)).GroupBy(p=>p.Package.PackageId).Select(g=>g.OrderByDescending(p=>KnowledgePackageFile.VersionOf(p.Package.PackageVersion)).First()).OrderBy(p=>p.Package.PackageId).ToList());
-            Filter();await RefreshInstalledAsync();
+            await RefreshInstalledAsync();
         });
     }
     partial void OnFilterSubjectChanged(Subject? value)=>Filter();
-    private void Filter(){Catalog=_catalog.Where(p=>FilterSubject==null||p.Package.Subjects.Any(s=>s.Key==FilterSubject.Id||s.Key=="custom")).ToArray();SelectedCatalog=Catalog.FirstOrDefault();}
+    private void Filter()
+    {
+        var previous=SelectedCatalog?.Package.PackageId;
+        Catalog=_catalog.Where(p=>string.IsNullOrEmpty(FilterSubject?.Id)||p.Package.Subjects.Any(s=>s.Key==FilterSubject.Id||s.Key=="custom"))
+            .Select(p=>p with{InstallStatus=Installed.Any(i=>i.PackageId==p.Package.PackageId&&i.ProfileId==Profile?.Id)?"已安装 / 查看目录":"未安装"}).ToArray();
+        SelectedCatalog=Catalog.FirstOrDefault(p=>p.Package.PackageId==previous)??Catalog.FirstOrDefault();
+        OnPropertyChanged(nameof(HasInstalledPackage));OnPropertyChanged(nameof(InstallHint));
+    }
     partial void OnSelectedCatalogChanged(PackageCatalogItem? value){if(value!=null)SelectPackage(value.Package);}
-    partial void OnProfileChanged(ExamProfile? value){_preview=null;CanApply=false;if(_package!=null)SelectPackage(_package);}
+    partial void OnProfileChanged(ExamProfile? value){_preview=null;CanApply=false;Filter();}
     partial void OnSelectedInstallChanged(PackageInstall? value)
     {
         if(value==null){HistoryText="尚无安装记录";return;}
@@ -75,7 +89,7 @@ public sealed partial class KnowledgePackageViewModel : ObservableObject
     public void SelectPackage(KnowledgePackage p)
     {
         _package=p;_preview=null;CanApply=false;Conflicts=[];ChangeRows=[];
-        PackageName=p.Name+" · "+p.PackageVersion;Description=p.Description;
+        PackageName=p.Name+" · "+p.PackageVersion;Description=p.Description;OnPropertyChanged(nameof(HasInstalledPackage));OnPropertyChanged(nameof(InstallHint));
         SourceText="维护方："+p.Maintainer+"\n许可："+p.License.Id+" · "+p.License.Text+"\n"+string.Join("\n",p.Sources.Select(s=>s.Title+(s.Url==null?"":"\n"+s.Url)))+"\nSHA-256："+p.ContentHash;
         Targets=p.Subjects.Select(s=>new PackageTargetRow(s,Subjects,Subjects.FirstOrDefault(x=>x.Id==s.Key)??(s.Key=="custom"?FilterSubject:null))).ToArray();
         Roots=PreviewTree(p);Summary=$"{p.Nodes.Count} 个参考节点；请核对科目变体和目标档案。";Feedback="已载入纯数据模板；尚未写入数据库。";
@@ -140,11 +154,23 @@ public sealed partial class KnowledgePackageViewModel : ObservableObject
             if(resolved.Token!=original.Token)throw new InvalidOperationException("目录或学习记录已变化，请重新预览。");if(resolved.Error!=null)throw new InvalidDataException(resolved.Error);
             var body=Summary+"\n目标："+(Profile?.Name??original.ProfileId)+"\n"+string.Join("、",original.Targets.Values.Select(id=>Subjects.Single(s=>s.Id==id).Name))+"\n仅调整目录；保留学习记录、进度与掌握状态。应用前将验证完整备份。";
             if(Confirm==null||!await Confirm(body))return;
-            var result=await Task.Run(()=>Owner.Database.ApplyPackage(original,choices));CanApply=false;Feedback=result.NoOp?"相同内容已安装，没有重复写入。":"目录已更新；学习记录与状态完整保留。完整备份已验证。";
-            Owner.Refresh();await RefreshInstalledAsync();
+            var result=await Task.Run(()=>Owner.Database.ApplyPackage(original,choices));Owner.Refresh();await RefreshInstalledAsync();CanApply=false;Feedback=result.NoOp?"相同内容已安装，没有重复写入。":"目录已更新；学习记录与状态完整保留。完整备份已验证。";
         });
     }
-    private async Task RefreshInstalledAsync(){Installed=await Task.Run(()=>Owner.Database.InstalledPackages());}
+    private async Task RefreshInstalledAsync(){Installed=await Task.Run(()=>Owner.Database.InstalledPackages());Filter();}
+    [RelayCommand] private Task ViewDirectoryAsync()=>OpenInstalledAsync(()=>Installed.FirstOrDefault(i=>i.PackageId==_package?.PackageId&&i.ProfileId==Profile?.Id&&i.Targets.OrderBy(t=>t.Key).SequenceEqual(TargetMap().OrderBy(t=>t.Key))));
+    [RelayCommand] private Task ViewInstalledAsync()=>OpenInstalledAsync(()=>SelectedInstall);
+    private async Task OpenInstalledAsync(Func<PackageInstall?> select)
+    {
+        await RunAsync(async()=>
+        {
+            var install=select();if(install==null)throw new InvalidDataException("请先选择已安装的知识包及其原安装目标。");
+            var operation=await Task.Run(()=>Owner.Database.PackageHistory(install.Id).OrderByDescending(o=>o.At).FirstOrDefault());
+            var binding=operation?.AfterBindings.FirstOrDefault(b=>b.Active);
+            if(binding==null){Feedback="这是空白包，尚无目录。可到学习进度新增章节。";return;}
+            if(OpenDirectory!=null)await OpenDirectory(binding.NodeId);
+        });
+    }
     private async Task RunAsync(Func<Task> action)
     {
         if(Busy)return;Busy=true;

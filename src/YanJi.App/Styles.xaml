@@ -19,6 +19,8 @@
   <SolidColorBrush x:Key="Hover" Color="#E1E6DA" />
   <SolidColorBrush x:Key="Pressed" Color="#354D3F" />
   <SolidColorBrush x:Key="DisabledInk" Color="#899286" />
+  <SolidColorBrush x:Key="MiniSurface" Color="#E6FEFDF9" />
+  <SolidColorBrush x:Key="MiniEdge" Color="#A6FFFFFF" />
   <Style TargetType="Window">
     <Setter Property="FontFamily" Value="Segoe UI Variable Text, Segoe UI, Microsoft YaHei UI" />
     <Setter Property="FontSize" Value="14" />
@@ -90,23 +92,25 @@
       <Setter.Value>
         <ControlTemplate TargetType="Button">
           <Grid>
-            <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8" />
-            <Border x:Name="Feedback" Background="{TemplateBinding Foreground}" CornerRadius="8" Opacity="0" IsHitTestVisible="False" />
-            <ContentPresenter x:Name="ButtonContent" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
-            <Border x:Name="FocusRing" Margin="-2" BorderBrush="{DynamicResource Accent}" BorderThickness="1.5" CornerRadius="10" Visibility="Collapsed" IsHitTestVisible="False" />
+            <Border x:Name="Shadow" Background="#22000000" CornerRadius="8" Margin="1,3,1,-2" IsHitTestVisible="False" />
+            <Grid x:Name="ButtonFace"><Grid.RenderTransform><TranslateTransform x:Name="Depress" /></Grid.RenderTransform>
+              <Border x:Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8" />
+              <Border x:Name="DepthShade" CornerRadius="8" Margin="1" IsHitTestVisible="False"><Border.Background><LinearGradientBrush StartPoint="0,0" EndPoint="0,1"><GradientStop Color="#38FFFFFF" Offset="0"/><GradientStop Color="#08FFFFFF" Offset="0.48"/><GradientStop Color="#18000000" Offset="1"/></LinearGradientBrush></Border.Background></Border>
+              <Border x:Name="Highlight" CornerRadius="7" Margin="1" BorderThickness="1,1,1,0" IsHitTestVisible="False"><Border.BorderBrush><LinearGradientBrush StartPoint="0,0" EndPoint="0,1"><GradientStop Color="#65FFFFFF" Offset="0"/><GradientStop Color="#00FFFFFF" Offset="0.85"/></LinearGradientBrush></Border.BorderBrush></Border>
+              <Border x:Name="Feedback" Background="{TemplateBinding Foreground}" CornerRadius="8" Opacity="0" IsHitTestVisible="False" />
+              <ContentPresenter x:Name="ButtonContent" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+            </Grid>
+            <Border x:Name="FocusRing" Margin="-3" BorderBrush="{DynamicResource Accent}" BorderThickness="2" CornerRadius="11" Visibility="Collapsed" IsHitTestVisible="False" />
           </Grid>
           <ControlTemplate.Triggers>
-            <Trigger Property="IsPressed" Value="True"><Setter TargetName="ButtonContent" Property="Opacity" Value="0.82" /></Trigger>
-            <Trigger Property="IsKeyboardFocused" Value="True">
-              <Setter TargetName="FocusRing" Property="Visibility" Value="Visible" />
-            </Trigger>
-            <Trigger Property="IsEnabled" Value="False">
-              <Setter Property="Foreground" Value="{DynamicResource DisabledInk}" />
-              <Setter Property="Opacity" Value="0.65" />
-              <Setter Property="Cursor" Value="Arrow" />
-            </Trigger>
-            <Trigger Property="local:ButtonFeedback.State" Value="Saving"><Setter Property="Content" Value="保存中…" /><Setter Property="Foreground" Value="{DynamicResource AccentInk}" /><Setter Property="Opacity" Value="1" /></Trigger>
-            <Trigger Property="local:ButtonFeedback.State" Value="Success"><Setter Property="Content" Value="已保存" /><Setter Property="Foreground" Value="{DynamicResource AccentInk}" /><Setter Property="Opacity" Value="1" /></Trigger>
+            <Trigger Property="local:ButtonFeedback.Depth" Value="False"><Setter TargetName="Shadow" Property="Visibility" Value="Collapsed"/><Setter TargetName="DepthShade" Property="Visibility" Value="Collapsed"/><Setter TargetName="Highlight" Property="Visibility" Value="Collapsed"/></Trigger>
+            <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Highlight" Property="Opacity" Value="1"/><Setter Property="BorderBrush" Value="{DynamicResource Accent}"/></Trigger>
+            <Trigger Property="IsPressed" Value="True"><Setter TargetName="ButtonFace" Property="RenderTransform"><Setter.Value><TranslateTransform Y="1.5"/></Setter.Value></Setter><Setter TargetName="Shadow" Property="Opacity" Value="0"/><Setter TargetName="Highlight" Property="Opacity" Value="0"/><Setter TargetName="DepthShade" Property="Opacity" Value="0.35"/><Setter TargetName="ButtonContent" Property="Opacity" Value="0.9"/></Trigger>
+            <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="FocusRing" Property="Visibility" Value="Visible"/></Trigger>
+            <Trigger Property="IsEnabled" Value="False"><Setter Property="Foreground" Value="{DynamicResource DisabledInk}"/><Setter TargetName="Surface" Property="Background" Value="{DynamicResource Soft}"/><Setter TargetName="Shadow" Property="Visibility" Value="Collapsed"/><Setter TargetName="DepthShade" Property="Visibility" Value="Collapsed"/><Setter TargetName="Highlight" Property="Visibility" Value="Collapsed"/><Setter Property="Opacity" Value="0.72"/><Setter Property="Cursor" Value="Arrow"/></Trigger>
+            <Trigger Property="local:ButtonFeedback.State" Value="Saving"><Setter TargetName="Surface" Property="Background" Value="{DynamicResource Accent}"/><Setter Property="Foreground" Value="{DynamicResource AccentInk}"/><Setter Property="Opacity" Value="1"/></Trigger>
+            <Trigger Property="local:ButtonFeedback.State" Value="Success"><Setter TargetName="Surface" Property="Background" Value="{DynamicResource Accent}"/><Setter Property="Foreground" Value="{DynamicResource AccentInk}"/><Setter Property="Opacity" Value="1"/></Trigger>
+            <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True"><Setter TargetName="Shadow" Property="Visibility" Value="Collapsed"/><Setter TargetName="DepthShade" Property="Visibility" Value="Collapsed"/><Setter TargetName="Highlight" Property="Visibility" Value="Collapsed"/></DataTrigger>
           </ControlTemplate.Triggers>
         </ControlTemplate>
       </Setter.Value>
@@ -125,6 +129,7 @@
     <Setter Property="Foreground" Value="{DynamicResource Danger}" />
   </Style>
   <Style x:Key="QuietButton" TargetType="Button" BasedOn="{StaticResource FocusButton}">
+    <Setter Property="local:ButtonFeedback.Depth" Value="False"/>
     <Setter Property="Background" Value="Transparent" />
     <Setter Property="BorderThickness" Value="0" />
     <Setter Property="Padding" Value="8,6" />

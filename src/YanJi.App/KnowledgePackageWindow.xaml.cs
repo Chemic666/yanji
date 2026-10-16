@@ -10,6 +10,7 @@ public partial class KnowledgePackageWindow : Window
     public KnowledgePackageWindow(MainWindow owner)
     {
         InitializeComponent();Owner=owner;Model=new(owner.Model,owner.KnowledgeView.Model?.Subject);DataContext=Model;
+        Model.OpenDirectory=async id=>{Close();await owner.OpenKnowledgeAsync(id);};
         Model.Confirm=message=>Task.FromResult(new ConfirmDialog(this,"确认知识目录变更",message,"确认应用",false).ShowDialog()==true);
         Loaded+=async(_,_)=>await (Initialization=Model.InitializeAsync());
     }
