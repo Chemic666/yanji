@@ -1,41 +1,34 @@
-# 研迹 YanJi V0.4.0 RC-Final
+# 研迹 YanJi
 
-Windows 11 x64、离线优先的考研学习管理客户端。2028指入学年份，考试日期可空。当前版本`0.4.0-rc.final.1`是最终人工验收候选版，不是已公开发行的Stable。
+面向考研日常学习的 Windows 11 x64 本地客户端：默认简洁，高级能力按需展开，无账号、服务器或云同步。
 
-## 使用
+当前本地候选 **0.4.0-rc.simple.1**，尚未公开发布。主要页面：今日（计时/补录）、学习进度（学到哪里与下一步）、学习数据（真实投入）；任务、薄弱点、日历、修订和高级统计保留。
 
-完整解压Windows x64 ZIP到一个新的可写目录，双击`YanJi.exe`，无需.NET SDK或账号。候选数据默认保存在程序旁`data-rc-v04`，不会自动接管旧版目录。切勿覆盖正式安装或把删除程序目录当作安全卸载。
+## 开始使用
 
-首次设置考试档案和科目，安装参考知识包，然后从知识节点或任务开始学习。自由计时、倒计时、番茄钟均实时显示秒；暂停与休息不计入有效学习。支持迷你窗、托盘、纯时长补录、修订/软删/恢复、薄弱点、原始记录下钻和完整备份。
+完整解压程序包至新的可写目录后双击YanJi.exe，默认旁置data-rc-simple，不覆盖正式安装。首次可选择应用数学、英语、408参考目录；已有目录不会静默导入。参考内容不是2028官方完整大纲。
 
-- [使用说明](docs/V04-RCFINAL-USER-GUIDE.md)
-- [升级、备份和旧格式回退](docs/V04-RCFINAL-UPGRADE.md)
-- [人工验收清单](docs/V04-RCFINAL-MANUAL.md)
-- [发行说明草稿](docs/V04-RCFINAL-RELEASE-NOTES.md)
-- [许可范围](COPYRIGHT.md)及[第三方清单](THIRD-PARTY-NOTICES.md)
+- [使用说明](docs/V04-SIMPLE-START.md)
+- [界面设计](docs/V04-SIMPLE-DESIGN.md)
+- [完整目录、范围和来源](docs/V04-SIMPLE-REFERENCES.md)
+- [数据兼容](docs/V04-SIMPLE-COMPATIBILITY.md)
 
-旧版升级只对声明支持并通过校验的Schema1～4提供路径；先创建并校验完整备份，复制升级到全新目录。回退使用升级前原格式备份，不能让旧程序直接误写Schema2/3/4。本轮不操作真实用户数据库。
+## 构建与验证
 
-## License
+C#、WPF、.NET 10、CommunityToolkit.Mvvm、Microsoft.Data.Sqlite。构建需要Windows及.NET 10 SDK，发行包自包含，不要求用户安装SDK。
 
-YanJi的**原创代码采用Apache-2.0**，官方完整文本见仓库根`LICENSE`；Windows包同样携带`LICENSE`、`NOTICE`、`COPYRIGHT.md`及`licenses/`。第三方组件与外部Skill保留各自许可证；知识包内容许可与代码许可独立，当前内置自编目录元数据为CC0-1.0。用户数据属于用户/相应权利人，不因软件开源而公开、上传或改变许可。详见[COPYRIGHT.md](COPYRIGHT.md)。
-
-## 构建与核查
-
-使用`global.json`允许的.NET 10 SDK（当前基线10.0.401），固定版本见`Directory.Packages.props`与锁文件。Windows CMD：
-
-```cmd
-dotnet restore YanJi.slnx --locked-mode --configfile NuGet.Config
-dotnet build src\YanJi.App\YanJi.App.csproj -c Release --no-restore
-dotnet publish src\YanJi.App\YanJi.App.csproj -c Release -r win-x64 --self-contained true --no-restore -o artifacts\candidate
-python tools\Check-ReleaseLicenses.py . --mode source
-python tools\Check-ReleaseLicenses.py artifacts\candidate --mode binary
+```powershell
+.\tools\Invoke-Build.ps1 build YanJi.slnx -c Release
+$env:YANJI_M1_TEST_ROOT = "$PWD\artifacts\local-core-data"
+.\tools\Invoke-Build.ps1 test tests\YanJi.Tests\YanJi.Tests.csproj -c Release
 ```
 
-本机既有便携SDK也可通过`tools/Invoke-Build.ps1 -Arguments @(...)`调用，不修改系统PATH。发布前检查ZIP清单、SHA-256和许可证；只有带对应提交/程序集来源的归档可用于交付。不要把`bin/obj`、真实数据库、备份或临时证据加入Git。
+工具优先复用本机项目SDK，可用YANJI_DOTNET_ROOT指定现有工具链。测试与截图必须指定全新隔离数据目录，不能选择真实学习库。实际程序提交、标签、原始测试及未测事项见发行清单与对应验证报告。
 
-## 验证与限制
+## License 与数据
 
-程序尚未代码签名，SmartScreen实际表现未验证。物理微软拼音、其他物理DPI、干净机离线、真实电源恢复和多日稳定性未完成的部分明确为NOT TESTED；15分钟后台计时观察不等同完整前台应用长期认证。408为参考目录，非官方年度完整大纲。
+YanJi **原创代码**及相应原创文档采用[Apache-2.0](LICENSE)，边界见[COPYRIGHT.md](COPYRIGHT.md)。第三方组件、开发Skill与系统资源引用保留各自许可及NOTICE，详见[清单](THIRD-PARTY-NOTICES.md)和resources/legal/third-party-licenses.json。源码保留嵌套MIT与上游NOTICE，Windows发行包包含适用运行许可原文。
 
-没有账号、服务器、云同步、社交、AI评价或V0.5新功能。历史设计、恢复标签与原始失败证据保留；旧文档仅代表当时版本。正式发布、真实用户升级、远端推送及仓库可见性变更均需单独授权。
+参考知识包原创目录元数据CC0-1.0，不包含教材、题库、讲义正文；外部资料不因此获得授权。**用户数据属于用户自身，不会因开源而公开或上传。**
+
+候选未签名；SmartScreen、物理输入法、其他物理DPI、干净机离线、电源恢复与多日运行的未测场景不得宣称通过。升级前须创建并校验完整备份；真实数据切换与公开发布需单独授权，不保证任意历史格式直接升级。旧版Tag、源码及发行证据完整保留。

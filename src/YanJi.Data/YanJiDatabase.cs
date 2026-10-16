@@ -382,12 +382,14 @@ public sealed partial class YanJiDatabase : IDisposable
                 if(table=="reflections"&&Parse<ReflectionEntry>(payload).Date.ToString("yyyy-MM-dd",CultureInfo.InvariantCulture)!=id)throw new InvalidDataException("感想日期无效。");
                 if(table=="settings")
                 {var value=Parse<string>(payload);if(id.StartsWith("focus-session:",StringComparison.Ordinal)){var focus=Parse<FocusContext>(value);focus.Validate();var record=records.Find(x=>x.Id==id[14..]);if(record==null||record.Source!=SessionSource.Timer||record.Focus!=focus||focus.TaskId is string task&&Scalar(c,null,"SELECT id FROM tasks WHERE id=$id",("$id",task))==null)throw new InvalidDataException("专注关联无效。");}if(id.StartsWith(ReviewPrefix,StringComparison.Ordinal)){var item=Parse<PeriodReview>(value);ValidateReview(item,id[ReviewPrefix.Length..],true);if(item.SubjectId!=null&&Scalar(c,null,"SELECT id FROM subjects WHERE id=$id",("$id",item.SubjectId))==null)throw new InvalidDataException("复盘科目无效。");}if(id=="zone")TimeParts.ResolveZone(value);
+                    if(id.StartsWith(ProgressNotePrefix,StringComparison.Ordinal))CheckStoredProgressNote(c,Parse<NodeProgressNote>(value),id[ProgressNotePrefix.Length..],schema);
                     if(id=="exam-date"&&value.Length>0)DateOnly.ParseExact(value,"yyyy-MM-dd",CultureInfo.InvariantCulture);
                     if(id=="checkpoint-seconds"&&(!int.TryParse(value,out var seconds)||seconds<2||seconds>60))throw new InvalidDataException("检查点偏好无效。");}
             }
         }
         using(var cmd=Command(c,null,"SELECT at,before_json,after_json,kind FROM revisions"))using(var r=cmd.ExecuteReader())
             while(r.Read()){DateTimeOffset.Parse(r.GetString(0),CultureInfo.InvariantCulture);for(var i=1;i<=2;i++)if(!r.IsDBNull(i)){using var document=JsonDocument.Parse(r.GetString(i));if(r.GetString(3)=="session")ValidateParts(Parse<StudyRecord>(r.GetString(i)),true);if(r.GetString(3)=="period-review"){var review=Parse<PeriodReview>(r.GetString(i));ValidateReview(review,review.Id,true);}}}
+        CheckProgressNoteAudits(c,schema);
         if(Scalar(c,null,"SELECT payload FROM active_timer") is string timerJson)
         {
             var timer=Parse<TimerSnapshot>(timerJson);TimeParts.ResolveZone(timer.ZoneId);var current=records.Find(x=>x.Id==timer.SessionId);

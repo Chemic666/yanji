@@ -30,12 +30,12 @@ public sealed partial class MainViewModel
     private NonStudyCountdown? _break;
     public ObservableCollection<LearningTask> TodayTasks {get;}=[];
     partial void OnFocusModeIndexChanged(int value)
-    {if(!TimerActive)FocusMinutes=value==2?"25":"45";UpdateFocus();}
+    {if(!TimerActive)FocusMinutes=value==2?"25":"45";UpdateFocus();OnPropertyChanged(nameof(FocusOptionsLabel));}
     partial void OnFocusMinutesChanged(string value)=>UpdateFocus();
     partial void OnBusyChanged(bool value)=>UpdateFocus();
     private void LoadFocusPreferences()
     {
-        FocusModeIndex=int.TryParse(Database.Setting("focus-mode","0"),out var mode)&&mode is >=0 and <=2?mode:0;
+        var mode=0;FocusModeIndex=0;
         FocusMinutes=Database.Setting("focus-minutes",mode==2?"25":"45");BreakMinutes=Database.Setting("break-minutes","5");
         if(Timer.Focus is {} focus){FocusModeIndex=(int)focus.Mode;FocusMinutes=(focus.TargetMs/60000).ToString();BreakMinutes=(focus.BreakMs/60000).ToString();FocusTask=Database.Tasks().FirstOrDefault(t=>t.Id==(Timer.Context!=null?Timer.Context.TaskId:focus.TaskId));}
     }
@@ -55,7 +55,7 @@ public sealed partial class MainViewModel
         FocusSetupVisible=!s.IsActive;
         var subject=s.IsActive?AllSubjects.FirstOrDefault(x=>x.Id==s.SubjectId)?.Name:TimerSubject?.Name;
         TimerText=DurationText.FocusTimer(s);
-        FocusSubjectLabel=(subject??"请选择科目")+(focus is {Mode:not FocusMode.Free}?" · 剩余时间 HH:mm:ss":" · 有效学习时间 HH:mm:ss")+(focus?.Mode==FocusMode.Pomodoro?" · 番茄钟":focus?.Mode==FocusMode.Countdown?" · 倒计时":"");
+        FocusSubjectLabel=(subject??"请选择科目")+(focus is {Mode:not FocusMode.Free}?" · 剩余时间":" · 有效学习时间")+(focus?.Mode==FocusMode.Pomodoro?" · 番茄钟":focus?.Mode==FocusMode.Countdown?" · 倒计时":"");
         ConfiguredTimed=FocusModeIndex!=0;ConfiguredPomodoro=FocusModeIndex==2;HasLinkedTask=(s.IsActive?s.Context?.TaskId??(s.Context==null?focus?.TaskId:null):FocusTask?.Id)!=null;HasFocusGoal=focus is {Mode:not FocusMode.Free};
         var linkedId=s.IsActive?(s.Context!=null?s.Context.TaskId:focus?.TaskId):FocusTask?.Id;CanCompleteLinkedTask=!Busy&&linkedId!=null&&Tasks.Any(t=>t.Id==linkedId&&!t.Done);
         FocusTaskLabel=s.IsActive?(linkedId==null?"自由开始 · 未关联任务":"任务 · "+(s.Context?.TaskTitle??focus?.TaskTitle)):FocusTask!=null?"任务 · "+FocusTask.Title:"自由开始 · 也可从今日待办开始";
@@ -76,7 +76,7 @@ public sealed partial class MainViewModel
         if(Busy||TimerActive||selected==null){Status="请先结束或核对当前计时，再开始任务。";return;}
         var task=Database.Tasks().FirstOrDefault(t=>t.Id==selected.Id);if(task==null||task.Done){Status="请选择未完成任务。";return;}
         if(task.SubjectId!=null){var subject=Subjects.FirstOrDefault(s=>s.Id==task.SubjectId);if(subject==null){Status="任务科目已归档，请先调整任务科目。";return;}TimerSubject=subject;}
-        TimerChapter=TimerChapters.FirstOrDefault(c=>c.Id==task.ChapterId)??TimerChapters.FirstOrDefault();if(task.ChapterId!=null&&TimerChapter?.Id!=task.ChapterId){Status="任务知识节点已归档，请先调整任务。";return;}FocusTask=task;Page=0;await StartAsync();if(TimerActive&&task.SubjectId==null)Status="任务未指定科目；本次使用 "+TimerSubject?.Name+"，关联已保存。";
+        EnsureTimerChapter(task.ChapterId);TimerChapter=TimerChapters.FirstOrDefault(c=>c.Id==task.ChapterId)??TimerChapters.FirstOrDefault();if(task.ChapterId!=null&&TimerChapter?.Id!=task.ChapterId){Status="任务知识节点已归档，请先调整任务。";return;}FocusTask=task;Page=0;await StartAsync();if(TimerActive&&task.SubjectId==null)Status="任务未指定科目；本次使用 "+TimerSubject?.Name+"，关联已保存。";
     }
     [RelayCommand] private void ClearFocusTask(){if(!TimerActive){FocusTask=null;UpdateFocus();}}
     [RelayCommand] private void SkipBreak(){_break=null;BreakActive=false;UpdateTimer();}

@@ -105,7 +105,7 @@ public sealed partial class MainViewModel : ObservableObject
     public static string Duration(long milliseconds)=>DurationText.Format(milliseconds);
     private static void Replace<T>(ObservableCollection<T> target,IEnumerable<T> source){target.Clear();foreach(var item in source)target.Add(item);}
     private void LoadChapters(ObservableCollection<Chapter> target,string? subject,bool archived=false)
-    {var list=subject==null?[]:Database.Chapters(subject,archived).Where(c=>!c.Archived||target==TimerChapters&&c.Id==Timer.ChapterId&&Timer.IsActive).ToList();Replace(target,new[]{new Chapter("",subject??"",list.Count==0?"暂无章节 · 可不指定":"不指定章节")}.Concat(list));}
+    {var visible=subject==null?new System.Collections.Generic.HashSet<string>():VisibleReferenceIds(subject);var recent=Database.Records().Where(r=>r.SubjectId==subject&&r.ChapterId!=null).OrderByDescending(r=>r.CreatedAt).Select(r=>r.ChapterId!).Distinct().ToList();var list=subject==null?[]:Database.Chapters(subject,archived).Where(c=>(!c.Archived&&visible.Contains(c.Id))||target==TimerChapters&&c.Id==Timer.ChapterId&&Timer.IsActive).OrderBy(c=>recent.IndexOf(c.Id)<0?int.MaxValue:recent.IndexOf(c.Id)).ToList();Replace(target,new[]{new Chapter("",subject??"",list.Count==0?"暂无章节 · 可不指定":"不指定章节")}.Concat(list));}
     private static string? ChapterId(Chapter? chapter)=>string.IsNullOrWhiteSpace(chapter?.Id)?null:chapter.Id;
     partial void OnTimerSubjectChanged(Subject? value){LoadChapters(TimerChapters,value?.Id,_timer.Snapshot.IsActive);TimerChapter=TimerChapters.FirstOrDefault();}
     partial void OnManualSubjectChanged(Subject? value){LoadChapters(ManualChapters,value?.Id);ManualChapter=ManualChapters.FirstOrDefault();UpdateWarning();}
@@ -137,7 +137,7 @@ public sealed partial class MainViewModel : ObservableObject
         var today=LocalToday();var week=today.AddDays(-(((int)today.DayOfWeek+6)%7));var month=new DateOnly(today.Year,today.Month,1);
         TodayDurationMs=Database.DailyTotals(today,today).Sum(x=>x.DurationMs);WeekDurationMs=Database.DailyTotals(week,today).Sum(x=>x.DurationMs);MonthDurationMs=Database.DailyTotals(month,today).Sum(x=>x.DurationMs);
         TodayTotal=Duration(TodayDurationMs);WeekTotal=Duration(WeekDurationMs);MonthTotal=Duration(MonthDurationMs);
-        Replace(TodayRecords,Database.Records(today).OrderByDescending(r=>r.CreatedAt).Take(8).Select(r=>Row(r,today)));RefreshPresentation();LoadDay();UpdateWarning();
+        Replace(TodayRecords,Database.Records(today).OrderByDescending(r=>r.CreatedAt).Take(8).Select(r=>Row(r,today)));RefreshPresentation();LoadDay();UpdateWarning();NotifySimpleViews();
     }
     private void LoadDay()
     {

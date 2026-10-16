@@ -10,6 +10,7 @@ public sealed record Choice(string Value,string Label);
 public sealed record Field(string Key,string Label,string Value="",List<Choice>? Choices=null,bool Multiline=false,bool ReadOnly=false);
 public sealed class EditorDialog : Window
 {
+    internal Action<string>? NodeChanged {get;set;}
     private readonly Dictionary<string,Control> _controls=[];
     public Dictionary<string,string>? Values {get;private set;}
     internal void SetField(string key,string value){if(_controls[key] is TextBox text)text.Text=value;else ((ComboBox)_controls[key]).SelectedValue=value;}
@@ -45,6 +46,14 @@ public sealed class EditorDialog : Window
             {
                 var box=new ComboBox{ItemsSource=field.Choices,DisplayMemberPath="Label",SelectedValuePath="Value",SelectedValue=field.Value};
                 if(box.SelectedIndex<0&&field.Choices.Count>0)box.SelectedIndex=0;control=box;
+                if(field.Key=="node")
+                {
+                    var search=new TextBox{Style=(Style)FindResource("FocusTextBox"),ToolTip="搜索章节或完整路径",Margin=new Thickness(0,4,0,0)};
+                    AutomationProperties.SetName(search,"搜索章节或完整路径");content.Children.Add(search);
+                    search.TextChanged+=(_,_)=>{var current=box.SelectedValue;box.ItemsSource=field.Choices.Where(c=>c.Label.Contains(search.Text,StringComparison.CurrentCultureIgnoreCase)).ToList();box.SelectedValue=current;};
+                    var loadedId=field.Value;
+                    box.SelectionChanged+=(_,_)=>{if(box.SelectedValue is string id&&id!=loadedId){loadedId=id;NodeChanged?.Invoke(id);}};
+                }
             }
             else control=new TextBox{Text=field.Value,AcceptsReturn=field.Multiline,TextWrapping=TextWrapping.Wrap,IsReadOnly=field.ReadOnly,
                 Height=field.Multiline?112:double.NaN,VerticalScrollBarVisibility=field.Multiline?ScrollBarVisibility.Auto:ScrollBarVisibility.Hidden};

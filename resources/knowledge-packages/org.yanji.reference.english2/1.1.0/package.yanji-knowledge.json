@@ -1,0 +1,859 @@
+{
+  "PackageId": "org.yanji.reference.english2",
+  "PackageVersion": "1.1.0",
+  "SchemaVersion": 1,
+  "Name": "英语二 · 基础学习目录",
+  "Description": "YanJi 原创主题参考目录；不是官方考试大纲，也不是2028官方范围。用于规划、计时与独立进度记录；不保证逐项完整或预测考试题型。目录与简短说明原创，不附教材、试题、答案或讲义；请按报考年度大纲与院校要求核对。",
+  "Maintainer": "YanJi 参考目录维护",
+  "ExamKey": "cn-postgraduate",
+  "AdmissionYears": [],
+  "Sources": [
+    {
+      "Id": "neea-index",
+      "Title": "教育考试院大纲索引：英语一二历史入口",
+      "Url": "https://yankao.neea.edu.cn/html1/category/1509/6235-2.htm"
+    }
+  ],
+  "License": {
+    "Id": "CC0-1.0",
+    "Text": "本包原创目录结构与元数据采用 CC0-1.0；外部来源的内容与许可不包含在授权中，未复制其正文或题目。"
+  },
+  "Subjects": [
+    {
+      "Key": "english",
+      "Name": "english",
+      "Variant": "英语二"
+    }
+  ],
+  "Nodes": [
+    {
+      "Id": "english2.r0",
+      "SubjectKey": "english",
+      "ParentId": null,
+      "Kind": "Chapter",
+      "Name": "语言基础",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "english2.r0.c0",
+      "SubjectKey": "english",
+      "ParentId": "english2.r0",
+      "Kind": "Chapter",
+      "Name": "词汇与语法",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "english2.r0.c0.p0",
+      "SubjectKey": "english",
+      "ParentId": "english2.r0.c0",
+      "Kind": "KnowledgePoint",
+      "Name": "词汇复习",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "english2.r0.c0.p1",
+      "SubjectKey": "english",
+      "ParentId": "english2.r0.c0",
+      "Kind": "KnowledgePoint",
+      "Name": "搭配与语境",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "english2.r0.c0.p2",
+      "SubjectKey": "english",
+      "ParentId": "english2.r0.c0",
+      "Kind": "KnowledgePoint",
+      "Name": "句法与长句",
+      "Description": "",
+      "Order": 2
+    },
+    {
+      "Id": "english2.r1",
+      "SubjectKey": "english",
+      "ParentId": null,
+      "Kind": "Chapter",
+      "Name": "阅读与表达",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "english2.r1.c0",
+      "SubjectKey": "english",
+      "ParentId": "english2.r1",
+      "Kind": "Chapter",
+      "Name": "阅读训练",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "english2.r1.c0.p0",
+      "SubjectKey": "english",
+      "ParentId": "english2.r1.c0",
+      "Kind": "KnowledgePoint",
+      "Name": "篇章结构",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "english2.r1.c0.p1",
+      "SubjectKey": "english",
+      "ParentId": "english2.r1.c0",
+      "Kind": "KnowledgePoint",
+      "Name": "主旨与细节",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "english2.r1.c0.p2",
+      "SubjectKey": "english",
+      "ParentId": "english2.r1.c0",
+      "Kind": "KnowledgePoint",
+      "Name": "推断与论证",
+      "Description": "",
+      "Order": 2
+    },
+    {
+      "Id": "english2.r1.c1",
+      "SubjectKey": "english",
+      "ParentId": "english2.r1",
+      "Kind": "Chapter",
+      "Name": "翻译训练",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "english2.r1.c1.p0",
+      "SubjectKey": "english",
+      "ParentId": "english2.r1.c1",
+      "Kind": "KnowledgePoint",
+      "Name": "句子理解",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "english2.r1.c1.p1",
+      "SubjectKey": "english",
+      "ParentId": "english2.r1.c1",
+      "Kind": "KnowledgePoint",
+      "Name": "译文表达",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "english2.r1.c2",
+      "SubjectKey": "english",
+      "ParentId": "english2.r1",
+      "Kind": "Chapter",
+      "Name": "写作训练",
+      "Description": "",
+      "Order": 2
+    },
+    {
+      "Id": "english2.r1.c2.p0",
+      "SubjectKey": "english",
+      "ParentId": "english2.r1.c2",
+      "Kind": "KnowledgePoint",
+      "Name": "应用文",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "english2.r1.c2.p1",
+      "SubjectKey": "english",
+      "ParentId": "english2.r1.c2",
+      "Kind": "KnowledgePoint",
+      "Name": "主题写作",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "english2.r1.c2.p2",
+      "SubjectKey": "english",
+      "ParentId": "english2.r1.c2",
+      "Kind": "KnowledgePoint",
+      "Name": "修改与反馈",
+      "Description": "",
+      "Order": 2
+    },
+    {
+      "Id": "english2.v11.vocabulary",
+      "SubjectKey": "english",
+      "ParentId": "english2.r0",
+      "Kind": "Chapter",
+      "Name": "词汇与语境",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "english2.v11.vocabulary.p0",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.vocabulary",
+      "Kind": "KnowledgePoint",
+      "Name": "核心词复习",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "english2.v11.vocabulary.p1",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.vocabulary",
+      "Kind": "KnowledgePoint",
+      "Name": "一词多义与熟词僻义",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "english2.v11.vocabulary.p2",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.vocabulary",
+      "Kind": "KnowledgePoint",
+      "Name": "构词与词族",
+      "Description": "",
+      "Order": 2
+    },
+    {
+      "Id": "english2.v11.vocabulary.p3",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.vocabulary",
+      "Kind": "KnowledgePoint",
+      "Name": "固定搭配",
+      "Description": "",
+      "Order": 3
+    },
+    {
+      "Id": "english2.v11.vocabulary.p4",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.vocabulary",
+      "Kind": "KnowledgePoint",
+      "Name": "同义替换与语义关系",
+      "Description": "",
+      "Order": 4
+    },
+    {
+      "Id": "english2.v11.grammar",
+      "SubjectKey": "english",
+      "ParentId": "english2.r0",
+      "Kind": "Chapter",
+      "Name": "语法基础",
+      "Description": "",
+      "Order": 2
+    },
+    {
+      "Id": "english2.v11.grammar.p0",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.grammar",
+      "Kind": "KnowledgePoint",
+      "Name": "词类与句子成分",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "english2.v11.grammar.p1",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.grammar",
+      "Kind": "KnowledgePoint",
+      "Name": "时态与语态",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "english2.v11.grammar.p2",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.grammar",
+      "Kind": "KnowledgePoint",
+      "Name": "非谓语动词",
+      "Description": "",
+      "Order": 2
+    },
+    {
+      "Id": "english2.v11.grammar.p3",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.grammar",
+      "Kind": "KnowledgePoint",
+      "Name": "定语、名词性与状语从句",
+      "Description": "",
+      "Order": 3
+    },
+    {
+      "Id": "english2.v11.grammar.p4",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.grammar",
+      "Kind": "KnowledgePoint",
+      "Name": "虚拟语气",
+      "Description": "",
+      "Order": 4
+    },
+    {
+      "Id": "english2.v11.grammar.p5",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.grammar",
+      "Kind": "KnowledgePoint",
+      "Name": "倒装、强调与省略",
+      "Description": "",
+      "Order": 5
+    },
+    {
+      "Id": "english2.v11.sentences",
+      "SubjectKey": "english",
+      "ParentId": "english2.r0",
+      "Kind": "Chapter",
+      "Name": "长难句分析",
+      "Description": "",
+      "Order": 3
+    },
+    {
+      "Id": "english2.v11.sentences.p0",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.sentences",
+      "Kind": "KnowledgePoint",
+      "Name": "主干定位",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "english2.v11.sentences.p1",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.sentences",
+      "Kind": "KnowledgePoint",
+      "Name": "修饰成分与插入语",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "english2.v11.sentences.p2",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.sentences",
+      "Kind": "KnowledgePoint",
+      "Name": "并列与嵌套结构",
+      "Description": "",
+      "Order": 2
+    },
+    {
+      "Id": "english2.v11.sentences.p3",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.sentences",
+      "Kind": "KnowledgePoint",
+      "Name": "指代与逻辑衔接",
+      "Description": "",
+      "Order": 3
+    },
+    {
+      "Id": "english2.v11.cloze",
+      "SubjectKey": "english",
+      "ParentId": "english2.r1",
+      "Kind": "Chapter",
+      "Name": "完形填空（英语知识运用）",
+      "Description": "",
+      "Order": 3
+    },
+    {
+      "Id": "english2.v11.cloze.p0",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.cloze",
+      "Kind": "KnowledgePoint",
+      "Name": "词义与搭配辨析",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "english2.v11.cloze.p1",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.cloze",
+      "Kind": "KnowledgePoint",
+      "Name": "语法线索",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "english2.v11.cloze.p2",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.cloze",
+      "Kind": "KnowledgePoint",
+      "Name": "上下文语义",
+      "Description": "",
+      "Order": 2
+    },
+    {
+      "Id": "english2.v11.cloze.p3",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.cloze",
+      "Kind": "KnowledgePoint",
+      "Name": "篇章逻辑",
+      "Description": "",
+      "Order": 3
+    },
+    {
+      "Id": "english2.v11.cloze.p4",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.cloze",
+      "Kind": "KnowledgePoint",
+      "Name": "选项比较与复盘",
+      "Description": "",
+      "Order": 4
+    },
+    {
+      "Id": "english2.r1.c0.v11p3",
+      "SubjectKey": "english",
+      "ParentId": "english2.r1.c0",
+      "Kind": "KnowledgePoint",
+      "Name": "细节定位",
+      "Description": "",
+      "Order": 3
+    },
+    {
+      "Id": "english2.r1.c0.v11p4",
+      "SubjectKey": "english",
+      "ParentId": "english2.r1.c0",
+      "Kind": "KnowledgePoint",
+      "Name": "语境猜词",
+      "Description": "",
+      "Order": 4
+    },
+    {
+      "Id": "english2.r1.c0.v11p5",
+      "SubjectKey": "english",
+      "ParentId": "english2.r1.c0",
+      "Kind": "KnowledgePoint",
+      "Name": "作者态度",
+      "Description": "",
+      "Order": 5
+    },
+    {
+      "Id": "english2.r1.c0.v11p6",
+      "SubjectKey": "english",
+      "ParentId": "english2.r1.c0",
+      "Kind": "KnowledgePoint",
+      "Name": "例证作用",
+      "Description": "",
+      "Order": 6
+    },
+    {
+      "Id": "english2.r1.c0.v11p7",
+      "SubjectKey": "english",
+      "ParentId": "english2.r1.c0",
+      "Kind": "KnowledgePoint",
+      "Name": "干扰项辨析",
+      "Description": "",
+      "Order": 7
+    },
+    {
+      "Id": "english2.r1.c0.v11p8",
+      "SubjectKey": "english",
+      "ParentId": "english2.r1.c0",
+      "Kind": "KnowledgePoint",
+      "Name": "阅读错因整理",
+      "Description": "",
+      "Order": 8
+    },
+    {
+      "Id": "english2.v11.new-reading",
+      "SubjectKey": "english",
+      "ParentId": "english2.r1",
+      "Kind": "Chapter",
+      "Name": "新题型",
+      "Description": "",
+      "Order": 4
+    },
+    {
+      "Id": "english2.v11.headings",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.new-reading",
+      "Kind": "Chapter",
+      "Name": "小标题与概括句匹配",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "english2.v11.headings.p0",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.headings",
+      "Kind": "KnowledgePoint",
+      "Name": "段落主旨提炼",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "english2.v11.headings.p1",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.headings",
+      "Kind": "KnowledgePoint",
+      "Name": "标题层级与范围",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "english2.v11.headings.p2",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.headings",
+      "Kind": "KnowledgePoint",
+      "Name": "概括句对应",
+      "Description": "",
+      "Order": 2
+    },
+    {
+      "Id": "english2.v11.ordering",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.new-reading",
+      "Kind": "Chapter",
+      "Name": "段落排序",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "english2.v11.ordering.p0",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.ordering",
+      "Kind": "KnowledgePoint",
+      "Name": "首尾线索",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "english2.v11.ordering.p1",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.ordering",
+      "Kind": "KnowledgePoint",
+      "Name": "指代链",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "english2.v11.ordering.p2",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.ordering",
+      "Kind": "KnowledgePoint",
+      "Name": "时间与论证顺序",
+      "Description": "",
+      "Order": 2
+    },
+    {
+      "Id": "english2.v11.insertion",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.new-reading",
+      "Kind": "Chapter",
+      "Name": "选句填空",
+      "Description": "",
+      "Order": 2
+    },
+    {
+      "Id": "english2.v11.insertion.p0",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.insertion",
+      "Kind": "KnowledgePoint",
+      "Name": "空前空后衔接",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "english2.v11.insertion.p1",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.insertion",
+      "Kind": "KnowledgePoint",
+      "Name": "句段逻辑",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "english2.v11.insertion.p2",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.insertion",
+      "Kind": "KnowledgePoint",
+      "Name": "补全篇章结构",
+      "Description": "",
+      "Order": 2
+    },
+    {
+      "Id": "english2.v11.matching",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.new-reading",
+      "Kind": "Chapter",
+      "Name": "多项匹配（信息对应）",
+      "Description": "",
+      "Order": 3
+    },
+    {
+      "Id": "english2.v11.matching.p0",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.matching",
+      "Kind": "KnowledgePoint",
+      "Name": "人物与观点对应",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "english2.v11.matching.p1",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.matching",
+      "Kind": "KnowledgePoint",
+      "Name": "信息定位",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "english2.v11.matching.p2",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.matching",
+      "Kind": "KnowledgePoint",
+      "Name": "同义表述核对",
+      "Description": "",
+      "Order": 2
+    },
+    {
+      "Id": "english2.r1.c1.v11p2",
+      "SubjectKey": "english",
+      "ParentId": "english2.r1.c1",
+      "Kind": "KnowledgePoint",
+      "Name": "语义准确性",
+      "Description": "",
+      "Order": 2
+    },
+    {
+      "Id": "english2.r1.c1.v11p3",
+      "SubjectKey": "english",
+      "ParentId": "english2.r1.c1",
+      "Kind": "KnowledgePoint",
+      "Name": "词序调整与表达自然",
+      "Description": "",
+      "Order": 3
+    },
+    {
+      "Id": "english2.r1.c1.v11p4",
+      "SubjectKey": "english",
+      "ParentId": "english2.r1.c1",
+      "Kind": "KnowledgePoint",
+      "Name": "翻译检查与修订",
+      "Description": "",
+      "Order": 4
+    },
+    {
+      "Id": "english2.v11.sentence-translation",
+      "SubjectKey": "english",
+      "ParentId": "english2.r1.c1",
+      "Kind": "Chapter",
+      "Name": "语篇划线句翻译",
+      "Description": "",
+      "Order": 5
+    },
+    {
+      "Id": "english2.v11.sentence-translation.p0",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.sentence-translation",
+      "Kind": "KnowledgePoint",
+      "Name": "句子在语篇中的含义",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "english2.v11.sentence-translation.p1",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.sentence-translation",
+      "Kind": "KnowledgePoint",
+      "Name": "复杂结构的汉语重组",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "english2.v11.paragraph-translation",
+      "SubjectKey": "english",
+      "ParentId": "english2.r1.c1",
+      "Kind": "Chapter",
+      "Name": "段落翻译",
+      "Description": "",
+      "Order": 6
+    },
+    {
+      "Id": "english2.v11.paragraph-translation.p0",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.paragraph-translation",
+      "Kind": "KnowledgePoint",
+      "Name": "段落语义连贯",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "english2.v11.paragraph-translation.p1",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.paragraph-translation",
+      "Kind": "KnowledgePoint",
+      "Name": "代词指代与衔接",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "english2.v11.practical",
+      "SubjectKey": "english",
+      "ParentId": "english2.r1.c2",
+      "Kind": "Chapter",
+      "Name": "应用文写作",
+      "Description": "",
+      "Order": 3
+    },
+    {
+      "Id": "english2.v11.practical.p0",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.practical",
+      "Kind": "KnowledgePoint",
+      "Name": "书信与通知",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "english2.v11.practical.p1",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.practical",
+      "Kind": "KnowledgePoint",
+      "Name": "写作目的与对象",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "english2.v11.practical.p2",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.practical",
+      "Kind": "KnowledgePoint",
+      "Name": "信息完整与格式",
+      "Description": "",
+      "Order": 2
+    },
+    {
+      "Id": "english2.v11.practical.p3",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.practical",
+      "Kind": "KnowledgePoint",
+      "Name": "语气与语言检查",
+      "Description": "",
+      "Order": 3
+    },
+    {
+      "Id": "english2.v11.picture",
+      "SubjectKey": "english",
+      "ParentId": "english2.r1.c2",
+      "Kind": "Chapter",
+      "Name": "图画作文",
+      "Description": "学习训练侧重点；不表示英语一只允许图画提示，须核对当年要求。",
+      "Order": 4
+    },
+    {
+      "Id": "english2.v11.picture.p0",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.picture",
+      "Kind": "KnowledgePoint",
+      "Name": "图画描述",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "english2.v11.picture.p1",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.picture",
+      "Kind": "KnowledgePoint",
+      "Name": "寓意与论点",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "english2.v11.picture.p2",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.picture",
+      "Kind": "KnowledgePoint",
+      "Name": "论证展开",
+      "Description": "",
+      "Order": 2
+    },
+    {
+      "Id": "english2.v11.chart",
+      "SubjectKey": "english",
+      "ParentId": "english2.r1.c2",
+      "Kind": "Chapter",
+      "Name": "图表作文",
+      "Description": "学习训练侧重点；不表示英语二只允许图表提示，须核对当年要求。",
+      "Order": 5
+    },
+    {
+      "Id": "english2.v11.chart.p0",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.chart",
+      "Kind": "KnowledgePoint",
+      "Name": "趋势与对比描述",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "english2.v11.chart.p1",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.chart",
+      "Kind": "KnowledgePoint",
+      "Name": "数据概括",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "english2.v11.chart.p2",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.chart",
+      "Kind": "KnowledgePoint",
+      "Name": "原因与启示",
+      "Description": "",
+      "Order": 2
+    },
+    {
+      "Id": "english2.v11.revision",
+      "SubjectKey": "english",
+      "ParentId": null,
+      "Kind": "Chapter",
+      "Name": "复习与模考复盘",
+      "Description": "",
+      "Order": 2
+    },
+    {
+      "Id": "english2.v11.revision.p0",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.revision",
+      "Kind": "KnowledgePoint",
+      "Name": "词汇回收",
+      "Description": "",
+      "Order": 0
+    },
+    {
+      "Id": "english2.v11.revision.p1",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.revision",
+      "Kind": "KnowledgePoint",
+      "Name": "阅读错因",
+      "Description": "",
+      "Order": 1
+    },
+    {
+      "Id": "english2.v11.revision.p2",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.revision",
+      "Kind": "KnowledgePoint",
+      "Name": "翻译修订",
+      "Description": "",
+      "Order": 2
+    },
+    {
+      "Id": "english2.v11.revision.p3",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.revision",
+      "Kind": "KnowledgePoint",
+      "Name": "写作反馈",
+      "Description": "",
+      "Order": 3
+    },
+    {
+      "Id": "english2.v11.revision.p4",
+      "SubjectKey": "english",
+      "ParentId": "english2.v11.revision",
+      "Kind": "KnowledgePoint",
+      "Name": "阶段复盘与下一步",
+      "Description": "",
+      "Order": 4
+    }
+  ],
+  "ContentHash": "4E712A9C1C3B5EA16750B2A47C25C63C5329DA8F8120ADD8DE619A795EA5EE19"
+}

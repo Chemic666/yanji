@@ -2,50 +2,50 @@
   {
     "PackageId": "org.yanji.reference.408",
     "Name": "408 · 四科参考知识目录",
-    "Nodes": 145,
-    "Path": "org.yanji.reference.408\\1.0.0\\package.yanji-knowledge.json",
-    "ContentHash": "B5FF41058BF3846BB9882A3727BB670723E9717AD6FC87F634201305BB22A53E"
+    "Nodes": 177,
+    "Path": "org.yanji.reference.408/1.1.0/package.yanji-knowledge.json",
+    "ContentHash": "20B84D2E1B2421247FAAC04CCAD98E9D54D8C346AE4DC93F597EFC705FBCA627"
   },
   {
     "PackageId": "org.yanji.reference.math1",
     "Name": "数学一 · 基础参考目录",
-    "Nodes": 45,
-    "Path": "org.yanji.reference.math1\\1.0.0\\package.yanji-knowledge.json",
-    "ContentHash": "0D22A18E8BBE4A0CAE17A69963903C912C5A75ABA7FF3E14E81F3CD5FA144538"
+    "Nodes": 126,
+    "Path": "org.yanji.reference.math1/1.1.0/package.yanji-knowledge.json",
+    "ContentHash": "F7E3D0A47860FF552AD0875498370C3E4C8B90C4F27469A3E2A94BB82C65175E"
   },
   {
     "PackageId": "org.yanji.reference.math2",
     "Name": "数学二 · 基础参考目录",
-    "Nodes": 33,
-    "Path": "org.yanji.reference.math2\\1.0.0\\package.yanji-knowledge.json",
-    "ContentHash": "FAF249C88318B95F2D7BB4FBFC6BB53892BED3FD4133F432EFD4255A3E5A1935"
+    "Nodes": 126,
+    "Path": "org.yanji.reference.math2/1.1.0/package.yanji-knowledge.json",
+    "ContentHash": "CEF03E970340AF37FD6ECE677CDAED820BBB307F634D3647A7F46F75EC5ED57E"
   },
   {
     "PackageId": "org.yanji.reference.english1",
     "Name": "英语一 · 基础学习目录",
-    "Nodes": 17,
-    "Path": "org.yanji.reference.english1\\1.0.0\\package.yanji-knowledge.json",
-    "ContentHash": "4D6B14BA232F55A7843986F3D938EBF236292D1878EC3914C376C2F453D3E28B"
+    "Nodes": 92,
+    "Path": "org.yanji.reference.english1/1.1.0/package.yanji-knowledge.json",
+    "ContentHash": "A988B9E9D534326D3ED2897B6D77C41B10FC461F775B46CF0DD9685C3F7D7921"
   },
   {
     "PackageId": "org.yanji.reference.english2",
     "Name": "英语二 · 基础学习目录",
-    "Nodes": 17,
-    "Path": "org.yanji.reference.english2\\1.0.0\\package.yanji-knowledge.json",
-    "ContentHash": "4A5506E8E02603AA551BC9A80A1194835FCEB6B7FA37E6280CE71D451629AF06"
+    "Nodes": 92,
+    "Path": "org.yanji.reference.english2/1.1.0/package.yanji-knowledge.json",
+    "ContentHash": "4E712A9C1C3B5EA16750B2A47C25C63C5329DA8F8120ADD8DE619A795EA5EE19"
   },
   {
     "PackageId": "org.yanji.reference.politics",
     "Name": "政治 · 基础参考目录",
     "Nodes": 11,
-    "Path": "org.yanji.reference.politics\\1.0.0\\package.yanji-knowledge.json",
+    "Path": "org.yanji.reference.politics/1.0.0/package.yanji-knowledge.json",
     "ContentHash": "8C965DFC48D7E4FAA270A9DF36FF63959D6A4028195DA81CC7B94FC13B322903"
   },
   {
     "PackageId": "org.yanji.reference.blank",
     "Name": "自定义 · 空白知识包",
     "Nodes": 0,
-    "Path": "org.yanji.reference.blank\\1.0.0\\package.yanji-knowledge.json",
+    "Path": "org.yanji.reference.blank/1.0.0/package.yanji-knowledge.json",
     "ContentHash": "5DA8E8FA79316D23137EC20A101BF833238E3314A5F5867F11947187A780F998"
   }
 ]

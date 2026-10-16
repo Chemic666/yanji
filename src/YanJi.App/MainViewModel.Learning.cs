@@ -30,7 +30,7 @@ public sealed partial class MainViewModel
         if(Busy||TimerActive){Status="请先结束或核对当前计时。";return;}
         var node=Database.KnowledgeNodes().Single(n=>n.Id==nodeId);
         TimerSubject=Subjects.FirstOrDefault(s=>s.Id==node.SubjectId);
-        TimerChapter=TimerChapters.FirstOrDefault(c=>c.Id==nodeId);FocusTask=null;
+        EnsureTimerChapter(nodeId);TimerChapter=TimerChapters.FirstOrDefault(c=>c.Id==nodeId);FocusTask=null;
         if(TimerSubject==null||TimerChapter==null){Status="目录或科目已归档，请先重新启用。";return;}
         Page=0;await StartAsync();
     }

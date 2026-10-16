@@ -431,7 +431,7 @@
     },
     {
       "Name": "org.yanji.reference.408",
-      "Version": "1.0.0",
+      "Version": "1.1.0 (also ships historical 1.0.0)",
       "Source": [
         {
           "Id": "neea-index",
@@ -466,7 +466,11 @@
       "LicenseFiles": [
         "resources/licenses/KnowledgePack-CC0-1.0.txt"
       ],
-      "ContentLicenseDescription": "本包原创目录结构与元数据采用 CC0-1.0；外部来源的内容与许可不包含在授权中，未复制其正文或题目。"
+      "ContentLicenseDescription": "本包原创目录结构与元数据采用 CC0-1.0；外部来源的内容与许可不包含在授权中，未复制其正文或题目。",
+      "IncludedVersions": [
+        "1.0.0",
+        "1.1.0"
+      ]
     },
     {
       "Name": "org.yanji.reference.blank",
@@ -489,7 +493,7 @@
     },
     {
       "Name": "org.yanji.reference.english1",
-      "Version": "1.0.0",
+      "Version": "1.1.0 (also ships historical 1.0.0)",
       "Source": [
         {
           "Id": "neea-index",
@@ -504,11 +508,15 @@
       "LicenseFiles": [
         "resources/licenses/KnowledgePack-CC0-1.0.txt"
       ],
-      "ContentLicenseDescription": "本包原创目录结构与元数据采用 CC0-1.0；外部来源的内容与许可不包含在授权中，未复制其正文或题目。"
+      "ContentLicenseDescription": "本包原创目录结构与元数据采用 CC0-1.0；外部来源的内容与许可不包含在授权中，未复制其正文或题目。",
+      "IncludedVersions": [
+        "1.0.0",
+        "1.1.0"
+      ]
     },
     {
       "Name": "org.yanji.reference.english2",
-      "Version": "1.0.0",
+      "Version": "1.1.0 (also ships historical 1.0.0)",
       "Source": [
         {
           "Id": "neea-index",
@@ -523,11 +531,15 @@
       "LicenseFiles": [
         "resources/licenses/KnowledgePack-CC0-1.0.txt"
       ],
-      "ContentLicenseDescription": "本包原创目录结构与元数据采用 CC0-1.0；外部来源的内容与许可不包含在授权中，未复制其正文或题目。"
+      "ContentLicenseDescription": "本包原创目录结构与元数据采用 CC0-1.0；外部来源的内容与许可不包含在授权中，未复制其正文或题目。",
+      "IncludedVersions": [
+        "1.0.0",
+        "1.1.0"
+      ]
     },
     {
       "Name": "org.yanji.reference.math1",
-      "Version": "1.0.0",
+      "Version": "1.1.0 (also ships historical 1.0.0)",
       "Source": [
         {
           "Id": "neea-index",
@@ -547,11 +559,15 @@
       "LicenseFiles": [
         "resources/licenses/KnowledgePack-CC0-1.0.txt"
       ],
-      "ContentLicenseDescription": "本包原创目录结构与元数据采用 CC0-1.0；外部来源的内容与许可不包含在授权中，未复制其正文或题目。"
+      "ContentLicenseDescription": "本包原创目录结构与元数据采用 CC0-1.0；外部来源的内容与许可不包含在授权中，未复制其正文或题目。",
+      "IncludedVersions": [
+        "1.0.0",
+        "1.1.0"
+      ]
     },
     {
       "Name": "org.yanji.reference.math2",
-      "Version": "1.0.0",
+      "Version": "1.1.0 (also ships historical 1.0.0)",
       "Source": [
         {
           "Id": "neea-index",
@@ -571,7 +587,11 @@
       "LicenseFiles": [
         "resources/licenses/KnowledgePack-CC0-1.0.txt"
       ],
-      "ContentLicenseDescription": "本包原创目录结构与元数据采用 CC0-1.0；外部来源的内容与许可不包含在授权中，未复制其正文或题目。"
+      "ContentLicenseDescription": "本包原创目录结构与元数据采用 CC0-1.0；外部来源的内容与许可不包含在授权中，未复制其正文或题目。",
+      "IncludedVersions": [
+        "1.0.0",
+        "1.1.0"
+      ]
     },
     {
       "Name": "org.yanji.reference.politics",

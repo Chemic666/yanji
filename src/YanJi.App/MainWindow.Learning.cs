@@ -12,7 +12,7 @@ public partial class MainWindow
     internal Task EditNodeWeakAsync(WeakPoint point)=>EditWeakAsync(point);
     internal async Task OpenKnowledgeAsync(string id)
     {
-        Model.DrawerOpen=false;Model.Page=2;await Task.Delay(50);
+        Model.DrawerOpen=false;Model.Page=2;KnowledgeExpander.IsExpanded=true;await Task.Delay(50);
         var workspace=KnowledgeView.Model;if(workspace==null)return;var node=Model.Database.KnowledgeNodes().Single(n=>n.Id==id);
         workspace.ShowArchived=true;workspace.Subject=workspace.Subjects.First(s=>s.Id==node.SubjectId);await workspace.ReloadAsync(id);
     }

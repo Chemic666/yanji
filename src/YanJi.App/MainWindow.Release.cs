@@ -5,13 +5,15 @@ using YanJi.Data;
 namespace YanJi.App;
 public partial class MainWindow
 {
-    private async void ConfigureExamProfile_Click(object sender,RoutedEventArgs e)
+    private async void ConfigureExamProfile_Click(object sender,RoutedEventArgs e)=>await ConfigureExamProfileAsync();
+    internal async System.Threading.Tasks.Task ConfigureExamProfileAsync()
     {
         var profile=Model.Database.ExamProfiles().Single(p=>p.Id=="legacy-default");var subjects=Model.Database.Subjects(true);
-        var fields=new[]{new Field("name","考试档案名称 *",profile.Name),new Field("year","入学年份（本版本）","2028",ReadOnly:true),new Field("date","考试日期（可空，yyyy-MM-dd）",profile.ExamDate?.ToString("yyyy-MM-dd")??"")}
-            .Concat(subjects.Select(s=>new Field("subject:"+s.Id,s.Name,s.Archived?"0":"1",[new("1","使用中"),new("0","暂不使用（历史仍保留）")]))).ToArray();
+        var first=Model.Database.Setting("onboarding-complete","")!="true"&&Model.Database.KnowledgeNodes().Count==0&&Model.Database.Records(null,true).Count==0;
+        var fields=new[]{new Field("name","考试档案名称 *",profile.Name),new Field("year","入学年份（本版本）","2028",ReadOnly:true),new Field("date","考试日期（可空，yyyy-MM-dd）",profile.ExamDate?.ToString("yyyy-MM-dd")??""),new Field("presets","数学、英语、408参考目录",first?"1":"0",[new("1","应用至空白科目（先显示共同基础）"),new("0","暂不应用 / 保留已有目录")])}
+            .Concat(subjects.Select(s=>new Field("subject:"+s.Id,s.Name,(!s.Archived&&(!first||s.Id is "math" or "english" or "408"))?"1":"0",[new("1","使用中"),new("0","暂不使用（历史仍保留）")]))).ToArray();
         var v=Edit("开始使用研迹 · 考试档案",fields,"2028表示入学年份；日期可以暂空。选择日常科目，不会删除历史记录、知识节点或知识包。",values=>{Date(values["date"]);return Required(values,"name")??(!subjects.Any(s=>values["subject:"+s.Id]=="1")?"至少选择一个科目。":null);});
-        if(v!=null)await Model.RunAsync(()=>Model.Database.ConfigureDefaultProfile(v["name"],Date(v["date"]),subjects.Where(s=>v["subject:"+s.Id]=="1").Select(s=>s.Id).ToArray()),"考试档案与使用科目已保存");
+        if(v!=null&&await Model.RunAsync(()=>Model.Database.ConfigureDefaultProfile(v["name"],Date(v["date"]),subjects.Where(s=>v["subject:"+s.Id]=="1").Select(s=>s.Id).ToArray()),"考试档案与使用科目已保存")&&v["presets"]=="1")await ApplySimplePresetsAsync(false);
     }
     private async void UpgradeCopy_Click(object sender,RoutedEventArgs e)
     {

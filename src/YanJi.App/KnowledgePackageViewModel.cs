@@ -59,7 +59,7 @@ public sealed partial class KnowledgePackageViewModel : ObservableObject
         await RunAsync(async()=>
         {
             _catalog=await Task.Run(()=>Directory.EnumerateFiles(Path.Combine(AppContext.BaseDirectory,"knowledge-packages"),"*.yanji-knowledge.json",SearchOption.AllDirectories)
-                .Select(f=>new PackageCatalogItem(KnowledgePackageFile.Parse(File.ReadAllBytes(f)),f)).OrderBy(p=>p.Package.PackageId).ToList());
+                .Select(f=>new PackageCatalogItem(KnowledgePackageFile.Parse(File.ReadAllBytes(f)),f)).GroupBy(p=>p.Package.PackageId).Select(g=>g.OrderByDescending(p=>KnowledgePackageFile.VersionOf(p.Package.PackageVersion)).First()).OrderBy(p=>p.Package.PackageId).ToList());
             Filter();await RefreshInstalledAsync();
         });
     }

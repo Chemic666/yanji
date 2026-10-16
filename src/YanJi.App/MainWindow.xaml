@@ -1,4 +1,4 @@
-<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:local="clr-namespace:YanJi.App" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Class="YanJi.App.MainWindow" Style="{StaticResource {x:Type Window}}" Title="研迹 YanJi · 2028 备考" Width="1200" Height="800" MinWidth="900" MinHeight="600" WindowStartupLocation="CenterScreen" SizeChanged="Layout_Changed" PreviewKeyDown="Window_KeyDown">
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:local="clr-namespace:YanJi.App" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Class="YanJi.App.MainWindow" Style="{StaticResource {x:Type Window}}" Title="研迹 YanJi · RC-Simple · 2028 备考" Width="1200" Height="800" MinWidth="900" MinHeight="600" WindowStartupLocation="CenterScreen" SizeChanged="Layout_Changed" PreviewKeyDown="Window_KeyDown">
   <Window.Resources>
     <local:DurationDisplayConverter x:Key="DurationDisplay" />
     <local:PageVisibilityConverter x:Key="PageVisibility" />
@@ -139,52 +139,9 @@
         </StackPanel>
         <StackPanel DockPanel.Dock="Bottom">
           <Button Content="退出应用" Click="Exit_Click" x:Name="ExitButton" Style="{StaticResource QuietButton}" />
-          <TextBlock Text="V0.4 RC-Final · 候选验收" FontSize="11" Foreground="{DynamicResource Muted}" x:Name="VersionHint" Margin="10,8,0,0" Style="{StaticResource FocusTextBlock}" />
+          <TextBlock Text="V0.4 RC-Simple" FontSize="11" Foreground="{DynamicResource Muted}" x:Name="VersionHint" Margin="10,8,0,0" Style="{StaticResource FocusTextBlock}" />
         </StackPanel>
-        <ListBox x:Name="NavigationList" SelectedIndex="{Binding Page}" BorderThickness="0" Background="Transparent" SelectionChanged="Navigation_Changed" ItemContainerStyle="{StaticResource NavigationItem}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-          <ListBoxItem ToolTip="今日学习">
-            <StackPanel Orientation="Horizontal">
-              <local:FocusIcon Kind="timer" Width="20" Height="20" Margin="0,0,12,0" Stroke="{Binding Foreground,RelativeSource={RelativeSource AncestorType=ListBoxItem}}" />
-              <TextBlock Text="今日学习" Tag="NavLabel" Style="{StaticResource FocusTextBlock}" />
-            </StackPanel>
-          </ListBoxItem>
-          <ListBoxItem ToolTip="备考历程">
-            <StackPanel Orientation="Horizontal">
-              <local:FocusIcon Kind="calendar" Width="20" Height="20" Margin="0,0,12,0" Stroke="{Binding Foreground,RelativeSource={RelativeSource AncestorType=ListBoxItem}}" />
-              <TextBlock Text="备考历程" Tag="NavLabel" Style="{StaticResource FocusTextBlock}" />
-            </StackPanel>
-          </ListBoxItem>
-          <ListBoxItem ToolTip="计划与进度">
-            <StackPanel Orientation="Horizontal">
-              <local:FocusIcon Kind="plan" Width="20" Height="20" Margin="0,0,12,0" Stroke="{Binding Foreground,RelativeSource={RelativeSource AncestorType=ListBoxItem}}" />
-              <TextBlock Text="计划与进度" Tag="NavLabel" Style="{StaticResource FocusTextBlock}" />
-            </StackPanel>
-          </ListBoxItem>
-          <ListBoxItem ToolTip="薄弱知识点">
-            <StackPanel Orientation="Horizontal">
-              <local:FocusIcon Kind="weak" Width="20" Height="20" Margin="0,0,12,0" Stroke="{Binding Foreground,RelativeSource={RelativeSource AncestorType=ListBoxItem}}" />
-              <TextBlock Text="薄弱知识点" Tag="NavLabel" Style="{StaticResource FocusTextBlock}" />
-            </StackPanel>
-          </ListBoxItem>
-          <ListBoxItem ToolTip="统计与复盘">
-            <StackPanel Orientation="Horizontal">
-              <local:FocusIcon Kind="stats" Width="20" Height="20" Margin="0,0,12,0" Stroke="{Binding Foreground,RelativeSource={RelativeSource AncestorType=ListBoxItem}}" />
-              <TextBlock Text="统计与复盘" Tag="NavLabel" Style="{StaticResource FocusTextBlock}" />
-            </StackPanel>
-          </ListBoxItem>
-          <ListBoxItem ToolTip="设置与数据">
-            <StackPanel Orientation="Horizontal">
-              <local:FocusIcon Kind="settings" Width="20" Height="20" Margin="0,0,12,0" Stroke="{Binding Foreground,RelativeSource={RelativeSource AncestorType=ListBoxItem}}" />
-              <TextBlock Text="设置与数据" Tag="NavLabel" Style="{StaticResource FocusTextBlock}" />
-            </StackPanel>
-          </ListBoxItem>
-          <ListBoxItem ToolTip="学习记录明细">
-            <StackPanel Orientation="Horizontal">
-              <local:FocusIcon Kind="record" Width="20" Height="20" Margin="0,0,12,0" Stroke="{Binding Foreground,RelativeSource={RelativeSource AncestorType=ListBoxItem}}" />
-              <TextBlock Text="学习记录" Tag="NavLabel" Style="{StaticResource FocusTextBlock}" />
-            </StackPanel>
-          </ListBoxItem>
-        </ListBox>
+        <ListBox x:Name="NavigationList" PreviewMouseLeftButtonUp="Navigation_Click" PreviewKeyDown="Navigation_KeyDown" SelectedIndex="{Binding NavigationIndex}" BorderThickness="0" Background="Transparent" SelectionChanged="Navigation_Changed" ItemContainerStyle="{StaticResource NavigationItem}" ScrollViewer.HorizontalScrollBarVisibility="Disabled"><ListBoxItem ToolTip="今日"><StackPanel Orientation="Horizontal"><local:FocusIcon Kind="timer" Width="20" Height="20" Margin="0,0,12,0" Stroke="{Binding Foreground,RelativeSource={RelativeSource AncestorType=ListBoxItem}}"/><TextBlock Text="今日" Tag="NavLabel" Style="{StaticResource FocusTextBlock}" /></StackPanel></ListBoxItem><ListBoxItem ToolTip="学习进度"><StackPanel Orientation="Horizontal"><local:FocusIcon Kind="plan" Width="20" Height="20" Margin="0,0,12,0" Stroke="{Binding Foreground,RelativeSource={RelativeSource AncestorType=ListBoxItem}}"/><TextBlock Text="学习进度" Tag="NavLabel" Style="{StaticResource FocusTextBlock}" /></StackPanel></ListBoxItem><ListBoxItem ToolTip="学习数据"><StackPanel Orientation="Horizontal"><local:FocusIcon Kind="stats" Width="20" Height="20" Margin="0,0,12,0" Stroke="{Binding Foreground,RelativeSource={RelativeSource AncestorType=ListBoxItem}}"/><TextBlock Text="学习数据" Tag="NavLabel" Style="{StaticResource FocusTextBlock}" /></StackPanel></ListBoxItem><ListBoxItem ToolTip="更多功能"><StackPanel Orientation="Horizontal"><local:FocusIcon Kind="settings" Width="20" Height="20" Margin="0,0,12,0" Stroke="{Binding Foreground,RelativeSource={RelativeSource AncestorType=ListBoxItem}}"/><TextBlock Text="更多功能" Tag="NavLabel" Style="{StaticResource FocusTextBlock}" /></StackPanel></ListBoxItem></ListBox>
       </DockPanel>
     </Border>
     <Grid Grid.Column="1" IsEnabled="{Binding DrawerOpen,Converter={StaticResource Inverse}}">
@@ -193,12 +150,12 @@
         <RowDefinition Height="Auto" />
       </Grid.RowDefinitions>
       <ScrollViewer x:Name="MainScroll" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="28,24,28,8">
-        <ScrollViewer.Style><Style TargetType="ScrollViewer"><Style.Triggers><DataTrigger Binding="{Binding Page}" Value="2"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers></Style></ScrollViewer.Style><Grid IsEnabled="{Binding Busy,Converter={StaticResource Inverse}}">
+        <Grid IsEnabled="{Binding Busy,Converter={StaticResource Inverse}}">
           <StackPanel Visibility="{Binding Page,Converter={StaticResource PageVisibility},ConverterParameter=0}">
             <DockPanel Margin="0,0,0,8">
               <Button DockPanel.Dock="Right" Content="＋ 快速补录" Style="{StaticResource FocusButton}" Click="QuickAdd_Click" />
               <StackPanel>
-                <TextBlock Text="今日学习" Style="{StaticResource Heading}" />
+                <TextBlock Text="今日" Style="{StaticResource Heading}" />
                 <TextBlock Text="专注当下，也看得见自己的积累。" Style="{StaticResource MutedText}" />
               </StackPanel>
             </DockPanel>
@@ -255,31 +212,6 @@
                       <TextBlock DockPanel.Dock="Right" Text="{Binding TimerStateText}" Style="{StaticResource MutedText}" MaxWidth="200" />
                       <TextBlock Text="专注这一段" Style="{StaticResource Subheading}" />
                     </DockPanel>
-                    <TextBlock Text="{Binding FocusTaskLabel}" TextWrapping="Wrap" MaxHeight="44" TextTrimming="CharacterEllipsis" ToolTip="{Binding FocusTaskLabel}" Style="{StaticResource FocusTextBlock}" Margin="0,0,0,8" />
-                    <WrapPanel IsEnabled="{Binding CanStartFocus}" Visibility="{Binding FocusSetupVisible,Converter={StaticResource BoolVisibility}}" Margin="0,0,0,6">
-                      <ComboBox x:Name="FocusModeSelector" SelectedIndex="{Binding FocusModeIndex}" Width="130" Style="{StaticResource FocusComboBox}" AutomationProperties.Name="专注模式">
-                        <ComboBoxItem Content="自由计时" /><ComboBoxItem Content="倒计时" /><ComboBoxItem Content="番茄钟" />
-                      </ComboBox>
-                      <TextBox Text="{Binding FocusMinutes,UpdateSourceTrigger=PropertyChanged}" Width="86" Padding="6,2" HorizontalContentAlignment="Center" Visibility="{Binding ConfiguredTimed,Converter={StaticResource BoolVisibility}}" Style="{StaticResource FocusTextBox}" AutomationProperties.Name="专注分钟" ToolTip="限时模式专注 1～720 分钟；自由计时忽略此项" />
-                      <TextBlock Text="分" Visibility="{Binding ConfiguredTimed,Converter={StaticResource BoolVisibility}}" Style="{StaticResource MutedText}" VerticalAlignment="Center" Margin="4,0" />
-                      <TextBox Text="{Binding BreakMinutes,UpdateSourceTrigger=PropertyChanged}" Width="68" Padding="6,2" HorizontalContentAlignment="Center" Visibility="{Binding ConfiguredPomodoro,Converter={StaticResource BoolVisibility}}" Style="{StaticResource FocusTextBox}" AutomationProperties.Name="番茄休息分钟" ToolTip="番茄结束后休息 1～60 分钟，不计入学习" />
-                      <TextBlock Text="分休息" Visibility="{Binding ConfiguredPomodoro,Converter={StaticResource BoolVisibility}}" Style="{StaticResource MutedText}" VerticalAlignment="Center" />
-                    </WrapPanel>
-                    <TextBlock Text="{Binding FocusSubjectLabel}" Style="{StaticResource MutedText}" Margin="0,2,0,6" />
-                    <TextBlock Text="{Binding TimerText}" FontFamily="Segoe UI Variable Display, Segoe UI" Typography.NumeralAlignment="Tabular" FontSize="44" Foreground="{DynamicResource Accent}" Margin="0,0,0,8" Style="{StaticResource FocusTextBlock}" />
-                    <TextBlock Text="{Binding FocusRemainingText}" Style="{StaticResource MutedText}" TextWrapping="Wrap" Margin="0,0,0,8" />
-                    <ProgressBar Visibility="{Binding HasFocusGoal,Converter={StaticResource BoolVisibility}}" Value="{Binding FocusProgress}" Maximum="100" Height="3" Foreground="{DynamicResource Accent}" Background="{DynamicResource Soft}" Margin="0,0,0,8" AutomationProperties.Name="目标有效时长进度" />
-                    <WrapPanel Margin="0,8,0,0">
-                      <Button Content="{Binding FocusStartLabel}" Style="{StaticResource Primary}" Command="{Binding StartCommand}" IsEnabled="{Binding CanStartFocus}" MinWidth="100" AutomationProperties.AutomationId="FocusStart" />
-                      <Button Content="暂停 / 继续" Command="{Binding PauseResumeCommand}" IsEnabled="{Binding CanPauseFocus}" Style="{StaticResource FocusButton}" AutomationProperties.AutomationId="FocusPause" />
-                      <Button Content="结束" Command="{Binding FinishCommand}" IsEnabled="{Binding TimerActive}" Style="{StaticResource FocusButton}" />
-                      <Button Content="迷你窗" Click="ShowMini_Click" Style="{StaticResource QuietButton}" ToolTip="Ctrl+M，迷你窗与主窗共享同一计时" />
-                    </WrapPanel>
-                    <WrapPanel>
-                      <Button Content="跳过休息" Command="{Binding SkipBreakCommand}" Visibility="{Binding BreakActive,Converter={StaticResource BoolVisibility}}" Style="{StaticResource QuietButton}" />
-                      <Button Visibility="{Binding HasLinkedTask,Converter={StaticResource BoolVisibility}}" Content="解除任务关联" Command="{Binding ClearFocusTaskCommand}" IsEnabled="{Binding CanStartFocus}" Style="{StaticResource QuietButton}" />
-                      <Button Visibility="{Binding HasLinkedTask,Converter={StaticResource BoolVisibility}}" Content="标记任务完成" Command="{Binding CompleteFocusTaskCommand}" IsEnabled="{Binding CanCompleteLinkedTask}" Style="{StaticResource QuietButton}" />
-                    </WrapPanel>
                     <Grid x:Name="TimerFields" Visibility="{Binding FocusSetupVisible,Converter={StaticResource BoolVisibility}}" IsEnabled="{Binding TimerActive,Converter={StaticResource Inverse}}"><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
                       <Grid.ColumnDefinitions>
                         <ColumnDefinition />
@@ -291,11 +223,35 @@
                         <ComboBox ItemsSource="{Binding TimerSubjects}" DisplayMemberPath="Name" SelectedItem="{Binding TimerSubject}" ToolTip="计时科目" AutomationProperties.Name="计时科目" Style="{StaticResource FocusComboBox}" HorizontalContentAlignment="Stretch" />
                       </StackPanel>
                       <StackPanel x:Name="TimerChapterField" Grid.Column="2">
-                        <TextBlock Text="主要章节 · 可选" Style="{StaticResource MutedText}" />
-                        <Button Content="管理章节" Click="ManageChapters_Click" Style="{StaticResource QuietButton}" HorizontalAlignment="Left" />
+                        <DockPanel><Button DockPanel.Dock="Right" Content="管理章节" Click="ManageChapters_Click" Style="{StaticResource QuietButton}" Padding="0" Margin="8,0,0,0" MinHeight="0" Height="20"/><TextBlock Text="主要章节 · 可选" Style="{StaticResource MutedText}" /></DockPanel>
 <ComboBox ItemsSource="{Binding TimerChapters}" DisplayMemberPath="Name" SelectedItem="{Binding TimerChapter}" ToolTip="主要章节，可选" AutomationProperties.Name="主要章节，可选" Style="{StaticResource FocusComboBox}" HorizontalContentAlignment="Stretch" />
                       </StackPanel>
-                    </Grid>
+                    </Grid><TextBlock Visibility="{Binding HasLinkedTask,Converter={StaticResource BoolVisibility}}" Text="{Binding FocusTaskLabel}" TextWrapping="Wrap" MaxHeight="44" TextTrimming="CharacterEllipsis" ToolTip="{Binding FocusTaskLabel}" Style="{StaticResource FocusTextBlock}" Margin="0,0,0,8" />
+
+                    <TextBlock Text="{Binding FocusSubjectLabel}" Style="{StaticResource MutedText}" Margin="0,2,0,6" />
+                    <TextBlock x:Name="TimerDigits" Text="{Binding TimerText}" FontFamily="Segoe UI Variable Display, Segoe UI" Typography.NumeralAlignment="Tabular" FontSize="56" Foreground="{DynamicResource Accent}" Margin="0,12,0,8" Style="{StaticResource FocusTextBlock}" />
+                    <TextBlock Visibility="{Binding ConfiguredTimed,Converter={StaticResource BoolVisibility}}" Text="{Binding FocusRemainingText}" Style="{StaticResource MutedText}" TextWrapping="Wrap" Margin="0,0,0,8" />
+                    <ProgressBar Visibility="{Binding HasFocusGoal,Converter={StaticResource BoolVisibility}}" Value="{Binding FocusProgress}" Maximum="100" Height="3" Foreground="{DynamicResource Accent}" Background="{DynamicResource Soft}" Margin="0,0,0,8" AutomationProperties.Name="目标有效时长进度" />
+                    <WrapPanel Margin="0,8,0,0">
+                      <Button Content="{Binding FocusStartLabel}" Style="{StaticResource Primary}" Command="{Binding StartCommand}" IsEnabled="{Binding CanStartFocus}" MinWidth="100" AutomationProperties.AutomationId="FocusStart" />
+                      <Button Content="暂停 / 继续" Command="{Binding PauseResumeCommand}" IsEnabled="{Binding CanPauseFocus}" Style="{StaticResource FocusButton}" AutomationProperties.AutomationId="FocusPause" />
+                      <Button Content="结束" Command="{Binding FinishCommand}" IsEnabled="{Binding TimerActive}" Style="{StaticResource FocusButton}" />
+                      <Button Content="迷你窗" Click="ShowMini_Click" Style="{StaticResource QuietButton}" ToolTip="Ctrl+M，迷你窗与主窗共享同一计时" />
+                    </WrapPanel>
+                    <Expander Header="{Binding FocusOptionsLabel}" Style="{StaticResource FocusExpander}" Visibility="{Binding FocusSetupVisible,Converter={StaticResource BoolVisibility}}"><WrapPanel IsEnabled="{Binding CanStartFocus}" Visibility="{Binding FocusSetupVisible,Converter={StaticResource BoolVisibility}}" Margin="0,0,0,6">
+                      <ComboBox x:Name="FocusModeSelector" SelectedIndex="{Binding FocusModeIndex}" Width="130" Style="{StaticResource FocusComboBox}" AutomationProperties.Name="专注模式">
+                        <ComboBoxItem Content="自由计时" /><ComboBoxItem Content="倒计时" /><ComboBoxItem Content="番茄钟" />
+                      </ComboBox>
+                      <TextBox Text="{Binding FocusMinutes,UpdateSourceTrigger=PropertyChanged}" Width="86" Padding="6,2" HorizontalContentAlignment="Center" Visibility="{Binding ConfiguredTimed,Converter={StaticResource BoolVisibility}}" Style="{StaticResource FocusTextBox}" AutomationProperties.Name="专注分钟" ToolTip="限时模式专注 1～720 分钟；自由计时忽略此项" />
+                      <TextBlock Text="分" Visibility="{Binding ConfiguredTimed,Converter={StaticResource BoolVisibility}}" Style="{StaticResource MutedText}" VerticalAlignment="Center" Margin="4,0" />
+                      <TextBox Text="{Binding BreakMinutes,UpdateSourceTrigger=PropertyChanged}" Width="68" Padding="6,2" HorizontalContentAlignment="Center" Visibility="{Binding ConfiguredPomodoro,Converter={StaticResource BoolVisibility}}" Style="{StaticResource FocusTextBox}" AutomationProperties.Name="番茄休息分钟" ToolTip="番茄结束后休息 1～60 分钟，不计入学习" />
+                      <TextBlock Text="分休息" Visibility="{Binding ConfiguredPomodoro,Converter={StaticResource BoolVisibility}}" Style="{StaticResource MutedText}" VerticalAlignment="Center" />
+                    </WrapPanel></Expander><WrapPanel>
+                      <Button Content="跳过休息" Command="{Binding SkipBreakCommand}" Visibility="{Binding BreakActive,Converter={StaticResource BoolVisibility}}" Style="{StaticResource QuietButton}" />
+                      <Button Visibility="{Binding HasLinkedTask,Converter={StaticResource BoolVisibility}}" Content="解除任务关联" Command="{Binding ClearFocusTaskCommand}" IsEnabled="{Binding CanStartFocus}" Style="{StaticResource QuietButton}" />
+                      <Button Visibility="{Binding HasLinkedTask,Converter={StaticResource BoolVisibility}}" Content="标记任务完成" Command="{Binding CompleteFocusTaskCommand}" IsEnabled="{Binding CanCompleteLinkedTask}" Style="{StaticResource QuietButton}" />
+                    </WrapPanel>
+
                     <Expander Visibility="{Binding FocusSetupVisible,Converter={StaticResource BoolVisibility}}" Header="添加这一段的备注" Style="{StaticResource FocusExpander}">
                       <TextBox Text="{Binding TimerNote,UpdateSourceTrigger=PropertyChanged}" ToolTip="这一段学什么？备注可选" AutomationProperties.Name="这一段学什么？备注可选" IsEnabled="{Binding TimerActive,Converter={StaticResource Inverse}}" Style="{StaticResource FocusTextBox}" />
                     </Expander>
@@ -307,7 +263,7 @@
                     <TextBlock Text="可选补充备注、薄弱点或学习进度，不会自动判断掌握。" TextWrapping="Wrap" Style="{StaticResource MutedText}" />
                     <WrapPanel><Button Content="补充本次学习" Click="CompleteStudy_Click" Style="{StaticResource QuietButton}" /><Button Content="跳过" Command="{Binding DismissCompletedStudyCommand}" Style="{StaticResource QuietButton}" /></WrapPanel>
                   </StackPanel></Border>
-                <Border Style="{StaticResource SectionSurface}">
+                <Expander Header="每日感想 · 可选" Style="{StaticResource FocusExpander}"><Border Style="{StaticResource SectionSurface}">
                   <StackPanel>
                     <DockPanel>
                       <Button DockPanel.Dock="Right" Content="保存感想" Click="SaveReflection_Click" Style="{StaticResource QuietButton}" />
@@ -316,23 +272,10 @@
                     <TextBox Text="{Binding Reflection,UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap" Height="88" VerticalScrollBarVisibility="Auto" ToolTip="今日感想，输入后自动保存" AutomationProperties.Name="今日感想，输入后自动保存" Margin="0" Style="{StaticResource FocusTextBox}" />
                     <TextBlock Text="今天的收获，或明天的一小步。输入后自动保存。" Style="{StaticResource MutedText}" Margin="0,8,0,0" />
                   </StackPanel>
-                </Border>
+                </Border></Expander>
               </StackPanel>
               <StackPanel x:Name="TodayReflection" Grid.Column="2">
-                <Border Style="{StaticResource DenseSurface}">
-                  <StackPanel>
-                    <DockPanel><Button Content="新增任务" DockPanel.Dock="Right" Click="AddTask_Click" Style="{StaticResource QuietButton}" /><TextBlock Text="今日待办 · 直接开始" Style="{StaticResource Subheading}" /></DockPanel>
-                    <ScrollViewer MaxHeight="200" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"><ItemsControl ItemsSource="{Binding TodayTasks}">
-                      <ItemsControl.ItemTemplate><DataTemplate>
-                        <DockPanel Margin="0,6">
-                          <Button DockPanel.Dock="Right" Content="开始 →" Command="{Binding DataContext.StartTaskCommand,RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}" IsEnabled="{Binding DataContext.CanStartFocus,RelativeSource={RelativeSource AncestorType=Window}}" Style="{StaticResource QuietButton}" />
-                          <TextBlock Text="{Binding Title}" TextWrapping="Wrap" MaxHeight="44" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Style="{StaticResource FocusTextBlock}" ToolTip="{Binding Title}" />
-                        </DockPanel>
-                      </DataTemplate></ItemsControl.ItemTemplate>
-                    </ItemsControl></ScrollViewer>
-                    <ContentControl Content="选一件小任务，从这里开始。" ContentTemplate="{StaticResource EmptyState}" Visibility="{Binding TodayTasks.Count,Converter={StaticResource Empty}}" />
-                  </StackPanel>
-                </Border>
+
                 <Border Style="{StaticResource DenseSurface}">
                   <StackPanel>
                     <DockPanel>
@@ -346,8 +289,21 @@
                       <Button Content="区间补录" Click="KnownInterval_Click" Style="{StaticResource QuietButton}" />
                     </WrapPanel>
                   </StackPanel>
-                </Border>
-                <Border Style="{StaticResource DenseSurface}">
+                </Border><Expander Header="学习任务 · 一键开始" Style="{StaticResource FocusExpander}"><Border Style="{StaticResource DenseSurface}">
+                  <StackPanel>
+                    <DockPanel><Button Content="新增任务" DockPanel.Dock="Right" Click="AddTask_Click" Style="{StaticResource QuietButton}" /><TextBlock Text="今日待办 · 直接开始" Style="{StaticResource Subheading}" /></DockPanel>
+                    <ScrollViewer MaxHeight="200" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"><ItemsControl ItemsSource="{Binding TodayTasks}">
+                      <ItemsControl.ItemTemplate><DataTemplate>
+                        <DockPanel Margin="0,6">
+                          <Button DockPanel.Dock="Right" Content="开始 →" Command="{Binding DataContext.StartTaskCommand,RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}" IsEnabled="{Binding DataContext.CanStartFocus,RelativeSource={RelativeSource AncestorType=Window}}" Style="{StaticResource QuietButton}" />
+                          <TextBlock Text="{Binding Title}" TextWrapping="Wrap" MaxHeight="44" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Style="{StaticResource FocusTextBlock}" ToolTip="{Binding Title}" />
+                        </DockPanel>
+                      </DataTemplate></ItemsControl.ItemTemplate>
+                    </ItemsControl></ScrollViewer>
+                    <ContentControl Content="选一件小任务，从这里开始。" ContentTemplate="{StaticResource EmptyState}" Visibility="{Binding TodayTasks.Count,Converter={StaticResource Empty}}" />
+                  </StackPanel>
+                </Border></Expander>
+                <Expander Header="最近学习与七日趋势" Style="{StaticResource FocusExpander}"><Border Style="{StaticResource DenseSurface}">
                   <StackPanel>
                     <TextBlock Text="最近学习 · 继续一段新学习" Style="{StaticResource Subheading}" />
                     <ItemsControl ItemsSource="{Binding RecentLearningItems}"><ItemsControl.ItemTemplate><DataTemplate><Button Content="{Binding Label}" ToolTip="{Binding Label}" Command="{Binding DataContext.ContinueRecentCommand,RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}" Style="{StaticResource QuietButton}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" MaxHeight="50" /></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
@@ -355,7 +311,7 @@
                     <local:StudyChart x:Name="RecentTrend" Data="{Binding MiniTrend}" Mode="Sparkline" Height="44" PointInvoked="Chart_Drill" />
                     <TextBlock Text="悬停查看时长，点击回到原始记录。" Style="{StaticResource MutedText}" Margin="0,4,0,0" />
                   </StackPanel>
-                </Border>
+                </Border></Expander>
               </StackPanel>
             </Grid>
           </StackPanel>
@@ -486,7 +442,8 @@
               </StackPanel>
             </Border>
           </StackPanel>
-          <StackPanel x:Name="LegacyProgress" Visibility="{Binding Page,Converter={StaticResource PageVisibility},ConverterParameter=2}">
+          <StackPanel Visibility="{Binding Page,Converter={StaticResource PageVisibility},ConverterParameter=2}"><local:SimpleProgressWorkspace x:Name="SimpleProgressView" /><Expander x:Name="KnowledgeExpander" Header="完整知识目录 · 搜索、编辑与知识包" Style="{StaticResource FocusExpander}"><local:KnowledgeWorkspace x:Name="KnowledgeView" Height="620" /></Expander><Button Content="科目与学习任务" Click="LegacyTasks_Click" Style="{StaticResource QuietButton}" HorizontalAlignment="Left" /></StackPanel>
+<StackPanel Visibility="{Binding Page,Converter={StaticResource PageVisibility},ConverterParameter=7}"><TextBlock Text="更多功能" Style="{StaticResource Heading}"/><TextBlock Text="需要时再展开，日常学习保持简单。" Style="{StaticResource MutedText}" Margin="0,0,0,20"/><WrapPanel><Button Content="历史学习记录" Tag="6" Click="MorePage_Click" Style="{StaticResource FocusButton}"/><Button Content="备考历程与日历" Tag="1" Click="MorePage_Click" Style="{StaticResource FocusButton}"/><Button Content="薄弱知识点" Tag="3" Click="MorePage_Click" Style="{StaticResource FocusButton}"/><Button Content="计划与任务" Click="LegacyTasks_Click" Style="{StaticResource FocusButton}"/><Button Content="设置、备份与恢复" Tag="5" Click="MorePage_Click" Style="{StaticResource FocusButton}"/><Button Content="参考目录与知识包" Tag="2" Click="MorePage_Click" Style="{StaticResource FocusButton}"/></WrapPanel><TextBlock Text="历史修订、片段操作仍在学习记录详情中；章节统计与阶段复盘在学习数据的展开项中。" Style="{StaticResource MutedText}" Margin="0,20,0,0"/></StackPanel><StackPanel x:Name="LegacyProgress" Visibility="Collapsed">
             <DockPanel>
               <WrapPanel DockPanel.Dock="Right">
                 <Button Content="＋ 科目" Click="AddSubject_Click" Style="{StaticResource FocusButton}" />
@@ -646,7 +603,7 @@
           </StackPanel>
           <StackPanel Visibility="{Binding Page,Converter={StaticResource PageVisibility},ConverterParameter=4}">
             <StackPanel>
-              <TextBlock Text="统计与复盘" Style="{StaticResource Heading}" />
+              <TextBlock Text="学习数据" Style="{StaticResource Heading}" /><UniformGrid Columns="3" Margin="0,12,0,16"><StackPanel Margin="0,0,12,0"><TextBlock Text="今日" Style="{StaticResource MutedText}"/><local:NaturalDuration Milliseconds="{Binding TodayDurationMs}" FontSize="26" Style="{StaticResource DurationNumber}" Foreground="{DynamicResource Accent}"/></StackPanel><StackPanel Margin="0,0,12,0"><TextBlock Text="本周" Style="{StaticResource MutedText}"/><local:NaturalDuration Milliseconds="{Binding WeekDurationMs}" FontSize="26" Style="{StaticResource DurationNumber}" Foreground="{DynamicResource Accent}"/></StackPanel><StackPanel Margin="0,0,12,0"><TextBlock Text="本月" Style="{StaticResource MutedText}"/><local:NaturalDuration Milliseconds="{Binding MonthDurationMs}" FontSize="26" Style="{StaticResource DurationNumber}" Foreground="{DynamicResource Accent}"/></StackPanel></UniformGrid>
               <WrapPanel >
                   <Button Content="今天" Tag="day" Click="StatsRange_Click" Style="{StaticResource FocusButton}" />
                   <Button Content="本周" Tag="week" Click="StatsRange_Click" Style="{StaticResource FocusButton}" />
@@ -655,12 +612,12 @@
                 <Button Content="查看原始记录 →" Click="StatsRecords_Click" Style="{StaticResource FocusButton}" /></WrapPanel>
             </StackPanel>
 
-            <WrapPanel Margin="0,0,0,8">
+            <Expander x:Name="StatsAdvancedExpander" Header="章节投入与学习复盘" Style="{StaticResource FocusExpander}"><WrapPanel Margin="0,0,0,8">
               <Button Content="数据概览" Tag="0" Click="StatsView_Click"><Button.Style><Style TargetType="Button" BasedOn="{StaticResource FocusButton}"><Style.Triggers><DataTrigger Binding="{Binding StatsView}" Value="0"><Setter Property="Background" Value="{DynamicResource SelectionSurface}" /><Setter Property="FontWeight" Value="SemiBold" /></DataTrigger></Style.Triggers></Style></Button.Style></Button>
               <Button Content="科目与章节" Tag="1" Click="StatsView_Click"><Button.Style><Style TargetType="Button" BasedOn="{StaticResource FocusButton}"><Style.Triggers><DataTrigger Binding="{Binding StatsView}" Value="1"><Setter Property="Background" Value="{DynamicResource SelectionSurface}" /><Setter Property="FontWeight" Value="SemiBold" /></DataTrigger></Style.Triggers></Style></Button.Style></Button>
               <Button Content="学习复盘" Tag="2" Click="StatsView_Click"><Button.Style><Style TargetType="Button" BasedOn="{StaticResource FocusButton}"><Style.Triggers><DataTrigger Binding="{Binding StatsView}" Value="2"><Setter Property="Background" Value="{DynamicResource SelectionSurface}" /><Setter Property="FontWeight" Value="SemiBold" /></DataTrigger></Style.Triggers></Style></Button.Style></Button>
-            </WrapPanel>
-            <Border Style="{StaticResource Toolbar}" Padding="0" Margin="0,4,0,8">
+            </WrapPanel></Expander>
+            <Expander Header="自定义日期与科目筛选" Style="{StaticResource FocusExpander}"><Border Style="{StaticResource Toolbar}" Padding="0" Margin="0,4,0,8">
               <StackPanel>
 
                 <WrapPanel>
@@ -680,9 +637,9 @@
                 </WrapPanel>
                 <TextBlock Text="原值聚合后显示整数秒 · 非零不足一秒显示“不足 1 秒” · 最多十年" FontSize="11" Foreground="{DynamicResource Muted}" Margin="0,4,0,0" Style="{StaticResource FocusTextBlock}" />
               </StackPanel>
-            </Border>
+            </Border></Expander>
 <StackPanel Visibility="{Binding StatsView,Converter={StaticResource PageVisibility},ConverterParameter=0}">
-            <Grid x:Name="StatsMetrics" Margin="0,0,0,8">
+            <Expander Header="区间汇总与统计口径" Style="{StaticResource FocusExpander}"><Grid x:Name="StatsMetrics" Margin="0,0,0,8">
               <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1.5*" />
                 <ColumnDefinition />
@@ -712,7 +669,7 @@
                 </TextBlock>
                 <TextBlock><TextBlock.Style><Style TargetType="TextBlock" BasedOn="{StaticResource MetaText}"><Setter Property="Text" Value="{Binding Analysis.LearningDays,StringFormat=有效学习 · 除以 {0} 天}" /><Style.Triggers><DataTrigger Binding="{Binding Analysis.LearningDays}" Value="0"><Setter Property="Text" Value="暂无学习日 · 暂不计算平均" /></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock>
               </StackPanel>
-            </Grid>
+            </Grid></Expander>
             <Grid>
               <Grid.ColumnDefinitions>
                 <ColumnDefinition x:Name="StatsLeft" Width="*" />
@@ -743,7 +700,7 @@
                 </StackPanel>
               </Border>
             </Grid>
-            <Border Style="{StaticResource SectionSurface}">
+            <Expander Header="学习热力日历" Style="{StaticResource FocusExpander}"><Border Style="{StaticResource SectionSurface}">
               <StackPanel>
                 <TextBlock Text="范围学习热力" Style="{StaticResource Subheading}" />
                 <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
@@ -751,7 +708,7 @@
                 </ScrollViewer>
                 <TextBlock Text="学习 / 休息标记 / 无记录 / 待核对分开；未知时长不计入。横向滚动查看完整范围，左右键可达每一天。" Style="{StaticResource MutedText}" />
               </StackPanel>
-            </Border>
+            </Border></Expander>
 </StackPanel>
 <StackPanel Visibility="{Binding StatsView,Converter={StaticResource PageVisibility},ConverterParameter=1}">
             <Border Style="{StaticResource SectionSurface}"><StackPanel>
@@ -927,7 +884,7 @@
           </StackPanel>
         </Grid>
       </ScrollViewer>
-      <Border Visibility="{Binding Page,Converter={StaticResource PageVisibility},ConverterParameter=2}" IsEnabled="{Binding Busy,Converter={StaticResource Inverse}}" Padding="24,16,24,12"><local:KnowledgeWorkspace x:Name="KnowledgeView" /></Border>
+
       <Border Grid.Row="1" Background="{DynamicResource CardBackground}" BorderBrush="{DynamicResource Line}" BorderThickness="0,1,0,0" Padding="24,8">
         <DockPanel>
           <TextBlock DockPanel.Dock="Right" Text="处理中…" Foreground="{DynamicResource Accent}" Visibility="{Binding Busy,Converter={StaticResource BoolVisibility}}" Style="{StaticResource FocusTextBlock}" />

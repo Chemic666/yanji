@@ -87,6 +87,7 @@ public sealed partial class KnowledgeWorkspaceViewModel : ObservableObject
     private int _generation;
     private long _epoch = -1;
     public double LastSearchMilliseconds { get; private set; }
+    internal bool MatchesSnapshot(IReadOnlyList<KnowledgeNode> nodes)=>nodes.Count==_nodes.Count&&nodes.All(n=>_map.TryGetValue(n.Id,out var current)&&current.Version==n.Version);
     public void InvalidateAfterRestore()
     {
         _generation++; _searchCancellation?.Cancel(); _epoch = -1;
@@ -230,9 +231,9 @@ public sealed partial class KnowledgeWorkspaceViewModel : ObservableObject
     private async Task WriteAsync(IReadOnlyList<KnowledgeNode> nodes, string reason, string id)
     {
         if (KnowledgeBusy) return; KnowledgeBusy = true;
-        try { var refreshLegacy = nodes.Any(n => !_map.TryGetValue(n.Id, out var old) || old.Name != n.Name || old.Archived != n.Archived);
+        try {
             var epoch = _epoch;
-            await Task.Run(() => Owner.Database.SaveKnowledgeNodes(nodes, reason, epoch)); if (refreshLegacy) Owner.Refresh();
+            await Task.Run(() => Owner.Database.SaveKnowledgeNodes(nodes, reason, epoch)); Owner.Refresh();
             await ReloadAsync(id); Feedback = reason + "已保存；学习时长未变更。"; }
         catch (Exception e) { Feedback = e.Message; }
         finally { KnowledgeBusy = false; }

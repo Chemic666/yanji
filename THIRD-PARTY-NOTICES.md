@@ -38,12 +38,12 @@ YanJi原创代码采用Apache-2.0；第三方内容及知识包保留各自条�
 | skill:winui-ui-testing | d399e3151db3a6e549ca4ac9d9cbeefa21260ed8 | MIT | 是 | 否 | .agents/skills/winui-ui-testing/LICENSE.txt |
 | Windows system fonts | Windows 11 system installation | Windows system-font usage terms; no font-file redistribution | 否 | 否 | 系统接口使用；无资源文件再分发 |
 | Windows application system icon | SystemIcons.Application | Windows/.NET provided resource usage; no extracted icon file | 否 | 否 | 系统接口使用；无资源文件再分发 |
-| org.yanji.reference.408 | 1.0.0 | CC0-1.0 | 是 | 是 | resources/licenses/KnowledgePack-CC0-1.0.txt |
+| org.yanji.reference.408 | 1.1.0 + historical 1.0.0 | CC0-1.0 | 是 | 是 | resources/licenses/KnowledgePack-CC0-1.0.txt |
 | org.yanji.reference.blank | 1.0.0 | CC0-1.0 | 是 | 是 | resources/licenses/KnowledgePack-CC0-1.0.txt |
-| org.yanji.reference.english1 | 1.0.0 | CC0-1.0 | 是 | 是 | resources/licenses/KnowledgePack-CC0-1.0.txt |
-| org.yanji.reference.english2 | 1.0.0 | CC0-1.0 | 是 | 是 | resources/licenses/KnowledgePack-CC0-1.0.txt |
-| org.yanji.reference.math1 | 1.0.0 | CC0-1.0 | 是 | 是 | resources/licenses/KnowledgePack-CC0-1.0.txt |
-| org.yanji.reference.math2 | 1.0.0 | CC0-1.0 | 是 | 是 | resources/licenses/KnowledgePack-CC0-1.0.txt |
+| org.yanji.reference.english1 | 1.1.0 + historical 1.0.0 | CC0-1.0 | 是 | 是 | resources/licenses/KnowledgePack-CC0-1.0.txt |
+| org.yanji.reference.english2 | 1.1.0 + historical 1.0.0 | CC0-1.0 | 是 | 是 | resources/licenses/KnowledgePack-CC0-1.0.txt |
+| org.yanji.reference.math1 | 1.1.0 + historical 1.0.0 | CC0-1.0 | 是 | 是 | resources/licenses/KnowledgePack-CC0-1.0.txt |
+| org.yanji.reference.math2 | 1.1.0 + historical 1.0.0 | CC0-1.0 | 是 | 是 | resources/licenses/KnowledgePack-CC0-1.0.txt |
 | org.yanji.reference.politics | 1.0.0 | CC0-1.0 | 是 | 是 | resources/licenses/KnowledgePack-CC0-1.0.txt |
 
 上游来源、版权/NOTICE保留要求、精确文本SHA见机器清单；NuGet作者/版权元数据见源码`docs/legal/nuget-dependencies.json`。原生SQLite核心为公有领域，SQLitePCLRaw包装层为Apache-2.0，两者不同。
