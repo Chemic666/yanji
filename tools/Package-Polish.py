@@ -54,7 +54,7 @@ def final():
     assert counters.attrib['passed']=='216' and counters.attrib['failed']=='0'
     assert read(ART/'final-data-and-retention.json')['Status']=='READY FOR FINAL APPROVAL'
     assert read(native/'shortcut-result.json')['Status']=='PASS'
-    perf=read(ART/'perf-final/result.json');assert perf['Status']=='PASS' and perf['ObservedMs']>=120000 and perf['Assembly']==VERSION+'+'+code
+    perf=read(ART/'perf-accepted/result.json');assert perf['Status']=='PASS' and perf['ObservedMs']>=120000 and perf['Assembly']==VERSION+'+'+code
     shots=read(native/'screenshots.json');assert len(shots)==10 and len({r['File'].casefold() for r in shots})==10
     gallery=['<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>RC-Polish · 真实WPF</title><style>body{font:16px system-ui;max-width:1200px;margin:32px auto;background:#f5f3ec;color:#28372e;padding:20px}img{max-width:100%;height:auto}figure{margin:24px 0}</style><h1>YanJi RC-Polish · 原生窗口</h1><p>本候选ZIP解压程序；实际200%DPI。不是网页模拟。物理IME、其他DPI与电源实验未执行。</p>']
     for row in shots:
@@ -77,7 +77,8 @@ def final():
     archives.append(pack(release/('YanJi-v'+VERSION+'-source.zip'),source(),code,head,'source'))
     def evidence():
         for name,data in files(ART):
-            if PurePosixPath(name).parts[0]=='publish' or PurePosixPath(name).parts[0].endswith('-data'):continue
+            if PurePosixPath(name).parts[0]=='publish' or PurePosixPath(name).parts[0].endswith(('-data','-build')):continue
+            if PurePosixPath(name).suffix.lower() in {'.exe','.dll','.pdb'}:continue
             yield 'evidence/'+name,data
         for p in sorted((ROOT/'docs').glob('V04-POLISH-*.md')):yield 'docs/'+p.name,p.read_bytes()
         yield 'resources/legal/third-party-licenses.json',(ROOT/'resources/legal/third-party-licenses.json').read_bytes()

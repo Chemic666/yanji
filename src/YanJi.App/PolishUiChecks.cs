@@ -74,7 +74,7 @@ internal static class PolishUiChecks
             }
             owner.Model.DarkTheme=false;await Wait(()=>!owner.Model.Busy);Write("shortcut-result.json",new{Status=passed?"PASS":"FAIL",Checks=checks.Count,Images=shots.Count,PhysicalIME="NOT TESTED",Method="real WPF controls and routed commands with synthetic composition/key arguments; not physical IME/keystrokes"});return passed;
         }
-        catch(Exception ex){Write("shortcut-failure.json",new{Error=ex.ToString()});return false;}
+        catch(Exception ex){Write("shortcut-failure.json",new{Error=ex.ToString(),Page=owner.Model.Page,Expanded=owner.KnowledgeExpander.IsExpanded,TreeVisible=owner.KnowledgeView.IsVisible,Subject=owner.KnowledgeView.Model?.Subject?.Id,Selected=owner.KnowledgeView.Model?.Selected?.Node.Id,Busy=owner.KnowledgeView.Model?.KnowledgeBusy,Feedback=owner.KnowledgeView.Model?.Feedback,Roots=owner.KnowledgeView.Model?.Roots.Select(r=>r.Node.Id)});return false;}
         finally{owner.TestDialogShown=null;}
     }
 }

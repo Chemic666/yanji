@@ -83,7 +83,7 @@ public partial class MainWindow : Window
         foreach(var (label,value) in new[]{("结束并保存",1),("暂停后退出",2),("取消退出",0)}){var button=new Button{Content=label};button.Click+=(_,_)=>{result=value;dialog.Close();};stack.Children.Add(button);}dialog.Content=stack;dialog.Height=280;dialog.ShowDialog();return result;
     }
     private async void Exit_Click(object sender,RoutedEventArgs e)=>await RequestExitAsync();
-    private async void Navigation_Changed(object sender,SelectionChangedEventArgs e){if(DataContext is MainViewModel vm){if(vm.Page==0)await vm.ChangeDayAsync(vm.LocalToday().ToDateTime(TimeOnly.MinValue));else await vm.SaveReflectionAsync();if(vm.Page==2)await SimpleProgressView.RefreshAsync();if(vm.Page==2&&KnowledgeView.Model is {} knowledge)await knowledge.ReloadAsync(knowledge.Selected?.Node.Id);MainScroll.ScrollToTop();}}
+    private async void Navigation_Changed(object sender,SelectionChangedEventArgs e){if(DataContext is MainViewModel vm){if(vm.Page==0)await vm.ChangeDayAsync(vm.LocalToday().ToDateTime(TimeOnly.MinValue));else await vm.SaveReflectionAsync();if(vm.Page==2)await SimpleProgressView.RefreshAsync();if(vm.Page==2&&KnowledgeView.Model is {KnowledgeBusy:false} knowledge)await knowledge.ReloadAsync(knowledge.Selected?.Node.Id);MainScroll.ScrollToTop();}}
     private async void TodayDetails_Click(object sender,RoutedEventArgs e){await Model.ChangeDayAsync(Model.LocalToday().ToDateTime(TimeOnly.MinValue));Model.Page=1;}
     private async void SaveReflection_Click(object sender,RoutedEventArgs e)=>await Model.SaveReflectionAsync();
     private async void KeepConfirmed_Click(object sender,RoutedEventArgs e)=>await Model.ResolveAsync([]);

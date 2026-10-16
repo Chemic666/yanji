@@ -23,3 +23,5 @@ SaveShortcuts集中处理WPF TextCompositionManager开始/更新/结束事件、
 Skill：实际读取yanji-domain-rules与dotnet-wpf参考，运行ui-ux-pro-max本地WPF查询“feedback focus animation”，落实绑定更新时机、MVVM、键盘可达与轻量反馈；systematic-debugging用于先测线程耗时再选修复。未安装新Skill/依赖，未调用Web设计引擎。
 
 官方参考：[WPF组合输入事件](https://learn.microsoft.com/en-us/dotnet/api/system.windows.input.textcompositionmanager?view=windowsdesktop-10.0)、[系统动画偏好](https://learn.microsoft.com/en-us/dotnet/api/system.windows.systemparameters.clientareaanimation?view=windowsdesktop-10.0)。
+
+最终定向验收发现并修正一个既存导航竞争：Navigation_Changed在OpenKnowledgeAsync的指定节点加载期间再次无目标Reload，覆盖选中状态。现有KnowledgeBusy为真时跳过重复导航加载；保留显式目标加载与稳定ID。原始失败、调用栈和修复后结果分别留存。
