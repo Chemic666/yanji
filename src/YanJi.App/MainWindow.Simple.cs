@@ -61,7 +61,7 @@ public partial class MainWindow
             dialog.SetField("state",((int)n.State).ToString());dialog.SetField("content",p?.Content??"");dialog.SetField("next",p?.Next??"");node=n;
         };
         TestDialogShown?.Invoke(dialog);
-        if(dialog.ShowDialog()!=true)return;var v=dialog.Values!;
-        await Model.RunAsync(()=>Model.Database.SaveProgressNote(v["node"],node.Version,(LearningState)int.Parse(v["state"]),v["content"],v["next"]),"学习进度已保存 · 无需计时");
+        dialog.CommitAsync=v=>Model.RunAsync(()=>Model.Database.SaveProgressNote(v["node"],node.Version,(LearningState)int.Parse(v["state"]),v["content"],v["next"]),"学习进度已保存 · 无需计时");
+        dialog.ShowDialog();
     }
 }

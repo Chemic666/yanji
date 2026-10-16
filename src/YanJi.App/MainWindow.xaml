@@ -1,4 +1,4 @@
-﻿<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:local="clr-namespace:YanJi.App" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Class="YanJi.App.MainWindow" Style="{StaticResource {x:Type Window}}" Title="研迹 YanJi · RC-Simple 2 · 2028 备考" Width="1200" Height="800" MinWidth="900" MinHeight="600" WindowStartupLocation="CenterScreen" SizeChanged="Layout_Changed" PreviewKeyDown="Window_KeyDown">
+﻿<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:local="clr-namespace:YanJi.App" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Class="YanJi.App.MainWindow" Style="{StaticResource {x:Type Window}}" Title="研迹 YanJi · RC-Polish · 2028 备考" Width="1200" Height="800" MinWidth="900" MinHeight="600" WindowStartupLocation="CenterScreen" SizeChanged="Layout_Changed" PreviewKeyDown="Window_KeyDown">
   <Window.Resources>
     <local:DurationDisplayConverter x:Key="DurationDisplay" />
     <local:PageVisibilityConverter x:Key="PageVisibility" />
@@ -143,7 +143,7 @@
         </StackPanel>
         <StackPanel DockPanel.Dock="Bottom">
           <Button Content="退出应用" Click="Exit_Click" x:Name="ExitButton" Style="{StaticResource QuietButton}" />
-          <TextBlock Text="V0.4 RC-Simple 2" FontSize="11" Foreground="{DynamicResource Muted}" x:Name="VersionHint" Margin="10,8,0,0" Style="{StaticResource FocusTextBlock}" />
+          <TextBlock Text="V0.4 RC-Polish" FontSize="11" Foreground="{DynamicResource Muted}" x:Name="VersionHint" Margin="10,8,0,0" Style="{StaticResource FocusTextBlock}" />
         </StackPanel>
         <ListBox x:Name="NavigationList" PreviewMouseLeftButtonUp="Navigation_Click" PreviewKeyDown="Navigation_KeyDown" SelectedIndex="{Binding NavigationIndex}" BorderThickness="0" Background="Transparent" SelectionChanged="Navigation_Changed" ItemContainerStyle="{StaticResource NavigationItem}" ScrollViewer.HorizontalScrollBarVisibility="Disabled"><ListBoxItem ToolTip="今日"><StackPanel Orientation="Horizontal"><local:FocusIcon Kind="timer" Width="20" Height="20" Margin="0,0,12,0" Stroke="{Binding Foreground,RelativeSource={RelativeSource AncestorType=ListBoxItem}}"/><TextBlock Text="今日" Tag="NavLabel" Style="{StaticResource FocusTextBlock}" /></StackPanel></ListBoxItem><ListBoxItem ToolTip="学习进度"><StackPanel Orientation="Horizontal"><local:FocusIcon Kind="plan" Width="20" Height="20" Margin="0,0,12,0" Stroke="{Binding Foreground,RelativeSource={RelativeSource AncestorType=ListBoxItem}}"/><TextBlock Text="学习进度" Tag="NavLabel" Style="{StaticResource FocusTextBlock}" /></StackPanel></ListBoxItem><ListBoxItem ToolTip="学习数据"><StackPanel Orientation="Horizontal"><local:FocusIcon Kind="stats" Width="20" Height="20" Margin="0,0,12,0" Stroke="{Binding Foreground,RelativeSource={RelativeSource AncestorType=ListBoxItem}}"/><TextBlock Text="学习数据" Tag="NavLabel" Style="{StaticResource FocusTextBlock}" /></StackPanel></ListBoxItem><ListBoxItem ToolTip="更多功能"><StackPanel Orientation="Horizontal"><local:FocusIcon Kind="settings" Width="20" Height="20" Margin="0,0,12,0" Stroke="{Binding Foreground,RelativeSource={RelativeSource AncestorType=ListBoxItem}}"/><TextBlock Text="更多功能" Tag="NavLabel" Style="{StaticResource FocusTextBlock}" /></StackPanel></ListBoxItem></ListBox>
       </DockPanel>
@@ -188,6 +188,7 @@
                 </StackPanel>
               </Button>
             </Grid>
+            <TextBlock Text="本段计时中 · 汇总在暂停或结束后更新" Visibility="{Binding TimerRunning,Converter={StaticResource BoolVisibility}}" Style="{StaticResource MutedText}" />
             <Border Background="{DynamicResource WarningSoft}" CornerRadius="8" Padding="16" Margin="0,0,0,20" Visibility="{Binding NeedsReview,Converter={StaticResource BoolVisibility}}">
               <StackPanel>
                 <TextBlock Text="待核对 · 未知时间未加入统计" FontWeight="SemiBold" Foreground="{DynamicResource Warning}" Style="{StaticResource FocusTextBlock}" />
@@ -612,7 +613,7 @@
           </StackPanel>
           <StackPanel Visibility="{Binding Page,Converter={StaticResource PageVisibility},ConverterParameter=4}">
             <StackPanel>
-              <TextBlock Text="学习数据" Style="{StaticResource Heading}" /><UniformGrid Columns="3" Margin="0,12,0,16"><StackPanel Margin="0,0,12,0"><TextBlock Text="今日" Style="{StaticResource MutedText}"/><local:NaturalDuration Milliseconds="{Binding TodayDurationMs}" FontSize="26" Style="{StaticResource DurationNumber}" Foreground="{DynamicResource Accent}"/></StackPanel><StackPanel Margin="0,0,12,0"><TextBlock Text="本周" Style="{StaticResource MutedText}"/><local:NaturalDuration Milliseconds="{Binding WeekDurationMs}" FontSize="26" Style="{StaticResource DurationNumber}" Foreground="{DynamicResource Accent}"/></StackPanel><StackPanel Margin="0,0,12,0"><TextBlock Text="本月" Style="{StaticResource MutedText}"/><local:NaturalDuration Milliseconds="{Binding MonthDurationMs}" FontSize="26" Style="{StaticResource DurationNumber}" Foreground="{DynamicResource Accent}"/></StackPanel></UniformGrid>
+              <TextBlock Text="学习数据" Style="{StaticResource Heading}" /><TextBlock Text="本段计时中 · 汇总在暂停或结束后更新" Visibility="{Binding TimerRunning,Converter={StaticResource BoolVisibility}}" Style="{StaticResource MutedText}" /><UniformGrid Columns="3" Margin="0,12,0,16"><StackPanel Margin="0,0,12,0"><TextBlock Text="今日" Style="{StaticResource MutedText}"/><local:NaturalDuration Milliseconds="{Binding TodayDurationMs}" FontSize="26" Style="{StaticResource DurationNumber}" Foreground="{DynamicResource Accent}"/></StackPanel><StackPanel Margin="0,0,12,0"><TextBlock Text="本周" Style="{StaticResource MutedText}"/><local:NaturalDuration Milliseconds="{Binding WeekDurationMs}" FontSize="26" Style="{StaticResource DurationNumber}" Foreground="{DynamicResource Accent}"/></StackPanel><StackPanel Margin="0,0,12,0"><TextBlock Text="本月" Style="{StaticResource MutedText}"/><local:NaturalDuration Milliseconds="{Binding MonthDurationMs}" FontSize="26" Style="{StaticResource DurationNumber}" Foreground="{DynamicResource Accent}"/></StackPanel></UniformGrid>
               <WrapPanel >
                   <Button Content="今天" Tag="day" Click="StatsRange_Click" Style="{StaticResource FocusButton}" />
                   <Button Content="本周" Tag="week" Click="StatsRange_Click" Style="{StaticResource FocusButton}" />

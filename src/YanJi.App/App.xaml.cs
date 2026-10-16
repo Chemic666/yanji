@@ -34,6 +34,9 @@ public partial class App : Application
     public bool M2Check {get;private set;}
     public bool SimpleCheck {get;private set;}
     public bool SimpleInteractionCheck {get;private set;}
+    public bool PolishPerf {get;private set;}
+    public bool PolishCheck {get;private set;}
+    public bool PolishShortcutsOnly {get;private set;}
     public bool V031Check {get;private set;}
     public bool V031Probe {get;private set;}
     internal bool ValidationFailed {get;set;}
@@ -68,6 +71,9 @@ public partial class App : Application
                 else if(e.Args[i]=="--m1-ui-check"&&i+1<e.Args.Length){SmokePath=Path.GetFullPath(e.Args[++i]);M1Check=true;M1UiOnly=true;}
                 else if(e.Args[i]=="--m4-check"&&i+1<e.Args.Length){SmokePath=Path.GetFullPath(e.Args[++i]);M4Check=true;} else if(e.Args[i]=="--m3-review-check"&&i+1<e.Args.Length){SmokePath=Path.GetFullPath(e.Args[++i]);M3Check=true;M3ReviewCheck=true;} else if(e.Args[i]=="--m3-check"&&i+1<e.Args.Length){SmokePath=Path.GetFullPath(e.Args[++i]);M3Check=true;}
                 else if(e.Args[i]=="--m2-check"&&i+1<e.Args.Length){SmokePath=Path.GetFullPath(e.Args[++i]);M2Check=true;}
+                else if(e.Args[i]=="--polish-shortcuts-only"&&i+1<e.Args.Length){SmokePath=Path.GetFullPath(e.Args[++i]);SimpleCheck=true;PolishShortcutsOnly=true;}
+                else if(e.Args[i]=="--polish-check"&&i+1<e.Args.Length){SmokePath=Path.GetFullPath(e.Args[++i]);SimpleCheck=true;SimpleInteractionCheck=true;PolishCheck=true;}
+                else if(e.Args[i]=="--polish-perf"&&i+1<e.Args.Length){SmokePath=Path.GetFullPath(e.Args[++i]);PolishPerf=true;}
                 else if(e.Args[i]=="--simple2-check"&&i+1<e.Args.Length){SmokePath=Path.GetFullPath(e.Args[++i]);SimpleCheck=true;SimpleInteractionCheck=true;}
                 else if(e.Args[i]=="--simple-check"&&i+1<e.Args.Length){SmokePath=Path.GetFullPath(e.Args[++i]);SimpleCheck=true;}
                 else if(e.Args[i]=="--v031-probe"&&i+1<e.Args.Length){SmokePath=Path.GetFullPath(e.Args[++i]);V031Probe=true;}
@@ -76,11 +82,12 @@ public partial class App : Application
                 else if(e.Args[i]=="--v02-visual"&&i+1<e.Args.Length){SmokePath=Path.GetFullPath(e.Args[++i]);V02Visual=true;}
                 else throw new ArgumentException("未知参数。支持 --data-dir <独立数据目录> 与 --smoke <报告目录>。");
             }
-            var candidateDefault=Path.Combine(AppContext.BaseDirectory,"data-rc-simple");
+            var candidateDefault=Path.Combine(AppContext.BaseDirectory,"data-rc-polish");
             if(SmokePath!=null&&explicitDirectory==null&&!(StartupOnly&&candidateDefault.StartsWith(Path.GetFullPath("artifacts")+Path.DirectorySeparatorChar,StringComparison.OrdinalIgnoreCase)&&SmokePath.StartsWith(Path.GetFullPath("artifacts")+Path.DirectorySeparatorChar,StringComparison.OrdinalIgnoreCase)))throw new ArgumentException("自动化验证必须指定独立数据目录。");
             _dataDirectory=Path.GetFullPath(explicitDirectory??candidateDefault);
             if(V021Capture && (V021Fixture==null||SmokePath==null||!SmokePath.StartsWith(Path.GetFullPath("artifacts")+Path.DirectorySeparatorChar,StringComparison.OrdinalIgnoreCase)||!_dataDirectory.StartsWith(Path.GetFullPath("artifacts")+Path.DirectorySeparatorChar,StringComparison.OrdinalIgnoreCase)))throw new ArgumentException("V021 capture requires fixture and fresh project artifacts data/output.");
-            if((V022Capture||V023Capture||V03Capture||V03Reopen||V03Layout||V03Recover||V031Probe||V031Check||M1Check||M2Check||M3Check||M4Check||SimpleCheck)&&(!SmokePath!.StartsWith(Path.GetFullPath("artifacts")+Path.DirectorySeparatorChar,StringComparison.OrdinalIgnoreCase)||!_dataDirectory.StartsWith(Path.GetFullPath("artifacts")+Path.DirectorySeparatorChar,StringComparison.OrdinalIgnoreCase)))throw new ArgumentException("Capture requires owned project artifacts.");
+            if((V022Capture||V023Capture||V03Capture||V03Reopen||V03Layout||V03Recover||V031Probe||V031Check||M1Check||M2Check||M3Check||M4Check||SimpleCheck||PolishPerf)&&(!SmokePath!.StartsWith(Path.GetFullPath("artifacts")+Path.DirectorySeparatorChar,StringComparison.OrdinalIgnoreCase)||!_dataDirectory.StartsWith(Path.GetFullPath("artifacts")+Path.DirectorySeparatorChar,StringComparison.OrdinalIgnoreCase)))throw new ArgumentException("Capture requires owned project artifacts.");
+            if(PolishPerf&&Directory.Exists(_dataDirectory)&&Directory.EnumerateFileSystemEntries(_dataDirectory).Any())throw new ArgumentException("Performance run requires fresh synthetic data.");
             if(V02Visual||V021Capture||V022Capture||V023Capture||V03Capture||V03Layout||V031Probe||V031Check||M1Check||M2Check||M3Check||M4Check||SimpleCheck)
             {
                 var formal=Path.GetFullPath(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"YanJi"));

@@ -102,6 +102,7 @@ internal static class SimpleInteractionValidation
             m.Page=7;Check(ButtonBy("计划与任务").IsEnabled,"legacy tasks editor entry retained");await Shot("more-light-1200");
             var backup=Path.Combine(output,"interaction.yanjibak");d.Backup(backup);d.ValidateBackup(backup);Check(d.Integrity()=="ok","isolated backup validation and integrity");
             Check(d.DailyTotals(m.LocalToday(),m.LocalToday()).Sum(x=>x.DurationMs)==raw,"exact millisecond statistics unchanged");
+            if(app.PolishCheck)Check(await PolishUiChecks.RunAsync(owner,output),"polish shortcuts, persistence failure and button states");
             Write("summary.json",new{RawMilliseconds=raw,Records=d.Records().Count,Progress=d.ProgressNotes(),Schema=d.Diagnostics()});
             Write("result.json",new{Status=failed?"FAIL":"PASS",Checks=checks.Count,Images=images.Count,Samples=samples.Count,NotTested=new[]{"physical IME candidates","other physical DPI","sleep hibernate restart","clean-machine offline","real user upgrade","screen reader","long soak"}});app.ValidationFailed=failed;
         }

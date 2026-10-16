@@ -39,11 +39,13 @@ public partial class MainWindow
         if(Model.CompletedStudy is not {} previous)return;
         var record=Model.Database.Records().SingleOrDefault(r=>r.Id==previous.Id);
         if(record==null){Model.CompletedStudy=null;Model.Status="这条学习记录已删除或不在当前数据中，未修改任何内容。";return;}
-        var v=Edit("已保存 · 可选补充",[new("note","本次备注（可选）",record.Note,Multiline:true),new("state","知识节点学习状态","keep",[new("keep","不修改"),new("0","未开始"),new("1","学习中"),new("2","已学习"),new("3","暂缓")]),new("weak","继续记录薄弱点","0",[new("0","跳过"),new("1","打开薄弱点关联")])],"关闭即可跳过，实际学习时间已保存。进度、自评掌握和验收独立。知识进度作为独立用户操作记录。");
-        if(v==null)return;
-        if(!await Model.RunAsync(()=>{if(record.Note!=v["note"])Model.Database.SaveRecord(record with{Note=v["note"]},"学习结束补充备注");},"学习备注已保存"))return;
+        var v=Edit("已保存 · 可选补充",[new("note","本次备注（可选）",record.Note,Multiline:true),new("state","知识节点学习状态","keep",[new("keep","不修改"),new("0","未开始"),new("1","学习中"),new("2","已学习"),new("3","暂缓")]),new("weak","继续记录薄弱点","0",[new("0","跳过"),new("1","打开薄弱点关联")])],"关闭即可跳过，实际学习时间已保存。进度、自评掌握和验收独立。知识进度作为独立用户操作记录。",commit:async v=>{
+        if(!await Model.RunAsync(()=>{if(record.Note!=v["note"])Model.Database.SaveRecord(record with{Note=v["note"]},"学习结束补充备注");},"学习备注已保存"))return false;
+        record=Model.Database.Records().Single(r=>r.Id==record.Id);
         if(v["state"]!="keep"&&record.ChapterId is {} nodeId)
-        {await Model.RunAsync(()=>{var n=Model.Database.KnowledgeNodes().Single(n=>n.Id==nodeId);Model.Database.SetLearningState(n.Id,n.Version,(LearningState)int.Parse(v["state"]));},"学习状态已按你的选择更新，掌握程度未变化");}
+        {if(!await Model.RunAsync(()=>{var n=Model.Database.KnowledgeNodes().Single(n=>n.Id==nodeId);Model.Database.SetLearningState(n.Id,n.Version,(LearningState)int.Parse(v["state"]));},"学习状态已按你的选择更新，掌握程度未变化"))return false;}
+        return true;});
+        if(v==null)return;
         if(v["weak"]=="1")await EditStudyWeakAsync(record);Model.CompletedStudy=null;
     }
     internal async Task AddNodeTaskAsync(KnowledgeNode node)

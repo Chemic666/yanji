@@ -16,8 +16,9 @@ public partial class KnowledgeWorkspace : UserControl
     private async void StudyTask_Click(object sender,RoutedEventArgs e)=>await Model!.Owner.StartTaskCommand.ExecuteAsync((LearningTask)((Button)sender).Tag);
     private async void StudyWeak_Click(object sender,RoutedEventArgs e){await OwnerWindow.EditNodeWeakAsync((WeakPoint)((Button)sender).Tag);if(Model?.Selected is {} row)await Model.ReloadAsync(row.Node.Id);}
     public KnowledgeWorkspaceViewModel? Model { get; private set; }
+    private readonly SaveShortcuts _saveShortcuts;
     private bool _detail;
-    public KnowledgeWorkspace() { InitializeComponent(); PreviewKeyDown += Keys; }
+    public KnowledgeWorkspace() { InitializeComponent(); PreviewKeyDown += Keys; _saveShortcuts=new(DetailPanel,async()=>{if(Model!=null)await Model.SaveCommand.ExecuteAsync(null);},()=>Model is {HasSelection:true,KnowledgeBusy:false}); }
     private async void Workspace_Loaded(object sender, RoutedEventArgs e)
     {
         if (Model != null) return;

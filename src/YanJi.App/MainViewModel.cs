@@ -105,7 +105,7 @@ public sealed partial class MainViewModel : ObservableObject
     public static string Duration(long milliseconds)=>DurationText.Format(milliseconds);
     private static void Replace<T>(ObservableCollection<T> target,IEnumerable<T> source){target.Clear();foreach(var item in source)target.Add(item);}
     private void LoadChapters(ObservableCollection<Chapter> target,string? subject,bool archived=false)
-    {var visible=subject==null?new System.Collections.Generic.HashSet<string>():VisibleReferenceIds(subject);var recent=Database.Records().Where(r=>r.SubjectId==subject&&r.ChapterId!=null).OrderByDescending(r=>r.CreatedAt).Select(r=>r.ChapterId!).Distinct().ToList();var list=subject==null?[]:Database.Chapters(subject,archived).Where(c=>(!c.Archived&&visible.Contains(c.Id))||target==TimerChapters&&c.Id==Timer.ChapterId&&Timer.IsActive).OrderBy(c=>recent.IndexOf(c.Id)<0?int.MaxValue:recent.IndexOf(c.Id)).ToList();Replace(target,new[]{new Chapter("",subject??"",list.Count==0?"暂无章节 · 可不指定":"不指定章节")}.Concat(list));}
+    {using var trace=PerfTrace.Span("LoadChapters.UI");var visible=subject==null?new System.Collections.Generic.HashSet<string>():VisibleReferenceIds(subject);var recent=Database.Records().Where(r=>r.SubjectId==subject&&r.ChapterId!=null).OrderByDescending(r=>r.CreatedAt).Select(r=>r.ChapterId!).Distinct().ToList();var list=subject==null?[]:Database.Chapters(subject,archived).Where(c=>(!c.Archived&&visible.Contains(c.Id))||target==TimerChapters&&c.Id==Timer.ChapterId&&Timer.IsActive).OrderBy(c=>recent.IndexOf(c.Id)<0?int.MaxValue:recent.IndexOf(c.Id)).ToList();Replace(target,new[]{new Chapter("",subject??"",list.Count==0?"暂无章节 · 可不指定":"不指定章节")}.Concat(list));}
     private static string? ChapterId(Chapter? chapter)=>string.IsNullOrWhiteSpace(chapter?.Id)?null:chapter.Id;
     partial void OnTimerSubjectChanged(Subject? value){LoadChapters(TimerChapters,value?.Id,_timer.Snapshot.IsActive);TimerChapter=TimerChapters.FirstOrDefault();}
     partial void OnManualSubjectChanged(Subject? value){LoadChapters(ManualChapters,value?.Id);ManualChapter=ManualChapters.FirstOrDefault();UpdateWarning();}
@@ -119,8 +119,10 @@ public sealed partial class MainViewModel : ObservableObject
     private RecordRow Row(StudyRecord record,DateOnly? focus=null)=>new(record,AllSubjects.FirstOrDefault(s=>s.Id==record.SubjectId)?.Name??record.SubjectId,
         AllChapters.FirstOrDefault(c=>c.Id==record.ChapterId)?.Name??"未指定章节",Duration(record.DurationMs),
         string.Join(" · ",record.Parts.GroupBy(p=>p.Date).Select(g=>$"{g.Key:MM-dd} {Duration(g.Sum(p=>p.DurationMs))}")),record.Source==SessionSource.Timer?"计时":"补录",focus==null?null:record.Parts.Where(p=>p.Date==focus).Sum(p=>p.DurationMs),record.Id==Timer.SessionId&&Timer.State==TimerState.NeedsReview,focus,focus);
+    private DateOnly _summaryDate;
     public void Refresh()
     {
+        using var trace=PerfTrace.Span("Refresh.UI");
         var snapshot=_timer.Snapshot;var active=snapshot.IsActive;
         var timerId=active?snapshot.SubjectId:TimerSubject?.Id;var timerChapterId=active?snapshot.ChapterId:TimerChapter?.Id;
         var manualId=ManualSubject?.Id;var manualChapterId=ManualChapter?.Id;
@@ -134,13 +136,14 @@ public sealed partial class MainViewModel : ObservableObject
         Replace(Tasks,Database.Tasks());Replace(WeakPoints,Database.WeakPoints());RefreshFocusTasks();RefreshLearning();
         ZoneId=Database.Setting("zone","Asia/Shanghai");TimeParts.ResolveZone(ZoneId);
         ExamDate=Database.ExamProfiles().FirstOrDefault(p=>p.Id=="legacy-default")?.ExamDate is DateOnly date?"考试日期 "+date.ToString("yyyy-MM-dd"):"2028 年入学 · 考试日期待定";
-        var today=LocalToday();var week=today.AddDays(-(((int)today.DayOfWeek+6)%7));var month=new DateOnly(today.Year,today.Month,1);
+        var today=LocalToday();_summaryDate=today;var week=today.AddDays(-(((int)today.DayOfWeek+6)%7));var month=new DateOnly(today.Year,today.Month,1);
         TodayDurationMs=Database.DailyTotals(today,today).Sum(x=>x.DurationMs);WeekDurationMs=Database.DailyTotals(week,today).Sum(x=>x.DurationMs);MonthDurationMs=Database.DailyTotals(month,today).Sum(x=>x.DurationMs);
         TodayTotal=Duration(TodayDurationMs);WeekTotal=Duration(WeekDurationMs);MonthTotal=Duration(MonthDurationMs);
         Replace(TodayRecords,Database.Records(today).OrderByDescending(r=>r.CreatedAt).Take(8).Select(r=>Row(r,today)));RefreshPresentation();LoadDay();UpdateWarning();NotifySimpleViews();
     }
     private void LoadDay()
     {
+        using var trace=PerfTrace.Span("LoadDay.UI");
         var date=DateOnly.FromDateTime(SelectedDate);Replace(DayRecords,Database.Records(date,ShowDeleted).Select(r=>Row(r,date)));
         if(!_reflectionDirty)
         {_loadingReflection=true;Reflection=Database.Reflection(date);_reflectionDate=date;_loadingReflection=false;}
@@ -163,7 +166,7 @@ public sealed partial class MainViewModel : ObservableObject
     {
         var snapshot=_timer.Snapshot;
         var justCompleted=snapshot.State==TimerState.Completed&&_durable?.IsActive==true;
-        try{var clock=Stopwatch.StartNew();var saved=await Task.Run(()=>Database.SaveTimer(snapshot,reason));TimerSaveCount++;TimerSaveTotalMilliseconds+=clock.Elapsed.TotalMilliseconds;_timer.ConfirmSaved(saved.Version,saved.Context);_durable=saved;_lastCheckpoint=DateTimeOffset.UtcNow;_timerRetryAt=DateTimeOffset.MinValue;}
+        try{var clock=Stopwatch.StartNew();var saved=await Task.Run(()=>{using var trace=PerfTrace.Span("SaveTimer.Background");return Database.SaveTimer(snapshot,reason);});TimerSaveCount++;TimerSaveTotalMilliseconds+=clock.Elapsed.TotalMilliseconds;_timer.ConfirmSaved(saved.Version,saved.Context);_durable=saved;_lastCheckpoint=DateTimeOffset.UtcNow;_timerRetryAt=DateTimeOffset.MinValue;}
         catch
         {
             _timer=new();if(_durable?.IsActive==true){_timer.Restore(_durable,WindowsClock.Sample());_timer.MarkUncertain("保存失败；仅保留上次成功检查点，请核对未保存时间。");}
@@ -173,6 +176,7 @@ public sealed partial class MainViewModel : ObservableObject
     }
     public async Task TickAsync()
     {
+        using var trace=PerfTrace.Span("Tick.Async");
         if(Busy)return;
         if(BreakActive)_break?.Advance(WindowsClock.Sample());
         if(_reflectionDirty&&DateTimeOffset.UtcNow>=_reflectionRetryAt)await SaveReflectionAsync();
@@ -183,7 +187,7 @@ public sealed partial class MainViewModel : ObservableObject
         var interval=int.TryParse(Database.Setting("checkpoint-seconds","15"),out var number)?Math.Clamp(number,2,60):15;
         if(TimerRunning&&(DateTimeOffset.UtcNow-_lastCheckpoint).TotalSeconds>=interval || _durable?.State!=_timer.Snapshot.State)
         {
-            Busy=true;try{await PersistTimerAsync(_timer.Snapshot.State==TimerState.Completed?"专注目标完成":before==TimerState.Running&&NeedsReview?"异常待核对":null);Refresh();}
+            Busy=true;try{await PersistTimerAsync(_timer.Snapshot.State==TimerState.Completed?"专注目标完成":before==TimerState.Running&&NeedsReview?"异常待核对":null);if(before!=_timer.Snapshot.State||_summaryDate!=LocalToday())Refresh();}
             catch(Exception e){_timerRetryAt=DateTimeOffset.UtcNow.AddSeconds(30);Status="计时保存失败："+e.Message;Error?.Invoke(Status);}finally{Busy=false;UpdateTimer();}
         }
     }
@@ -206,7 +210,7 @@ public sealed partial class MainViewModel : ObservableObject
     {
         if(!Busy&&!TimerActive&&await PauseBreakAsync())return;
         if(Busy||!TimerActive||NeedsReview)return;Busy=true;
-        try{if(TimerRunning)_timer.Pause(WindowsClock.Sample());else _timer.Resume(WindowsClock.Sample());await PersistTimerAsync(TimerRunning?"暂停":"继续");Status="计时状态已保存";}
+        try{var pausing=TimerRunning;if(pausing)_timer.Pause(WindowsClock.Sample());else _timer.Resume(WindowsClock.Sample());UpdateTimer();await PersistTimerAsync(pausing?"暂停":"继续");if(pausing)Refresh();Status="计时状态已保存";}
         catch(Exception e){Status=e.Message;Error?.Invoke(Status);}finally{Busy=false;UpdateTimer();}
     }
     [RelayCommand] private async Task FinishAsync()
@@ -239,15 +243,16 @@ public sealed partial class MainViewModel : ObservableObject
         try{_timer.ResolveReview(extra,WindowsClock.Sample());await PersistTimerAsync("用户核对未知时间");Refresh();Status="核对完成，计时保持暂停；可以继续或结束。";}
         catch(Exception e){Status=e.Message;Error?.Invoke(Status);}finally{Busy=false;UpdateTimer();}
     }
-    [RelayCommand] private async Task AddManualAsync()
+    [RelayCommand] private async Task AddManualAsync()=>await AddManualRecordAsync();
+    internal async Task<bool> AddManualRecordAsync(string? requestId=null)
     {
-        if(ManualSubject==null||Busy)return;
-        if(!double.TryParse(ManualMinutes,NumberStyles.Number,CultureInfo.CurrentCulture,out var minutes)||!double.IsFinite(minutes)||minutes<=0||minutes>1440){Status="请输入大于 0、最多 1440 的分钟数。";return;}
+        if(ManualSubject==null||Busy)return false;
+        if(!double.TryParse(ManualMinutes,NumberStyles.Number,CultureInfo.CurrentCulture,out var minutes)||!double.IsFinite(minutes)||minutes<=0||minutes>1440){Status="请输入大于 0、最多 1440 的分钟数。";return false;}
         try
-        {await FlushTimerAsync();var record=new StudyRecord(Guid.NewGuid().ToString("N"),ManualSubject.Id,ChapterId(ManualChapter),SessionSource.Manual,ManualNote,
+        {await FlushTimerAsync();var record=new StudyRecord(requestId??Guid.NewGuid().ToString("N"),ManualSubject.Id,ChapterId(ManualChapter),SessionSource.Manual,ManualNote,
             [TimeParts.Duration(DateOnly.FromDateTime(ManualDate),TimeSpan.FromMinutes(minutes),ZoneId)],Context:ContextFor(ChapterId(ManualChapter),ManualTask));
-            if(await RunAsync(()=>Database.SaveRecord(record,"追加学习时长"),"补录已追加；已有记录可在每日详情中修正。"))ManualNote="";}
-        catch(Exception e){Status="补录未完成："+e.Message;Error?.Invoke(Status);}
+            var saved=await RunAsync(()=>Database.SaveRecord(record,"追加学习时长"),"补录已追加；已有记录可在每日详情中修正。");if(saved)ManualNote="";return saved;}
+        catch(Exception e){Status="补录未完成："+e.Message;Error?.Invoke(Status);return false;}
     }
     public async Task FlushTimerAsync(){if(Busy||!TimerActive)return;Busy=true;try{_timer.Advance(WindowsClock.Sample());await PersistTimerAsync();}finally{Busy=false;UpdateTimer();}}
     public async Task<bool> SaveReflectionAsync()

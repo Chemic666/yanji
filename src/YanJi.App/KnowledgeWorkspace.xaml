@@ -85,7 +85,7 @@
             <TextBlock Text="把知识整理成自己的路径" Style="{StaticResource Subheading}" TextAlignment="Center" TextWrapping="Wrap" />
             <TextBlock Text="选择一个章节查看进度；也可以先新增根章节，再逐步细分。" Style="{StaticResource MutedText}" TextAlignment="Center" TextWrapping="Wrap" Margin="0,8,0,0" />
           </StackPanel>
-          <WrapPanel Grid.Row="2" Margin="0,12,0,0" Visibility="{Binding HasSelection,Converter={StaticResource Visible}}" IsEnabled="{Binding KnowledgeBusy,Converter={StaticResource Inverse}}"><Button Content="保存修改" Command="{Binding SaveCommand}" Style="{StaticResource Primary}" /><Button Content="{Binding ArchiveAction}" Click="Archive_Click" Style="{StaticResource QuietButton}" Margin="8,0,0,0" /></WrapPanel>
+          <WrapPanel Grid.Row="2" Margin="0,12,0,0" Visibility="{Binding HasSelection,Converter={StaticResource Visible}}" IsEnabled="{Binding KnowledgeBusy,Converter={StaticResource Inverse}}"><TextBlock Text="单行 Enter 保存 · 多行 Ctrl+Enter 保存" Style="{StaticResource MutedText}" /><Button Content="保存修改" Command="{Binding SaveCommand}" Style="{StaticResource Primary}" /><Button Content="{Binding ArchiveAction}" Click="Archive_Click" Style="{StaticResource QuietButton}" Margin="8,0,0,0" /></WrapPanel>
         </Grid>
       </Border>
     </Grid>

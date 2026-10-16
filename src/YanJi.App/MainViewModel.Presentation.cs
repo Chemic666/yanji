@@ -74,6 +74,7 @@ public sealed partial class MainViewModel
     private bool _themeLoading;
     private void RefreshPresentation()
     {
+        using var trace=PerfTrace.Span("Presentation.UI");
         _records=Database.Records(null,true);_settings=Database.Settings();
         var subject=RecordSubjectId;var stats=StatsSubjectId;var weak=WeakSubjectId;
         Replace(SubjectFilters,new[]{new Choice("","全部科目")}.Concat(AllSubjects.Select(s=>new Choice(s.Id,s.Name+(s.Archived?" · 归档":"")))));
@@ -128,6 +129,7 @@ public sealed partial class MainViewModel
     {var after=JsonSerializer.Deserialize<WeakPoint>(r.AfterJson??"null");return $"{r.At.ToLocalTime():yyyy-MM-dd HH:mm} · {(after==null?r.Reason:WeakName(after.State))}";}));
     private void BuildAnalytics()
     {
+        using var trace=PerfTrace.Span("Analytics.UI");
         try
         {
             var from=DateOnly.FromDateTime(StatsFrom);var to=DateOnly.FromDateTime(StatsTo);

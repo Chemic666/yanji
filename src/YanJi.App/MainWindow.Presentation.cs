@@ -14,7 +14,7 @@ public partial class MainWindow
     private IInputElement? _detailFocus;
     internal Action<Window>? TestDialogShown {get;set;}
     private bool Confirm(string title,string message,string action)
-    {var dialog=new ConfirmDialog(this,title,message,action);TestDialogShown?.Invoke(dialog);return dialog.ShowDialog()==true;}
+    {var dialogOwner=Application.Current.Windows.OfType<EditorDialog>().FirstOrDefault(w=>w.Owner==this&&w.IsVisible) as Window??this;var dialog=new ConfirmDialog(dialogOwner,title,message,action);TestDialogShown?.Invoke(dialog);return dialog.ShowDialog()==true;}
     private void RefreshChartThemes(){foreach(var chart in VisualChildren(this).OfType<StudyChart>())chart.RefreshTheme();}
     private static IEnumerable<DependencyObject> VisualChildren(DependencyObject root)
     {for(var i=0;i<VisualTreeHelper.GetChildrenCount(root);i++){var child=VisualTreeHelper.GetChild(root,i);yield return child;foreach(var d in VisualChildren(child))yield return d;}}
@@ -49,12 +49,15 @@ public partial class MainWindow
     private async void QuickAdd_Click(object sender,RoutedEventArgs e)
     {
         if(Model.Subjects.Count==0){Model.Status="请先添加或恢复一个使用中的科目，再补录学习。";return;}
-        var v=Edit("快速补录 · 追加一次学习",[new("date","日期 *（yyyy-MM-dd）",Model.LocalToday().ToString("yyyy-MM-dd")),new("subject","科目 *",Model.ManualSubject?.Id??Model.Subjects.First().Id,SubjectChoices(includeArchived:false)),new("minutes","时长（分钟）*","30"),new("chapter","主要章节（可选）","",ChapterChoices(includeArchived:false)),new("task","任务（可选）","",TaskChoices()),new("note","备注（可选）","",Multiline:true)],
-            "仅日期、科目、时长必填。纯时长不虚构起止位置；已有记录请使用“编辑”，不要重复追加。",v=>{Date(v["date"]);if(!double.TryParse(v["minutes"],out var m)||!double.IsFinite(m)||m<=0||m>1440)return "分钟数必须大于 0、最多 1440。";return Required(v,"date","subject","minutes")??CheckChapter(v);});
-        if(v==null)return;Model.ManualDate=Date(v["date"])!.Value.ToDateTime(TimeOnly.MinValue);Model.ManualSubject=Model.Subjects.FirstOrDefault(s=>s.Id==v["subject"]);
+        var requestId=Id();
+        await EditPersistAsync("快速补录 · 追加一次学习",[new("date","日期 *（yyyy-MM-dd）",Model.LocalToday().ToString("yyyy-MM-dd")),new("subject","科目 *",Model.ManualSubject?.Id??Model.Subjects.First().Id,SubjectChoices(includeArchived:false)),new("minutes","时长（分钟）*","30"),new("chapter","主要章节（可选）","",ChapterChoices(includeArchived:false)),new("task","任务（可选）","",TaskChoices()),new("note","备注（可选）","",Multiline:true)],
+            "仅日期、科目、时长必填。纯时长不虚构起止位置；已有记录请使用“编辑”，不要重复追加。",v=>{Date(v["date"]);if(!double.TryParse(v["minutes"],out var m)||!double.IsFinite(m)||m<=0||m>1440)return "分钟数必须大于 0、最多 1440。";return Required(v,"date","subject","minutes")??CheckChapter(v);},commit:async v=>
+        {
+            Model.ManualDate=Date(v["date"])!.Value.ToDateTime(TimeOnly.MinValue);Model.ManualSubject=Model.Subjects.FirstOrDefault(s=>s.Id==v["subject"]);
         Model.ManualChapter=Model.ManualChapters.FirstOrDefault(c=>c.Id==v["chapter"]);Model.ManualMinutes=v["minutes"];Model.ManualNote=v["note"];Model.ManualTask=Model.Database.Tasks().FirstOrDefault(t=>t.Id==v["task"]);
-        if(Model.ManualWarning.StartsWith("这一天")&&!Confirm("这一天已有该科目记录",Model.ManualWarning+"\n\n确认是在追加另一段学习，而非修正原记录？","仍然追加"))return;
-        await Model.AddManualCommand.ExecuteAsync(null);
+        if(Model.ManualWarning.StartsWith("这一天")&&!Confirm("这一天已有该科目记录",Model.ManualWarning+"\n\n确认是在追加另一段学习，而非修正原记录？","仍然追加"))return false;
+        return await Model.AddManualRecordAsync(requestId);
+        });
     }
     private async void Metric_Click(object sender,RoutedEventArgs e)
     {if(!await Model.SaveReflectionAsync())return;var today=Model.LocalToday();var tag=((Button)sender).Tag?.ToString();var from=tag=="week"?today.AddDays(-(((int)today.DayOfWeek+6)%7)):tag=="month"?new DateOnly(today.Year,today.Month,1):today;Model.OpenRecords(from,today);MainScroll.ScrollToTop();}

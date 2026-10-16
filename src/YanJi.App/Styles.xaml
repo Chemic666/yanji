@@ -1,4 +1,4 @@
-<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="clr-namespace:YanJi.App">
   <SolidColorBrush x:Key="SelectionSurface" Color="#DFE8D9" />
   <SolidColorBrush x:Key="SelectedInk" Color="#456653" />
   <SolidColorBrush x:Key="Accent" Color="#456653" />
@@ -79,8 +79,9 @@
     <Setter Property="Margin" Value="0,0,8,4" />
     <Setter Property="Foreground" Value="{DynamicResource Ink}" />
     <Setter Property="Background" Value="{DynamicResource Soft}" />
-    <Setter Property="BorderBrush" Value="Transparent" />
-    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Line}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="local:ButtonFeedback.Animate" Value="True" />
     <Setter Property="Cursor" Value="Hand" />
     <Setter Property="HorizontalContentAlignment" Value="Center" />
     <Setter Property="VerticalContentAlignment" Value="Center" />
@@ -90,17 +91,12 @@
         <ControlTemplate TargetType="Button">
           <Grid>
             <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8" />
-            <Border x:Name="Feedback" Background="{DynamicResource Accent}" CornerRadius="8" Opacity="0" IsHitTestVisible="False" />
-            <ContentPresenter Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
-            <Border x:Name="FocusRing" Margin="-2" BorderBrush="{DynamicResource Accent}" BorderThickness="2" CornerRadius="10" Visibility="Collapsed" IsHitTestVisible="False" />
+            <Border x:Name="Feedback" Background="{TemplateBinding Foreground}" CornerRadius="8" Opacity="0" IsHitTestVisible="False" />
+            <ContentPresenter x:Name="ButtonContent" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+            <Border x:Name="FocusRing" Margin="-2" BorderBrush="{DynamicResource Accent}" BorderThickness="1.5" CornerRadius="10" Visibility="Collapsed" IsHitTestVisible="False" />
           </Grid>
           <ControlTemplate.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
-              <Setter TargetName="Feedback" Property="Opacity" Value="0.10" />
-            </Trigger>
-            <Trigger Property="IsPressed" Value="True">
-              <Setter TargetName="Feedback" Property="Opacity" Value="0.22" />
-            </Trigger>
+            <Trigger Property="IsPressed" Value="True"><Setter TargetName="ButtonContent" Property="Opacity" Value="0.82" /></Trigger>
             <Trigger Property="IsKeyboardFocused" Value="True">
               <Setter TargetName="FocusRing" Property="Visibility" Value="Visible" />
             </Trigger>
@@ -109,6 +105,8 @@
               <Setter Property="Opacity" Value="0.65" />
               <Setter Property="Cursor" Value="Arrow" />
             </Trigger>
+            <Trigger Property="local:ButtonFeedback.State" Value="Saving"><Setter Property="Content" Value="保存中…" /><Setter Property="Foreground" Value="{DynamicResource AccentInk}" /><Setter Property="Opacity" Value="1" /></Trigger>
+            <Trigger Property="local:ButtonFeedback.State" Value="Success"><Setter Property="Content" Value="已保存" /><Setter Property="Foreground" Value="{DynamicResource AccentInk}" /><Setter Property="Opacity" Value="1" /></Trigger>
           </ControlTemplate.Triggers>
         </ControlTemplate>
       </Setter.Value>
@@ -116,17 +114,24 @@
   </Style>
   <Style x:Key="Primary" TargetType="Button" BasedOn="{StaticResource FocusButton}">
     <Setter Property="Background" Value="{DynamicResource Accent}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Accent}" />
+    <Setter Property="FontWeight" Value="SemiBold" />
     <Setter Property="Foreground" Value="{DynamicResource AccentInk}" />
     <Setter Property="MinHeight" Value="44" />
   </Style>
   <Style x:Key="DangerButton" TargetType="Button" BasedOn="{StaticResource FocusButton}">
     <Setter Property="Background" Value="{DynamicResource DangerSoft}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource Danger}" />
     <Setter Property="Foreground" Value="{DynamicResource Danger}" />
   </Style>
   <Style x:Key="QuietButton" TargetType="Button" BasedOn="{StaticResource FocusButton}">
     <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
     <Setter Property="Padding" Value="8,6" />
   </Style>
+  <Style x:Key="SecondaryButton" TargetType="Button" BasedOn="{StaticResource FocusButton}" />
+  <Style x:Key="GhostButton" TargetType="Button" BasedOn="{StaticResource QuietButton}" />
+  <Style x:Key="IconButton" TargetType="Button" BasedOn="{StaticResource QuietButton}"><Setter Property="MinWidth" Value="32" /><Setter Property="MinHeight" Value="32" /><Setter Property="Padding" Value="6" /></Style>
   <Style x:Key="NavigationItem" TargetType="ListBoxItem">
     <Setter Property="Padding" Value="12,10" />
     <Setter Property="MinHeight" Value="44" />
