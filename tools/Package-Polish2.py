@@ -48,16 +48,16 @@ def final():
     native_matches=[p.parent for p in ART.glob('native-*/provenance.json') if read(p)['Assembly']==VERSION+'+'+code and (p.parent/'result.json').is_file() and read(p.parent/'result.json')['Status']=='PASS']
     assert len(native_matches)==1,'Select exactly one successful native run of the tagged program'
     native=native_matches[0];result=read(native/'result.json');provenance=read(native/'provenance.json')
-    assert result['Status']=='PASS' and result['Checks']>=36
+    assert result['Status']=='PASS' and result['Checks']>=37
     assert provenance['Assembly']==VERSION+'+'+code and provenance['DllSha256']==candidate['BuildInfo']['DllSha256']
-    counters=next(e for e in ET.parse(ROOT/'artifacts/v04-polish/core/core-simple.trx').iter() if e.tag.endswith('Counters'))
+    counters=next(e for e in ET.parse(ART/'core/core-simple.trx').iter() if e.tag.endswith('Counters'))
     assert counters.attrib['passed']=='216' and counters.attrib['failed']=='0'
-    assert read(ART/'final-data-and-retention.json')['Status']=='READY FOR FINAL APPROVAL'
+    assert read(ART/'final-data-and-retention-approval.json')['Status']=='READY FOR FINAL APPROVAL'
     assert read(native/'shortcuts/shortcut-result.json')['Status']=='PASS'
-    assert read(ART/'windows-input.json')['Status']=='PASS'
-    perf=read(ART/'perf-delivery/result.json');assert perf['Status']=='PASS' and perf['ObservedMs']>=120000 and perf['Assembly']==VERSION+'+'+code
+    assert read(ART/'windows-input-approval.json')['Status']=='PASS'
+    perf=read(ART/'perf-approval/result.json');assert perf['Status']=='PASS' and perf['ObservedMs']>=120000 and perf['Assembly']==VERSION+'+'+code
     shots=read(native/'screenshots.json');assert len(shots)>=12 and len({r['File'].casefold() for r in shots})==len(shots)
-    gallery=['<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>RC-Polish · 真实WPF</title><style>body{font:16px system-ui;max-width:1200px;margin:32px auto;background:#f5f3ec;color:#28372e;padding:20px}img{max-width:100%;height:auto}figure{margin:24px 0}</style><h1>YanJi RC-Polish · 原生窗口</h1><p>本候选ZIP解压程序；实际200%DPI。不是网页模拟。物理IME、其他DPI与电源实验未执行。</p>']
+    gallery=['<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>RC-Polish.2 · 真实WPF</title><style>body{font:16px system-ui;max-width:1200px;margin:32px auto;background:#f5f3ec;color:#28372e;padding:20px}img{max-width:100%;height:auto}figure{margin:24px 0}</style><h1>YanJi RC-Polish.2 · 原生窗口</h1><p>本候选ZIP解压程序；实际200%DPI。不是网页模拟。物理IME、其他DPI与电源实验未执行。</p>']
     for row in shots:
         name=row['File'];assert PurePosixPath(name).name==name and '\\' not in name
         data=(native/name).read_bytes();assert len(data)==row['Bytes'] and sha(data)==row['Sha256']
@@ -90,7 +90,7 @@ def final():
             assert z.testzip() is None
             index=json.loads(z.read('manifest-sha256.json'))['Files'];assert set(z.namelist())==set(index)|{'manifest-sha256.json'}
             for name,row in index.items():data=z.read(name);assert len(data)==row['Bytes'] and sha(data)==row['Sha256']
-    dump(release/'release-manifest.json',{'Status':'READY FOR FINAL APPROVAL','WindowsInput':read(ART/'windows-input.json')['Status'],'Version':VERSION,'Branch':git('branch','--show-current'),'CodeHead':code,'DocumentationHead':head,'Tag':TAG,'Assembly':provenance['Assembly'],'BinarySha256':provenance['DllSha256'],'Archives':archives,'CoreTestsRun':0,'CoreTestsReused':216,'ReuseCondition':'Core/Data/resources/dependency versions unchanged from RC-Polish.1; existing216 raw TRX retained; UI test driver updated for new exit choices','NativeChecks':result['Checks'],'NativeImages':len(shots),'NativeTimerSamples':9,'ShortcutChecks':read(native/'shortcuts/shortcut-result.json')['Checks'],'PhysicalIME':'NOT TESTED','PerformanceFinalObservedMs':perf['ObservedMs'],'RealUserDataAccessed':False,'NoPublicRelease':True,'NotTested':result['NotTested']})
+    dump(release/'release-manifest.json',{'Status':'READY FOR FINAL APPROVAL','WindowsInput':read(ART/'windows-input-approval.json')['Status'],'Version':VERSION,'Branch':git('branch','--show-current'),'CodeHead':code,'DocumentationHead':head,'Tag':TAG,'Assembly':provenance['Assembly'],'BinarySha256':provenance['DllSha256'],'Archives':archives,'CoreTestsRun':0,'CoreTestsReused':216,'ReuseCondition':'Core/Data/resources/dependency versions unchanged from RC-Polish.1; existing216 raw TRX retained; UI test driver updated for new exit choices','NativeChecks':result['Checks'],'NativeImages':len(shots),'NativeTimerSamples':9,'ShortcutChecks':read(native/'shortcuts/shortcut-result.json')['Checks'],'PhysicalIME':'NOT TESTED','PerformanceFinalObservedMs':perf['ObservedMs'],'RealUserDataAccessed':False,'NoPublicRelease':True,'NotTested':read(ART/'windows-input-approval.json')['NotTested'],'PerformanceDetails':['perf-approval','perf-foreground','performance-final-summary.json'],'ButtonStateReuse':'review-final/states/reuse.json','ExternalWindowsInputReuse':'windows-input-approval.json'})
     new(release/'SHA256SUMS.txt',''.join(r['Sha256']+'  '+r['File']+'\n' for r in archives).encode())
     new(release/'MANUAL-POLISH.md',(ROOT/'docs/V04-POLISH2-START.md').read_bytes())
     dump(release/'space-summary.json',{'ReleaseBytes':sum(p.stat().st_size for p in release.rglob('*') if p.is_file()),'ArtifactsBytes':sum(p.stat().st_size for p in ART.rglob('*') if p.is_file()),'SelfContainedCopiesCreated':1,'HistoricalFilesDeleted':0})

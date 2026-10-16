@@ -8,7 +8,7 @@
 - [x] 迷你窗：WindowStyle=None、AllowsTransparency、独立不透明文字、约90%面板、圆角/细边；拖动、位置与置顶持久化，悬停/键盘焦点呈现操作。无动态背景模糊。
 - [x] Soft Depth按钮：共享模板/派生等级，上沿高光、轻量绘制阴影、垂直明暗、明确按压和焦点；140ms轻动效，尊重系统动画/高对比度。真实控件属性与像素状态验收，不用静态设计稿代替。
 - [x] 受影响WPF/SQLite检查、真实Windows关闭操作、同尺寸前后/五状态截图、1200×800与900×600浅深和本机200%DPI、125秒连续计时/主迷你同步；保留失败原件。
-- [ ] 一次最终发布，所有ZIP关闭后CRC/逐文件SHA/图片清单核对，记录程序与文档提交；停止等待人工验收。
+- [x] 最终封包检查已实现：ZIP关闭后CRC/逐文件SHA/图片清单核对，记录程序与文档提交；执行结论以release-manifest.json与final-closure.json为准，候选交付后停止。
 
 设计依据：项目ui-ux-pro-max的WPF显式样式继承与CanExecute建议；make-interfaces-feel-better的层次/光学对齐/轻量反馈；Apple HIG Materials/Buttons只提炼可读材质和清晰状态；Windows Fluent layering/elevation采用按压降低层级。拒绝CSS/GSAP、Apple字体/SF Symbols、Liquid Glass仿真和大面积动态模糊。系统字体及现有资源不变。
 
