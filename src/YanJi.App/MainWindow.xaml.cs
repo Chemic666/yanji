@@ -68,6 +68,8 @@ public partial class MainWindow : Window
         if(_exitBusy)return;
         if(Model.Busy){Model.Status="正在保存，请稍后再关闭。";return;}
         _exitBusy=true;
+        var restoreMini=MiniTimer?.IsVisible==true;
+        MiniTimer?.Hide(); // A pinned floating window must never cover an exit or unsaved-edit dialog.
         try
         {
             (System.Windows.Input.Keyboard.FocusedElement as TextBox)?.GetBindingExpression(TextBox.TextProperty)?.UpdateSource();
@@ -93,7 +95,7 @@ public partial class MainWindow : Window
             _exiting=true;Close();
         }
         catch(Exception e){MessageBox.Show(this,"退出前保存未完成："+e.Message,"研迹");}
-        finally{_exitBusy=false;if(!_exiting)_tick.Start();}
+        finally{_exitBusy=false;if(!_exiting){_tick.Start();if(restoreMini)MiniTimer?.Show();}}
     }
     private int ExitChoice()
     {

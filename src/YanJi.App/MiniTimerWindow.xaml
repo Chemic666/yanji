@@ -11,7 +11,7 @@
           <TextBlock Text="{Binding TimerChapter.Name}" Style="{StaticResource MutedText}" FontSize="12" TextAlignment="Center" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" Margin="0,3,0,0" ToolTip="{Binding TimerChapter.Name}"/>
           <TextBlock Text="{Binding TimerStateText}" Style="{StaticResource MutedText}" FontSize="11" TextAlignment="Center" Margin="0,3,0,0"/>
         </StackPanel>
-        <Grid Grid.Row="2"><TextBlock Text="悬停或 Tab 显示操作 · 拖动面板移动" Style="{StaticResource MutedText}" FontSize="10" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0" IsHitTestVisible="False"/>
+        <Grid Grid.Row="2"><TextBlock Text="悬停或 Tab 显示操作 · 拖动面板移动" Style="{StaticResource MutedText}" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0" IsHitTestVisible="False"/>
           <Border x:Name="Toolbar" Background="{DynamicResource MiniSurface}" CornerRadius="10" Padding="0,4">
             <Border.Style><Style TargetType="Border"><Setter Property="Opacity" Value="0"/><Setter Property="IsHitTestVisible" Value="False"/><Style.Triggers><DataTrigger Binding="{Binding IsMouseOver,RelativeSource={RelativeSource AncestorType=Window}}" Value="True"><Setter Property="Opacity" Value="1"/><Setter Property="IsHitTestVisible" Value="True"/></DataTrigger><DataTrigger Binding="{Binding IsKeyboardFocusWithin,RelativeSource={RelativeSource AncestorType=Window}}" Value="True"><Setter Property="Opacity" Value="1"/><Setter Property="IsHitTestVisible" Value="True"/></DataTrigger></Style.Triggers></Style></Border.Style>
             <WrapPanel HorizontalAlignment="Center">

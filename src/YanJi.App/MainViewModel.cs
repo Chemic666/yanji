@@ -202,7 +202,7 @@ public sealed partial class MainViewModel : ObservableObject
     [RelayCommand] private async Task StartAsync()
     {
         if(Busy||TimerSubject==null||TimerActive)return;Busy=true;
-        try{var focus=CreateFocus();_timer.Start(TimerSubject.Id,ChapterId(TimerChapter),TimerNote,ZoneId,WindowsClock.Sample(),focus,ContextFor(ChapterId(TimerChapter),FocusTask));CompletedStudy=null;await PersistTimerAsync("开始计时");BreakActive=false;_break=null;Status="专注已开始；关闭窗口会进入托盘。";
+        try{var focus=CreateFocus();_timer.Start(TimerSubject.Id,ChapterId(TimerChapter),TimerNote,ZoneId,WindowsClock.Sample(),focus,ContextFor(ChapterId(TimerChapter),FocusTask));CompletedStudy=null;await PersistTimerAsync("开始计时");BreakActive=false;_break=null;Status="专注已开始；关闭时可选择保存退出或后台继续。";
             try{Database.SaveSetting("focus-mode",FocusModeIndex.ToString());Database.SaveSetting("focus-minutes",FocusMinutes);Database.SaveSetting("break-minutes",BreakMinutes);}catch{Status="计时已开始，偏好未能保存。";}}
         catch(Exception e){Status=e.Message;Error?.Invoke(Status);}finally{Busy=false;UpdateTimer();}
     }
