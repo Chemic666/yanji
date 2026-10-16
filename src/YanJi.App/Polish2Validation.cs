@@ -119,9 +119,9 @@ internal static class Polish2Validation
         void Capture(string state)
         {
             if(!lab.IsVisible||!saved.Add((ThemeService.Dark?"dark-":"light-")+state))return;
-            lab.UpdateLayout();var file=(ThemeService.Dark?"dark-":"light-")+state+".png";NativeCapture.Save(lab,Path.Combine(output,file));events.Add(new{File=file,State=state,sample.IsPressed,sample.IsMouseOver,sample.IsKeyboardFocused,sample.IsEnabled,Utc=DateTimeOffset.UtcNow});File.WriteAllText(Path.Combine(output,"actual-button-states.json"),JsonSerializer.Serialize(events,new JsonSerializerOptions{WriteIndented=true}));
+            lab.UpdateLayout();var file=(ThemeService.Dark?"dark-":"light-")+state+".png";NativeCapture.Save(lab,Path.Combine(output,file));events.Add(new{File=file,State=state,sample.IsPressed,sample.IsMouseOver,sample.IsKeyboardFocused,sample.IsEnabled,FaceOffsetY=(sample.Template.FindName("ButtonFace",sample) as FrameworkElement)?.RenderTransform.Value.OffsetY,Utc=DateTimeOffset.UtcNow});File.WriteAllText(Path.Combine(output,"actual-button-states.json"),JsonSerializer.Serialize(events,new JsonSerializerOptions{WriteIndented=true}));
         }
-        DependencyPropertyDescriptor.FromProperty(Button.IsPressedProperty,typeof(Button)).AddValueChanged(sample,(_,_)=>{if(sample.IsPressed)sample.Dispatcher.BeginInvoke(DispatcherPriority.Render,new Action(()=>{if(sample.IsPressed)Capture("pressed");}));});
+        DependencyPropertyDescriptor.FromProperty(Button.IsPressedProperty,typeof(Button)).AddValueChanged(sample,async(_,_)=>{if(sample.IsPressed){await Task.Delay(60);if(sample.IsPressed)Capture("pressed");}});
         sample.MouseEnter+=async(_,_)=>{await Task.Delay(180);if(sample.IsMouseOver&&!sample.IsPressed)Capture("hover");};
         sample.IsKeyboardFocusedChanged+=(_,_)=>{if(sample.IsKeyboardFocused&&!sample.IsMouseOver)sample.Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle,new Action(()=>Capture("focused")));};
         sample.IsEnabledChanged+=(_,_)=>{if(!sample.IsEnabled)sample.Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle,new Action(()=>Capture("disabled")));};

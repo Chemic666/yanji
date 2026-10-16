@@ -55,7 +55,7 @@ def final():
     assert read(ART/'final-data-and-retention.json')['Status']=='READY FOR FINAL APPROVAL'
     assert read(native/'shortcuts/shortcut-result.json')['Status']=='PASS'
     assert read(ART/'windows-input.json')['Status']=='PASS'
-    perf=read(ART/'perf-accepted/result.json');assert perf['Status']=='PASS' and perf['ObservedMs']>=120000 and perf['Assembly']==VERSION+'+'+code
+    perf=read(ART/'perf-final/result.json');assert perf['Status']=='PASS' and perf['ObservedMs']>=120000 and perf['Assembly']==VERSION+'+'+code
     shots=read(native/'screenshots.json');assert len(shots)>=12 and len({r['File'].casefold() for r in shots})==len(shots)
     gallery=['<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>RC-Polish · 真实WPF</title><style>body{font:16px system-ui;max-width:1200px;margin:32px auto;background:#f5f3ec;color:#28372e;padding:20px}img{max-width:100%;height:auto}figure{margin:24px 0}</style><h1>YanJi RC-Polish · 原生窗口</h1><p>本候选ZIP解压程序；实际200%DPI。不是网页模拟。物理IME、其他DPI与电源实验未执行。</p>']
     for row in shots:
