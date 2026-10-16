@@ -73,9 +73,10 @@ public partial class MainWindow : Window
         try
         {
             (System.Windows.Input.Keyboard.FocusedElement as TextBox)?.GetBindingExpression(TextBox.TextProperty)?.UpdateSource();
-            if(KnowledgeView.Model is {HasUnsavedChanges:true})
+            var pendingNote=!string.IsNullOrWhiteSpace(Model.TimerNote)&&Model.TimerNote!=Model.Timer.Note;
+            if(pendingNote||KnowledgeView.Model is {HasUnsavedChanges:true})
             {
-                var unsaved=new ConfirmDialog(this,"尚有未保存的章节修改","退出将放弃当前目录编辑。已保存的学习记录和进度不受影响。","放弃修改并退出",false);
+                var unsaved=new ConfirmDialog(this,"尚有未保存的修改","退出将放弃尚未保存的章节编辑或下一段学习备注。已保存的学习记录和进度不受影响。","放弃修改并退出",false);
                 TestDialogShown?.Invoke(unsaved);
                 if(unsaved.ShowDialog()!=true)return;
             }
