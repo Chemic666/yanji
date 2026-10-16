@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Windows.Media;
 using System.Windows.Threading;
+using System.Windows.Input;
 using Microsoft.Data.Sqlite;
 using YanJi.Core;
 using System.Linq;
@@ -97,10 +98,20 @@ internal static class Polish2Validation
         }
         catch(Exception ex){Write("failure.json",new{Error=ex.ToString()});app.ValidationFailed=true;main.TestDialogShown=null;main.SmokeClose();}
     }
+    // External input injects down/up faster than a compositor frame. Extend only
+    // this inert specimen's release; never delay any real learning/save control.
+    private sealed class StateSpecimenButton : Button
+    {
+        protected override async void OnMouseLeftButtonUp(MouseButtonEventArgs e)
+        {
+            if(IsPressed){e.Handled=true;await Task.Delay(140);}
+            base.OnMouseLeftButtonUp(e);
+        }
+    }
     private static void ShowButtonLab(MainWindow main,string output)
     {
         var root=new StackPanel{Margin=new Thickness(30),Focusable=true};root.Children.Add(new TextBlock{Text="Quiet Focus · Soft Depth",FontSize=22,Margin=new Thickness(0,0,0,24)});
-        var sample=new Button{Content="开始学习",Style=(Style)main.FindResource("Primary"),Width=150,HorizontalAlignment=HorizontalAlignment.Left};System.Windows.Automation.AutomationProperties.SetAutomationId(sample,"StateSample");root.Children.Add(sample);
+        var sample=new StateSpecimenButton{ToolTip="仅验收样本延迟释放140ms以采集绘制帧，正式按钮没有释放延迟。",Content="开始学习",Style=(Style)main.FindResource("Primary"),Width=150,HorizontalAlignment=HorizontalAlignment.Left};System.Windows.Automation.AutomationProperties.SetAutomationId(sample,"StateSample");root.Children.Add(sample);
         var lab=new Window{Owner=main,Title="研迹 · 按钮验收",Width=600,Height=300,Content=root,WindowStartupLocation=WindowStartupLocation.CenterOwner};
         var saved=new HashSet<string>();var events=new List<object>();
         var row=new WrapPanel{Margin=new Thickness(0,18,0,0)};
@@ -119,7 +130,7 @@ internal static class Polish2Validation
         void Capture(string state)
         {
             if(!lab.IsVisible||!saved.Add((ThemeService.Dark?"dark-":"light-")+state))return;
-            lab.UpdateLayout();var file=(ThemeService.Dark?"dark-":"light-")+state+".png";NativeCapture.Save(lab,Path.Combine(output,file));events.Add(new{File=file,State=state,sample.IsPressed,sample.IsMouseOver,sample.IsKeyboardFocused,sample.IsEnabled,FaceOffsetY=(sample.Template.FindName("ButtonFace",sample) as FrameworkElement)?.RenderTransform.Value.OffsetY,Utc=DateTimeOffset.UtcNow});File.WriteAllText(Path.Combine(output,"actual-button-states.json"),JsonSerializer.Serialize(events,new JsonSerializerOptions{WriteIndented=true}));
+            lab.UpdateLayout();var file=(ThemeService.Dark?"dark-":"light-")+state+".png";NativeCapture.Save(lab,Path.Combine(output,file));events.Add(new{File=file,State=state,SpecimenReleaseDelayMs=140,sample.IsPressed,sample.IsMouseOver,sample.IsKeyboardFocused,sample.IsEnabled,FaceOffsetY=(sample.Template.FindName("ButtonFace",sample) as FrameworkElement)?.RenderTransform.Value.OffsetY,Utc=DateTimeOffset.UtcNow});File.WriteAllText(Path.Combine(output,"actual-button-states.json"),JsonSerializer.Serialize(events,new JsonSerializerOptions{WriteIndented=true}));
         }
         DependencyPropertyDescriptor.FromProperty(Button.IsPressedProperty,typeof(Button)).AddValueChanged(sample,async(_,_)=>{if(sample.IsPressed){await Task.Delay(60);if(sample.IsPressed)Capture("pressed");}});
         sample.MouseEnter+=async(_,_)=>{await Task.Delay(180);if(sample.IsMouseOver&&!sample.IsPressed)Capture("hover");};
