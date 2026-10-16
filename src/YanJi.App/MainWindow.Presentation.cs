@@ -62,7 +62,7 @@ public partial class MainWindow
     private async void DayRecords_Click(object sender,RoutedEventArgs e){if(await Model.SaveReflectionAsync()){var date=DateOnly.FromDateTime(Model.SelectedDate);Model.OpenRecords(date,date);MainScroll.ScrollToTop();}}
     private async void StatsRecords_Click(object sender,RoutedEventArgs e){if(await Model.SaveReflectionAsync()){Model.OpenRecords(DateOnly.FromDateTime(Model.StatsFrom),DateOnly.FromDateTime(Model.StatsTo),Model.StatsSubjectId);MainScroll.ScrollToTop();}}
     private void StatsRange_Click(object sender,RoutedEventArgs e)=>Model.StatsRange(((Button)sender).Tag.ToString()!);
-    private void StatsView_Click(object sender,RoutedEventArgs e){Model.StatsView=int.Parse(((Button)sender).Tag.ToString()!);MainScroll.ScrollToTop();}
+    private void StatsView_Click(object sender,RoutedEventArgs e){Model.StatsView=int.Parse(((Button)sender).Tag.ToString()!);}
     private void ManageChapters_Click(object sender,RoutedEventArgs e){Model.Page=2;MainScroll.ScrollToTop();}
     private void NewReview_Click(object sender,RoutedEventArgs e)=>Model.NewPeriodReview();
     private async void SaveReview_Click(object sender,RoutedEventArgs e)=>await Model.SavePeriodReviewAsync();
@@ -86,7 +86,7 @@ public partial class MainWindow
     private async void RestDay_Click(object sender,RoutedEventArgs e)=>await Model.ToggleRestDayAsync();
     internal static string DeletionImpact(RecordRow row)=>$"科目：{row.Subject}\n整次时长：{row.Duration}\n受影响日期：{row.Dates}\n{row.Record.Parts.Count} 个有效片段\n\n删除的是整次学习，所有上述日期的贡献会从日历与统计移除。记录和修订历史保留，可在已删除明细中恢复。";
     private async void DeleteRecord_Click(object sender,RoutedEventArgs e)
-    {if(((Button)sender).Tag is not RecordRow row||row.Deleted)return;if(Confirm("删除整次学习",DeletionImpact(row),"软删除整次记录"))await Model.RunAsync(()=>Model.Database.DeleteRecord(row.Record.Id,row.Record.Version),"整次记录已软删除，日历与统计已同步更新");}
+    {if(((FrameworkElement)sender).Tag is not RecordRow row||row.Deleted)return;if(Confirm("删除整次学习",DeletionImpact(row),"软删除整次记录"))await Model.RunAsync(()=>Model.Database.DeleteRecord(row.Record.Id,row.Record.Version),"整次记录已软删除，日历与统计已同步更新");}
     private async void RestoreRecord_Click(object sender,RoutedEventArgs e)
     {if(((Button)sender).Tag is RecordRow row&&row.Deleted)await Model.RunAsync(()=>Model.Database.RestoreRecord(row.Record.Id,row.Record.Version),"整次记录已恢复，统计已更新");}
     private async void ExcludePart_Click(object sender,RoutedEventArgs e)

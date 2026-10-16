@@ -63,7 +63,12 @@ public sealed partial class MainViewModel
         FocusProgress=focus is {TargetMs:>0}?Math.Clamp(s.DurationMs/(double)focus.TargetMs*100,0,100):0;
         if(BreakActive&&_break!=null){FocusSubjectLabel="休息剩余时间 · HH:mm:ss";TimerText=DurationText.Timer(_break.RemainingMs);TimerStateText=_break.RemainingMs==0?"休息结束 · 主动开始下一轮":_break.Running?"休息中 · 不计入学习时长":"休息已暂停 · 不计入学习时长";FocusRemainingText="休息剩余 "+Duration(_break.RemainingMs);}
         CanStartFocus=!Busy&&!s.IsActive;CanPauseFocus=!Busy&&!NeedsReview&&(s.IsActive||BreakActive&&_break?.RemainingMs>0);
-        FocusStartLabel=BreakActive?"开始下一轮":FocusModeIndex==0?"开始学习":"开始专注";
+        if(!s.IsActive&&!BreakActive&&s.State==TimerState.Completed)
+        {
+            FocusSubjectLabel="上一段已保存 · 有效学习时间";
+            FocusRemainingText="本段已结束，开始下一段会重新计时。";
+        }
+        FocusStartLabel=BreakActive?"开始下一轮":s.State==TimerState.Completed?"开始下一段":FocusModeIndex==0?"开始学习":"开始专注";
     }
     private void RefreshFocusTasks()=>Replace(TodayTasks,Tasks.Where(t=>!t.Done&&(t.DueDate==null||t.DueDate<=LocalToday())).OrderBy(t=>t.DueDate??DateOnly.MaxValue));
     private void OnFocusSaved(TimerSnapshot saved)

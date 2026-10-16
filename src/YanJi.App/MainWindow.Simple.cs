@@ -9,6 +9,11 @@ using YanJi.Core;
 namespace YanJi.App;
 public partial class MainWindow
 {
+    private void OpenActions_Click(object sender,RoutedEventArgs e)
+    {
+        var button=(Button)sender;
+        if(button.ContextMenu is {} menu){menu.PlacementTarget=button;menu.IsOpen=true;}
+    }
     private async void MorePage_Click(object sender,RoutedEventArgs e)
     {Model.Page=int.Parse((string)((Button)sender).Tag);MainScroll.ScrollToTop();if(Model.Page==2)await SimpleProgressView.RefreshAsync();}
     private async void LegacyTasks_Click(object sender,RoutedEventArgs e){ShowLegacyProgress();await SimpleProgressView.RefreshAsync();}

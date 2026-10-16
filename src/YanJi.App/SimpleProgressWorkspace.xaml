@@ -1,25 +1,28 @@
 <UserControl x:Class="YanJi.App.SimpleProgressWorkspace" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Loaded="Workspace_Loaded">
   <StackPanel KeyboardNavigation.TabNavigation="Continue">
     <DockPanel Margin="0,0,0,20">
-      <Button DockPanel.Dock="Right" Content="应用参考目录" Click="Presets_Click" Style="{StaticResource FocusButton}" />
+
       <StackPanel><TextBlock Text="学习进度" Style="{StaticResource Heading}" /><TextBlock Text="记下学到哪里，下一次从这里继续。" Style="{StaticResource MutedText}" /></StackPanel>
     </DockPanel>
-    <WrapPanel Margin="0,0,0,12">
-      <StackPanel Margin="0,0,16,0"><TextBlock Text="数学参考范围" Style="{StaticResource MutedText}" /><ComboBox x:Name="MathRange" Width="200" SelectedIndex="0" SelectionChanged="Range_Changed" Style="{StaticResource FocusComboBox}" AutomationProperties.Name="数学参考范围"><ComboBoxItem Content="尚未确定 · 共同基础" /><ComboBoxItem Content="数学一" /><ComboBoxItem Content="数学二" /><ComboBoxItem Content="查看全部范围" /></ComboBox></StackPanel>
-      <StackPanel><TextBlock Text="英语参考范围" Style="{StaticResource MutedText}" /><ComboBox x:Name="EnglishRange" Width="200" SelectedIndex="0" SelectionChanged="Range_Changed" Style="{StaticResource FocusComboBox}" AutomationProperties.Name="英语参考范围"><ComboBoxItem Content="尚未确定 · 共同基础" /><ComboBoxItem Content="英语一" /><ComboBoxItem Content="英语二" /><ComboBoxItem Content="查看全部范围" /></ComboBox></StackPanel>
-    </WrapPanel>
+
     <ItemsControl ItemsSource="{Binding Rows}"><ItemsControl.ItemTemplate><DataTemplate>
-      <Border Style="{StaticResource SectionSurface}" Padding="20" Margin="0,0,0,12">
+      <Border Style="{StaticResource SectionSurface}" Padding="16" Margin="0,0,0,10">
         <StackPanel>
           <DockPanel><TextBlock DockPanel.Dock="Right" Text="{Binding State}" Foreground="{DynamicResource Accent}" FontSize="12" /><TextBlock Text="{Binding Name}" FontSize="20" FontWeight="SemiBold" /></DockPanel>
-          <TextBlock Text="{Binding Current}" TextWrapping="Wrap" FontSize="15" Margin="0,10,0,4" MaxHeight="66" TextTrimming="CharacterEllipsis" ToolTip="{Binding Current}" />
-          <TextBlock Text="{Binding Content}" TextWrapping="Wrap" Foreground="{DynamicResource Ink}" MaxHeight="60" ToolTip="{Binding Content}" />
-          <TextBlock Text="{Binding Next,StringFormat=下一步：{0}}" Style="{StaticResource MutedText}" TextWrapping="Wrap" MaxHeight="48" ToolTip="{Binding Next}" Margin="0,4" />
+          <TextBlock Text="{Binding Current}" TextWrapping="Wrap" FontSize="15" Margin="0,8,0,4" MaxHeight="66" TextTrimming="CharacterEllipsis" ToolTip="{Binding Current}" />
+          <TextBlock Text="{Binding Content}" TextWrapping="Wrap" Foreground="{DynamicResource Ink}" MaxHeight="40" ToolTip="{Binding Content}"><TextBlock.Style><Style TargetType="TextBlock"><Style.Triggers><DataTrigger Binding="{Binding Content}" Value=""><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock>
+          <TextBlock Text="{Binding Next,StringFormat=下一步：{0}}" TextWrapping="Wrap" MaxHeight="40" ToolTip="{Binding Next}" Margin="0,4"><TextBlock.Style><Style TargetType="TextBlock" BasedOn="{StaticResource MutedText}"><Style.Triggers><DataTrigger Binding="{Binding Next}" Value=""><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock>
           <TextBlock Text="{Binding Recent,StringFormat=最近学习：{0}}" Style="{StaticResource MutedText}" MaxHeight="36" TextTrimming="CharacterEllipsis" ToolTip="{Binding Recent}" />
-          <WrapPanel Margin="0,12,0,0"><Button Content="更新进度" Tag="{Binding}" Click="Update_Click" Style="{StaticResource Primary}" /><Button Content="开始学习" Tag="{Binding}" Click="Start_Click" Style="{StaticResource FocusButton}" /><Button Content="查看章节" Tag="{Binding}" Click="Browse_Click" Style="{StaticResource QuietButton}" /></WrapPanel>
+          <WrapPanel Margin="0,8,0,0"><Button Content="更新进度" Tag="{Binding}" Click="Update_Click" Style="{StaticResource Primary}" /><Button Content="开始学习" Tag="{Binding}" Click="Start_Click" Style="{StaticResource FocusButton}" /><Button Content="查看章节" Tag="{Binding}" Click="Browse_Click" Style="{StaticResource QuietButton}" /></WrapPanel>
         </StackPanel>
       </Border>
     </DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+    <Expander x:Name="SubjectSettings" Header="科目与目录设置 · 考试范围、参考目录" Style="{StaticResource FocusExpander}"><StackPanel>
+    <WrapPanel Margin="0,0,0,12">
+      <StackPanel Margin="0,0,16,0"><TextBlock Text="数学参考范围" Style="{StaticResource MutedText}" /><ComboBox x:Name="MathRange" Width="200" SelectedIndex="0" SelectionChanged="Range_Changed" Style="{StaticResource FocusComboBox}" AutomationProperties.Name="数学参考范围"><ComboBoxItem Content="尚未确定 · 共同基础" /><ComboBoxItem Content="数学一" /><ComboBoxItem Content="数学二" /><ComboBoxItem Content="查看全部范围" /></ComboBox></StackPanel>
+      <StackPanel><TextBlock Text="英语参考范围" Style="{StaticResource MutedText}" /><ComboBox x:Name="EnglishRange" Width="200" SelectedIndex="0" SelectionChanged="Range_Changed" Style="{StaticResource FocusComboBox}" AutomationProperties.Name="英语参考范围"><ComboBoxItem Content="尚未确定 · 共同基础" /><ComboBoxItem Content="英语一" /><ComboBoxItem Content="英语二" /><ComboBoxItem Content="查看全部范围" /></ComboBox></StackPanel>
+    </WrapPanel><Button Content="应用参考目录" Click="Presets_Click" Style="{StaticResource FocusButton}" HorizontalAlignment="Left" /><TextBlock Text="已有目录和本地修改会保留；完整知识包管理在下方完整目录中。" Style="{StaticResource MutedText}" />
+    </StackPanel></Expander>
     <TextBlock Text="进度可以独立保存，不产生学习时长；已学习也不等于掌握或验收通过。" Style="{StaticResource MutedText}" Margin="0,0,0,12" />
   </StackPanel>
 </UserControl>

@@ -33,6 +33,7 @@ public partial class App : Application
     public bool M4Check {get;private set;} public bool M3ReviewCheck {get;private set;} public bool M3Check {get;private set;}
     public bool M2Check {get;private set;}
     public bool SimpleCheck {get;private set;}
+    public bool SimpleInteractionCheck {get;private set;}
     public bool V031Check {get;private set;}
     public bool V031Probe {get;private set;}
     internal bool ValidationFailed {get;set;}
@@ -67,6 +68,7 @@ public partial class App : Application
                 else if(e.Args[i]=="--m1-ui-check"&&i+1<e.Args.Length){SmokePath=Path.GetFullPath(e.Args[++i]);M1Check=true;M1UiOnly=true;}
                 else if(e.Args[i]=="--m4-check"&&i+1<e.Args.Length){SmokePath=Path.GetFullPath(e.Args[++i]);M4Check=true;} else if(e.Args[i]=="--m3-review-check"&&i+1<e.Args.Length){SmokePath=Path.GetFullPath(e.Args[++i]);M3Check=true;M3ReviewCheck=true;} else if(e.Args[i]=="--m3-check"&&i+1<e.Args.Length){SmokePath=Path.GetFullPath(e.Args[++i]);M3Check=true;}
                 else if(e.Args[i]=="--m2-check"&&i+1<e.Args.Length){SmokePath=Path.GetFullPath(e.Args[++i]);M2Check=true;}
+                else if(e.Args[i]=="--simple2-check"&&i+1<e.Args.Length){SmokePath=Path.GetFullPath(e.Args[++i]);SimpleCheck=true;SimpleInteractionCheck=true;}
                 else if(e.Args[i]=="--simple-check"&&i+1<e.Args.Length){SmokePath=Path.GetFullPath(e.Args[++i]);SimpleCheck=true;}
                 else if(e.Args[i]=="--v031-probe"&&i+1<e.Args.Length){SmokePath=Path.GetFullPath(e.Args[++i]);V031Probe=true;}
                 else if(e.Args[i]=="--v031-check"&&i+1<e.Args.Length){SmokePath=Path.GetFullPath(e.Args[++i]);V031Check=true;}
