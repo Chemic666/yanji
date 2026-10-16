@@ -100,9 +100,11 @@ internal static class SimpleWindowValidation
             await Wait(()=>tree.Selected?.Node.Version==d.KnowledgeNodes().Single(n=>n.Id==mathNode.Id).Version);Check(true,"quick progress refreshes expanded tree version without stale editor");
             var parent=d.KnowledgeNodes().Single(n=>n.Id==mathNode.ParentId);await m.RunAsync(()=>d.SaveKnowledgeNodes([parent with{Archived=true}]),"隔离祖先归档");
             await Wait(()=>view.Rows.All(r=>r.NodeId!=mathNode.Id));Check(true,"archived ancestor removes descendant from current-progress summary, not history");
-            parent=d.KnowledgeNodes().Single(n=>n.Id==parent.Id);await m.RunAsync(()=>d.SaveKnowledgeNodes([parent with{Archived=false}]),"隔离重新启用");
+            parent=d.KnowledgeNodes().Single(n=>n.Id==parent.Id);Check(await m.RunAsync(()=>d.SaveKnowledgeNodes([parent with{Archived=false}]),"隔离重新启用"),"reactivation transaction commits");
             m.Page=6;owner.NavigationList.RaiseEvent(new KeyEventArgs(Keyboard.PrimaryDevice,PresentationSource.FromVisual(owner),Environment.TickCount,Key.Enter){RoutedEvent=Keyboard.PreviewKeyDownEvent});Check(m.Page==7&&owner.NavigationList.SelectedIndex==3,"selected more navigation returns from a drilldown via keyboard");
-            m.DarkTheme=false;owner.Width=1200;owner.Height=800;m.Page=2;owner.KnowledgeExpander.IsExpanded=false;await owner.SimpleProgressView.RefreshAsync();await Shot("progress-filled-light-1200");
+            m.DarkTheme=false;owner.Width=1200;owner.Height=800;m.Page=2;owner.KnowledgeExpander.IsExpanded=false;await owner.SimpleProgressView.RefreshAsync();
+            await Wait(()=>view.Rows.Any(r=>r.NodeId==mathNode.Id&&r.Next.Contains("连续")));Check(true,"reactivated ancestor restores stable current progress before visual capture");
+            await Shot("progress-filled-light-1200");
             Write("summary.json",new{RawMilliseconds=total,Records=d.Records().Count,Nodes=d.KnowledgeNodes().Count,Progress=d.ProgressNotes(),Installed=d.InstalledPackages(),Schema=d.Diagnostics(),DirectoryRoundTripMs=started.Elapsed.TotalMilliseconds});
             Write("result.json",new{Status=failed?"FAIL":"PASS",Checks=checks.Count,Images=images.Count,Samples=samples.Count,NotTested=new[]{"physical IME candidate input","other physical DPI","sleep hibernate reboot","clean-machine offline","real user upgrade","multi-day soak"}});app.ValidationFailed=failed;
         }
