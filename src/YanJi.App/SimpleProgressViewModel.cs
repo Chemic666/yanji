@@ -22,7 +22,10 @@ public sealed partial class SimpleProgressViewModel : ObservableObject
         var rows=await Task.Run(()=>
         {
             var subjects=Owner.Database.Subjects().OrderBy(s=>s.Id switch{"math"=>0,"english"=>1,"408"=>2,_=>3}).ToList();
-            var nodes=Owner.Database.KnowledgeNodes();var notes=Owner.Database.ProgressNotes();var records=Owner.Database.Records();
+            var nodes=Owner.Database.KnowledgeNodes();var notes=Owner.Database.ProgressNotes();
+            // A newly started durable session legitimately has zero parts.
+            // Recent completed learning must not assume that every saved row has a date.
+            var records=Owner.Database.Records().Where(r=>r.DurationMs>0&&r.Parts.Count>0&&(!Owner.TimerActive||r.Id!=Owner.Timer.SessionId)).ToList();
             var map=nodes.ToDictionary(n=>n.Id);var active=new Dictionary<string,bool>();
             bool Active(KnowledgeNode n)=>active.TryGetValue(n.Id,out var a)?a:active[n.Id]=!n.Archived&&(n.ParentId==null||Active(map[n.ParentId]));
             var activeIds=nodes.Where(Active).Select(n=>n.Id).ToHashSet();
