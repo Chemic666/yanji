@@ -50,4 +50,6 @@ Windows11、本机192DPI（200%），.NET10私有SDK，SQLite真实文件。复�
 - 未强制结束外部补验的闲置候选窗口；它使用final-data合成库，没有真实学习数据。
 - 无图标缓存异常证据，不需要主动清缓存或重启Explorer。
 
+源码包门禁第一次因Generate-AppIcon.py的Git归档CRLF/LF行尾差异失败；三份图标二进制逐字节一致。只对该文本脚本规范化行尾比较，PNG/ICO仍严格比较，未改变图标或程序。失败说明保留在packaging-recovery.json。
+
 所有验证仅访问本轮/已有artifacts隔离数据。未访问真实LocalAppData学习库、未升级真实数据库、未推送或公开发布，未进入V0.5。图标设计保持原样。

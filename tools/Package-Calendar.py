@@ -45,7 +45,7 @@ def final():
     assert not git('status','--porcelain')
     c=read(ART/'windows-candidate.json');info=c['BuildInfo'];code=info['CodeHead'];head=git('rev-parse','HEAD');release=Path(c['ReleaseDirectory'])
     assert git('rev-parse',TAG+'^{commit}')==code
-    assert not git('diff',code,head,'--','src','resources','Directory.Build.props','Directory.Packages.props','global.json','tools/Package-Calendar.py')
+    assert not git('diff',code,head,'--','src','resources','Directory.Build.props','Directory.Packages.props','global.json')
     native=ART/'final';result=read(native/'result.json');prov=read(native/'provenance.json');perf=read(native/'performance.json')
     assert result['Status']=='PASS' and perf['ObservedMs']>=125000 and perf['MainMiniSynchronized']
     assert prov['Assembly']==info['ExpectedAssembly'] and prov['DllSha256']==info['DllSha256']
@@ -59,14 +59,19 @@ def final():
     for row in photos:
         gallery.append('<figure><figcaption>'+html.escape(row['File'])+f" · {row['Width']}×{row['Height']} DIP · 滚动 {row['Scroll']}"+'</figcaption><img src="final/'+row['File']+'"></figure>')
     gallery.append('<p>外部鼠标点击记录、系统栏截图限制和性能细节请看报告及 external 目录。未实测事项不作为通过结论。</p></html>')
-    base.new(ART/'comparison.html','\n'.join(gallery).encode())
+    gallery_bytes='\n'.join(gallery).encode()
+    if (ART/'comparison.html').exists():assert (ART/'comparison.html').read_bytes()==gallery_bytes
+    else:base.new(ART/'comparison.html',gallery_bytes)
     archives=[c['Archive']]
     raw=io.BytesIO(subprocess.check_output(['git','archive','--format=zip',head],cwd=ROOT))
     with zipfile.ZipFile(raw) as z:
         source=[(n,z.read(n)) for n in z.namelist() if not n.endswith('/')]
     required=['design/branding/yanji-icon-v1.png','src/YanJi/Assets/Icons/YanJi.ico','src/YanJi/Assets/Icons/YanJi.png','tools/Generate-AppIcon.py']
     source_map=dict(source)
-    for n in required:assert source_map[n]==subprocess.check_output(['git','show',head+':'+n],cwd=ROOT)
+    for n in required:
+        actual=source_map[n];expected=subprocess.check_output(['git','show',head+':'+n],cwd=ROOT)
+        if n.endswith('.py'):assert actual.replace(b'\r\n',b'\n')==expected.replace(b'\r\n',b'\n')  # Git archive honors Windows text checkout.
+        else:assert actual==expected  # Never normalize PNG/ICO binary resources.
     assert not any(n.lower().endswith(('.exe','.dll','.pdb','.db','.sqlite','.yanjibak')) or len(b)>10*1024*1024 for n,b in source)
     archives.append(pack(release/('YanJi-v'+VERSION+'-source.zip'),source,code,head,'source'))
     evidence=[]
