@@ -92,12 +92,12 @@ internal static class SimpleInteractionValidation
             owner.TestDialogShown=w=>{async Task Accept(){await Task.Delay(100);Check(Children(w).OfType<TextBlock>().Any(t=>t.Text.Contains("受影响日期")),"delete confirmation describes scope");Children(w).OfType<Button>().Single(b=>b.Content?.ToString()=="软删除整次记录").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));}_=Accept();};
             await MenuAction("记录操作 ⋯","删除记录…");owner.TestDialogShown=null;await Wait(()=>d.Records(includeDeleted:true).Any(r=>r.Deleted));
             var deleted=d.Records(includeDeleted:true).Single(r=>r.Deleted);await m.RunAsync(()=>d.RestoreRecord(deleted.Id,deleted.Version),"隔离恢复");Check(d.Records().Sum(r=>r.DurationMs)==raw,"menu soft delete and restore preserve canonical duration");
-            m.Page=4;m.StatsRange("day");Check(!owner.StatsAdvancedExpander.IsExpanded,"one collapsed advanced analytics area");await Shot("data-light-1200");m.DarkTheme=true;owner.Width=900;owner.Height=600;await Shot("data-dark-900");
+            m.Page=4;m.StatsRange("day");Check(!owner.StatsAdvancedExpander.IsExpanded,"secondary custom filters initially collapsed");await Shot("data-light-1200");m.DarkTheme=true;owner.Width=900;owner.Height=600;await Shot("data-dark-900");
             ButtonBy("历史学习记录 →").RaiseEvent(new RoutedEventArgs(Button.ClickEvent));await Wait(()=>m.Page==6);Check(true,"primary data history button opens records");m.Page=4;
             m.DarkTheme=false;owner.Width=1200;owner.Height=800;owner.StatsAdvancedExpander.IsExpanded=true;m.StatsView=1;owner.UpdateLayout();await Task.Delay(100);
-            Check(owner.DailyStack.IsVisible&&owner.SubjectDonut.IsVisible&&Children(owner.StatsAdvancedExpander).OfType<Button>().Any(b=>b.Content?.ToString()=="学习复盘"),"advanced tabs retain primary charts and review entry");
+            Check(owner.DailyStack.IsVisible&&owner.SubjectDonut.IsVisible&&owner.StudyReviewSection.IsVisible&&owner.LearningCalendar.IsVisible,"data page exposes calendar, primary charts and review");
             owner.StatsAdvancedExpander.BringIntoView();await Shot("detailed-analysis-light-1200");owner.StatsAdvancedExpander.IsExpanded=false;
-            m.Page=7;owner.MainScroll.ScrollToTop();var pages=new[]{("历史学习记录",6),("备考历程与日历",1),("薄弱知识点",3),("设置、备份与恢复",5),("参考目录与知识包",2)};
+            m.Page=7;owner.MainScroll.ScrollToTop();var pages=new[]{("历史学习记录",6),("备考历程与日历",4),("薄弱知识点",3),("设置、备份与恢复",5),("参考目录与知识包",2)};
             foreach(var (label,page) in pages){m.Page=7;ButtonBy(label).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));await Wait(()=>m.Page==page);Check(true,"more entry reachable "+label);}
             m.Page=7;Check(ButtonBy("计划与任务").IsEnabled,"legacy tasks editor entry retained");await Shot("more-light-1200");
             var backup=Path.Combine(output,"interaction.yanjibak");d.Backup(backup);d.ValidateBackup(backup);Check(d.Integrity()=="ok","isolated backup validation and integrity");

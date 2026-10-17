@@ -18,12 +18,12 @@
     <None Include="../../COPYRIGHT.md" Link="COPYRIGHT.md" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <None Include="../../THIRD-PARTY-NOTICES.md" Link="THIRD-PARTY-NOTICES.md" CopyToPublishDirectory="PreserveNewest" />
     <None Include="../../resources/legal/third-party-licenses.json" Link="third-party-licenses.json" CopyToPublishDirectory="PreserveNewest" />
-    <None Include="../../docs/V04-POLISH2-START.md" Link="START-HERE.md" CopyToPublishDirectory="PreserveNewest" />
-    <None Include="../../docs/V04-POLISH2-START.md" Link="USER-GUIDE.md" CopyToPublishDirectory="PreserveNewest" />
+    <None Include="../../docs/CALENDAR-RESTORE.md" Link="START-HERE.md" CopyToPublishDirectory="PreserveNewest" />
+    <None Include="../../docs/CALENDAR-RESTORE.md" Link="USER-GUIDE.md" CopyToPublishDirectory="PreserveNewest" />
     <None Include="../../docs/V04-RCFINAL-UPGRADE.md" Link="UPGRADE-ROLLBACK.md" CopyToPublishDirectory="PreserveNewest" />
     <None Include="../../docs/V04-RCFINAL-MANUAL.md" Link="MANUAL-ACCEPTANCE.md" CopyToPublishDirectory="PreserveNewest" />
     <None Include="../../docs/V04-SIMPLE-REFERENCES.md" Link="KNOWLEDGE-SOURCES.md" CopyToPublishDirectory="PreserveNewest" />
-    <None Include="../../docs/V04-POLISH2-DESIGN.md" Link="RELEASE-NOTES.md" CopyToPublishDirectory="PreserveNewest" />
+    <None Include="../../docs/CALENDAR-RESTORE.md" Link="RELEASE-NOTES.md" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
   <ItemGroup><None Include="../../resources/knowledge-packages/**/*.json" Link="knowledge-packages/%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" /></ItemGroup>
 </Project>

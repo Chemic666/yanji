@@ -65,6 +65,11 @@ public partial class MainWindow
     private async void DayRecords_Click(object sender,RoutedEventArgs e){if(await Model.SaveReflectionAsync()){var date=DateOnly.FromDateTime(Model.SelectedDate);Model.OpenRecords(date,date);MainScroll.ScrollToTop();}}
     private async void StatsRecords_Click(object sender,RoutedEventArgs e){if(await Model.SaveReflectionAsync()){Model.OpenRecords(DateOnly.FromDateTime(Model.StatsFrom),DateOnly.FromDateTime(Model.StatsTo),Model.StatsSubjectId);MainScroll.ScrollToTop();}}
     private void StatsRange_Click(object sender,RoutedEventArgs e)=>Model.StatsRange(((Button)sender).Tag.ToString()!);
+    private void DataSection_Click(object sender,RoutedEventArgs e)
+    {
+        var target=((Button)sender).Tag?.ToString() switch{"trends"=>(FrameworkElement)StatsOverviewHeading,"chapters"=>ChapterAnalysis,"review"=>StudyReviewSection,_=>LearningCalendar};
+        target.BringIntoView();
+    }
     private void StatsView_Click(object sender,RoutedEventArgs e){Model.StatsView=int.Parse(((Button)sender).Tag.ToString()!);}
     private void ManageChapters_Click(object sender,RoutedEventArgs e){Model.Page=2;MainScroll.ScrollToTop();}
     private void NewReview_Click(object sender,RoutedEventArgs e)=>Model.NewPeriodReview();
@@ -78,7 +83,7 @@ public partial class MainWindow
     private async void Chart_Drill(PlotPoint point)
     {if(!await Model.SaveReflectionAsync())return;Model.OpenRecords(point.From??DateOnly.FromDateTime(Model.StatsFrom),point.To??DateOnly.FromDateTime(Model.StatsTo),point.SubjectId);MainScroll.ScrollToTop();}
     private async void Heatmap_Drill(PlotPoint point)
-    {if(point.From is DateOnly date){await Model.ChangeDayAsync(date.ToDateTime(TimeOnly.MinValue));Model.CalendarMonth=date.ToDateTime(TimeOnly.MinValue);Model.Page=1;await Model.ChangeDayAsync(date.ToDateTime(TimeOnly.MinValue));}}
+    {if(point.From is DateOnly date){await Model.ChangeDayAsync(date.ToDateTime(TimeOnly.MinValue));Model.Page=4;LearningCalendar.BringIntoView();}}
     private void Timeline_Drill(PlotPoint point){var row=Model.DayRecords.FirstOrDefault(r=>r.Record.Id==point.Key);if(row!=null)ShowDetail(row);}
     private async void ChapterDrill_Click(object sender,RoutedEventArgs e)
     {if(!await Model.SaveReflectionAsync())return;var point=(PlotPoint)((Button)sender).Tag;Model.OpenRecords(DateOnly.FromDateTime(Model.StatsFrom),DateOnly.FromDateTime(Model.StatsTo),point.SubjectId,point.Key);MainScroll.ScrollToTop();}

@@ -16,6 +16,7 @@ public sealed partial class MainViewModel
     { if (!_syncNavigation) Page = value switch { 0 => 0, 1 => 2, 2 => 4, _ => 7 }; }
     partial void OnPageChanged(int value)
     {
+        if(value==1){Page=4;return;} // Existing calendar links now lead to the primary data page.
         _syncNavigation = true;
         NavigationIndex = value switch { 0 => 0, 2 => 1, 4 => 2, _ => 3 };
         _syncNavigation = false;

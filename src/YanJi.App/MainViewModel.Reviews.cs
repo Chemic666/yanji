@@ -43,6 +43,6 @@ public sealed partial class MainViewModel
         ReviewTaskSummary=$"当前任务 {tasks.Count} 项 · 已完成状态 {tasks.Count(t=>t.Done)} 项；无完成日期，不表示本期完成量";
         ReviewFactSummary=Analysis is null?"请先选择有效日期范围":$"本期已保存学习 {Duration(Analysis.DurationMs)} · {Analysis.LearningDays} 个学习日 · {Analysis.Sessions} 次记录";
         ReviewSnapshotSummary=$"当前快照：{weak.Count(w=>w.ReviewDate is DateOnly d&&d<=LocalToday()&&w.State!=WeakPointState.Verified)} 项到期待复习薄弱点 · {tasks.Count(t=>!t.Done)} 项未完成任务；不表示本期变化。";
-        Replace(ReviewReflections,Database.Reflections().Where(r=>r.Key>=from&&r.Key<=to&&r.Value.Length>0).OrderBy(r=>r.Key).Select(r=>new ReflectionRow(r.Key,r.Value)));
+        Replace(ReviewReflections,_reflections.Where(r=>r.Key>=from&&r.Key<=to&&r.Value.Length>0).OrderBy(r=>r.Key).Select(r=>new ReflectionRow(r.Key,r.Value)));
     }
 }

@@ -27,8 +27,8 @@ public sealed record RecordRow(StudyRecord Record,string Subject,string Chapter,
     public string Dates=>string.Join("、",Record.Parts.Select(p=>p.Date).Distinct().Order().Select(d=>d.ToString("yyyy-MM-dd")));
     public string Summary=>Source+" · "+State+" · "+Record.Parts.Count+" 个片段 · "+Dates+(Record.Focus is {} f?" · "+(f.Mode==FocusMode.Pomodoro?"番茄钟":f.Mode==FocusMode.Countdown?"倒计时":"自由计时")+(Record.Context!=null?(Record.Context.TaskId!=null?" · 任务 "+Record.Context.TaskTitle:""):(f.TaskId!=null?" · 任务 "+f.TaskTitle:"")):"");
 }
-public sealed record CalendarDay(DateTime Date,string Day,string Duration,bool InMonth,bool Selected,string Status="尚无记录",string Color="#EDF3F5",long Milliseconds=0)
-{ public bool IsPending=>Status.Contains("待核对");public string Label=>Day+"\n"+(Duration.Length>0?Duration:Status=="尚无记录"?"无记录":Status);public string Description=>$"{Date:yyyy-MM-dd} · {Status}"+(Duration.Length>0?" · "+Duration:"");public string DisplayDuration=>Milliseconds>0?DurationText.Compact(Milliseconds):Status=="尚无记录"?"—":Status; }
+public sealed record CalendarDay(DateTime Date,string Day,string Duration,bool InMonth,bool Selected,string Status="尚无记录",string Color="#EDF3F5",long Milliseconds=0,bool IsToday=false)
+{ public string DateLabel=>IsToday?Day+" · 今":Day;public bool IsPending=>Status.Contains("待核对");public string Label=>Day+"\n"+(Duration.Length>0?Duration:Status=="尚无记录"?"无记录":Status);public string Description=>$"{Date:yyyy-MM-dd} · {Status}"+(Duration.Length>0?" · "+Duration:"");public string DisplayDuration=>Milliseconds>0?DurationText.Compact(Milliseconds):Status=="尚无记录"?"—":Status; }
 public sealed record StatRow(string Label,string Duration,double Width);
 public sealed partial class MainViewModel : ObservableObject
 {
@@ -144,12 +144,12 @@ public sealed partial class MainViewModel : ObservableObject
     private void LoadDay()
     {
         using var trace=PerfTrace.Span("LoadDay.UI");
-        var date=DateOnly.FromDateTime(SelectedDate);Replace(DayRecords,Database.Records(date,ShowDeleted).Select(r=>Row(r,date)));
+        var date=DateOnly.FromDateTime(SelectedDate);Replace(DayRecords,_records.Where(r=>(ShowDeleted||!r.Deleted)&&r.Parts.Any(p=>p.Date==date)).OrderByDescending(r=>r.CreatedAt).Select(r=>Row(r,date)));
         if(!_reflectionDirty)
-        {_loadingReflection=true;Reflection=Database.Reflection(date);_reflectionDate=date;_loadingReflection=false;}
+        {_loadingReflection=true;Reflection=_reflections.GetValueOrDefault(date,"");_reflectionDate=date;_loadingReflection=false;}
         var first=new DateOnly(CalendarMonth.Year,CalendarMonth.Month,1);var start=first.AddDays(-(((int)first.DayOfWeek+6)%7));
-        var totals=Database.DailyTotals(start,start.AddDays(41)).ToDictionary(t=>t.Date,t=>t.DurationMs);
-        MonthLabel=CalendarMonth.ToString("yyyy 年 M 月");Replace(Days,Enumerable.Range(0,42).Select(i=>{var d=start.AddDays(i);var ms=totals.GetValueOrDefault(d);return new CalendarDay(d.ToDateTime(TimeOnly.MinValue),d.Day.ToString(),ms>0?Duration(ms):"",d.Month==first.Month,d==date,DayStatus(d,ms),ms>0?ThemeService.SubjectColor("math"):ThemeService.Dark?"#344737":"#E5ECDF",ms);}));RefreshDayPresentation();
+        var totals=_records.Where(r=>!r.Deleted).SelectMany(r=>r.Parts).Where(p=>p.Date>=start&&p.Date<=start.AddDays(41)).GroupBy(p=>p.Date).ToDictionary(g=>g.Key,g=>g.Sum(p=>p.DurationMs));
+        MonthLabel=CalendarMonth.ToString("yyyy 年 M 月");Replace(Days,Enumerable.Range(0,42).Select(i=>{var d=start.AddDays(i);var ms=totals.GetValueOrDefault(d);return new CalendarDay(d.ToDateTime(TimeOnly.MinValue),d.Day.ToString(),ms>0?Duration(ms):"",d.Month==first.Month,d==date,DayStatus(d,ms),ms>0?ThemeService.SubjectColor("math"):ThemeService.Dark?"#344737":"#E5ECDF",ms,d==LocalToday());}));RefreshDayPresentation();
     }
     public void RefreshStats()
     {
@@ -258,12 +258,14 @@ public sealed partial class MainViewModel : ObservableObject
     public async Task<bool> SaveReflectionAsync()
     {if(!_reflectionDirty)return true;if(Busy)return false;
         var date=_reflectionDate;var text=Reflection;
-        if(await RunAsync(()=>Database.SaveReflection(date,text),"每日感想已保存",false)){_reflectionDirty=false;return true;}
+        if(await RunAsync(()=>Database.SaveReflection(date,text),"每日感想已保存",false)){_reflections[date]=text;_reflectionDirty=false;return true;}
         _reflectionRetryAt=DateTimeOffset.UtcNow.AddSeconds(30);return false;}
     [RelayCommand] private async Task SelectDayAsync(CalendarDay? day)
-    {if(day==null||Busy||!await SaveReflectionAsync())return;SelectedDate=day.Date;LoadDay();}
+    {if(day==null||Busy||!await SaveReflectionAsync())return;CalendarMonth=day.Date;SetCalendarDate(day.Date);}
     [RelayCommand] private async Task PreviousMonthAsync(){if(!await SaveReflectionAsync())return;CalendarMonth=CalendarMonth.AddMonths(-1);LoadDay();}
     [RelayCommand] private async Task NextMonthAsync(){if(!await SaveReflectionAsync())return;CalendarMonth=CalendarMonth.AddMonths(1);LoadDay();}
     [RelayCommand] private void Recalculate()=>RefreshStats();
-    public async Task ChangeDayAsync(DateTime date){if(!await SaveReflectionAsync())return;SelectedDate=date;LoadDay();}
+    private void SetCalendarDate(DateTime date){if(SelectedDate==date)LoadDay();else SelectedDate=date;}
+    [RelayCommand] private async Task CalendarTodayAsync(){if(Busy||!await SaveReflectionAsync())return;CalendarMonth=LocalToday().ToDateTime(TimeOnly.MinValue);SetCalendarDate(CalendarMonth);}
+    public async Task ChangeDayAsync(DateTime date){if(Busy||!await SaveReflectionAsync())return;CalendarMonth=date;SetCalendarDate(date);}
 }

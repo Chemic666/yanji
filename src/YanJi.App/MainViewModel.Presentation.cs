@@ -20,6 +20,7 @@ public sealed record PartRow(StudyPart Part,string Time,string Duration,bool Exc
 public sealed partial class MainViewModel
 {
     private List<StudyRecord> _records=[];
+    private Dictionary<DateOnly,string> _reflections=[];
     private Dictionary<string,string> _settings=[];
     [ObservableProperty] private bool darkTheme;
     [ObservableProperty] private long todayDurationMs;
@@ -75,7 +76,7 @@ public sealed partial class MainViewModel
     private void RefreshPresentation()
     {
         using var trace=PerfTrace.Span("Presentation.UI");
-        _records=Database.Records(null,true);_settings=Database.Settings();
+        _records=Database.Records(null,true);_settings=Database.Settings();_reflections=Database.Reflections();
         var subject=RecordSubjectId;var stats=StatsSubjectId;var weak=WeakSubjectId;
         Replace(SubjectFilters,new[]{new Choice("","全部科目")}.Concat(AllSubjects.Select(s=>new Choice(s.Id,s.Name+(s.Archived?" · 归档":"")))));
         RecordSubjectId=subject;StatsSubjectId=stats;WeakSubjectId=weak;
