@@ -28,7 +28,7 @@ public sealed record RecordRow(StudyRecord Record,string Subject,string Chapter,
     public string Summary=>Source+" · "+State+" · "+Record.Parts.Count+" 个片段 · "+Dates+(Record.Focus is {} f?" · "+(f.Mode==FocusMode.Pomodoro?"番茄钟":f.Mode==FocusMode.Countdown?"倒计时":"自由计时")+(Record.Context!=null?(Record.Context.TaskId!=null?" · 任务 "+Record.Context.TaskTitle:""):(f.TaskId!=null?" · 任务 "+f.TaskTitle:"")):"");
 }
 public sealed record CalendarDay(DateTime Date,string Day,string Duration,bool InMonth,bool Selected,string Status="尚无记录",string Color="#EDF3F5",long Milliseconds=0,bool IsToday=false)
-{ public string DateLabel=>IsToday?Day+" · 今":Day;public bool IsPending=>Status.Contains("待核对");public string Label=>Day+"\n"+(Duration.Length>0?Duration:Status=="尚无记录"?"无记录":Status);public string Description=>$"{Date:yyyy-MM-dd} · {Status}"+(Duration.Length>0?" · "+Duration:"");public string DisplayDuration=>Milliseconds>0?DurationText.Compact(Milliseconds):Status=="尚无记录"?"—":Status; }
+{ public bool HasStudy=>Milliseconds>0;public string DateLabel=>IsToday?Day+" · 今":Day;public bool IsPending=>Status.Contains("待核对");public string Label=>Day+"\n"+(Duration.Length>0?Duration:Status=="尚无记录"?"无记录":Status);public string Description=>$"{Date:yyyy-MM-dd} · {Status}"+(Duration.Length>0?" · "+Duration:"");public string DisplayDuration=>Milliseconds>0?DurationText.Compact(Milliseconds):Status=="尚无记录"?"—":Status; }
 public sealed record StatRow(string Label,string Duration,double Width);
 public sealed partial class MainViewModel : ObservableObject
 {

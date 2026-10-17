@@ -17,9 +17,12 @@ public static class ThemeService
         Application.Current.ThemeMode=dark?ThemeMode.Dark:ThemeMode.Light;
 #pragma warning restore WPF0001
         var colors=dark?new[]{"#1C201D","#272D28","#30382F","#3C473D","#E6ECE4","#B5C1B4","#A3C4A5","#344737","#F1A8A0","#472D2C","#E8C18C","#433A29","#222720","#C0CEC0","#354137","#D2DFD0","#798778","#17251B"}:
-            new[]{"#F6F4EE","#FEFDF9","#EDEFE7","#D9DED3","#29352E","#57665A","#456653","#DFE8D9","#A13E36","#F7E8E3","#805817","#F4ECD9","#ECEEE5","#425448","#E1E6DA","#354D3F","#899286","#FFFFFF"};
+            new[]{"#F6F4EE","#FCFCF7","#EDEFE7","#D9DED3","#29352E","#57665A","#456653","#DFE8D9","#A13E36","#F7E8E3","#805817","#F4ECD9","#ECEEE5","#425448","#E1E6DA","#354D3F","#899286","#FFFFFF"};
         var keys=new[]{"Canvas","CardBackground","Soft","Line","Ink","Muted","Accent","AccentSoft","Danger","DangerSoft","Warning","WarningSoft","NavigationBackground","NavigationInk","Hover","Pressed","DisabledInk","AccentInk"};
         for(var i=0;i<keys.Length;i++)Application.Current.Resources[keys[i]]=new SolidColorBrush((Color)ColorConverter.ConvertFromString(colors[i]));
+        var surfaceKeys=new[]{"FieldSurface","FieldEdge","FieldHover","FieldFocus","FocusOutline","PopupEdge","Separator","CalendarHint"};
+        var surfaceColors=dark?new[]{"#232C25","#354138","#2D382F","#273329","#B3A3C4A5","#3A473D","#354036","#29352B"}:new[]{"#F1F3EC","#E1E6DA","#EBEFE5","#FEFFFA","#B3456653","#E4E8DE","#E7EBE1","#EFF3EA"};
+        for(var i=0;i<surfaceKeys.Length;i++)Application.Current.Resources[surfaceKeys[i]]=new SolidColorBrush((Color)ColorConverter.ConvertFromString(surfaceColors[i]));
         Application.Current.Resources["SelectedInk"]=Application.Current.Resources["Accent"];
         Application.Current.Resources["SelectionSurface"]=Application.Current.Resources["AccentSoft"];
         if(highContrast)
@@ -31,6 +34,8 @@ public static class ThemeService
             Application.Current.Resources["SelectedInk"]=SystemColors.HighlightTextBrush;
             Application.Current.Resources["SelectionSurface"]=SystemColors.WindowBrush;
             Application.Current.Resources["Hover"]=SystemColors.ControlBrush;
+            foreach(var key in new[]{"FieldSurface","FieldHover","FieldFocus","CalendarHint"})Application.Current.Resources[key]=SystemColors.WindowBrush;
+            foreach(var key in new[]{"FieldEdge","FocusOutline","PopupEdge","Separator"})Application.Current.Resources[key]=SystemColors.HighlightBrush;
             Application.Current.Resources["DisabledInk"]=SystemColors.GrayTextBrush;
             foreach(var key in new[]{"Danger","Warning"})Application.Current.Resources[key]=SystemColors.WindowTextBrush;
             foreach(var key in new[]{"DangerSoft","WarningSoft"})Application.Current.Resources[key]=SystemColors.WindowBrush;

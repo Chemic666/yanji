@@ -109,7 +109,7 @@ internal static class Polish2Validation
             base.OnMouseLeftButtonUp(e);
         }
     }
-    private static void ShowButtonLab(MainWindow main,string output)
+    internal static void ShowButtonLab(MainWindow main,string output)
     {
         var root=new StackPanel{Margin=new Thickness(30),Focusable=true};root.Children.Add(new TextBlock{Text="Quiet Focus · Soft Depth",FontSize=22,Margin=new Thickness(0,0,0,24)});
         var sample=new StateSpecimenButton{ToolTip="仅验收样本延迟释放140ms以采集绘制帧，正式按钮没有释放延迟。",Content="开始学习",Style=(Style)main.FindResource("Primary"),Width=150,HorizontalAlignment=HorizontalAlignment.Left};System.Windows.Automation.AutomationProperties.SetAutomationId(sample,"StateSample");root.Children.Add(sample);

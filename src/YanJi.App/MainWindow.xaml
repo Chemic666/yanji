@@ -34,7 +34,7 @@
       </Border>
     </DataTemplate>
     <DataTemplate x:Key="CalendarSessionRow">
-      <Border BorderBrush="{DynamicResource Line}" BorderThickness="0,0,0,1" Padding="0,10" Margin="0,0,0,2">
+      <Border BorderBrush="{DynamicResource Separator}" BorderThickness="0,0,0,1" Padding="0,10" Margin="0,0,0,2">
         <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="4"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
           <Border Background="{Binding Color}" CornerRadius="2"/>
           <StackPanel Grid.Column="1" Margin="12,0,8,0">
@@ -73,7 +73,7 @@
       </DataTemplate.Triggers>
     </DataTemplate>
     <DataTemplate x:Key="CompactStudySessionRow">
-      <Border BorderBrush="{DynamicResource Line}" BorderThickness="0,0,0,1" Padding="0,4">
+      <Border BorderBrush="{DynamicResource Separator}" BorderThickness="0,0,0,1" Padding="0,4">
         <StackPanel>
           <DockPanel>
             <TextBlock DockPanel.Dock="Right" Text="{Binding DisplayDuration}" ToolTip="{Binding ScopeLabel}" FontWeight="SemiBold" Foreground="{DynamicResource Accent}" Margin="8,0,0,0" />
@@ -95,7 +95,7 @@
       </Border>
     </DataTemplate>
     <DataTemplate x:Key="StudySessionRow">
-      <Border BorderBrush="{DynamicResource Line}" BorderThickness="0,0,0,1" Padding="0,8">
+      <Border BorderBrush="{DynamicResource Separator}" BorderThickness="0,0,0,1" Padding="0,8">
         <Grid>
           <Grid.ColumnDefinitions>
             <ColumnDefinition Width="4" />
@@ -150,7 +150,7 @@
       <ColumnDefinition x:Name="NavColumn" Width="208" />
       <ColumnDefinition />
     </Grid.ColumnDefinitions>
-    <Border Background="{DynamicResource NavigationBackground}" BorderBrush="{DynamicResource Line}" BorderThickness="0" IsEnabled="{Binding DrawerOpen,Converter={StaticResource Inverse}}">
+    <Border Background="{DynamicResource NavigationBackground}" BorderBrush="{DynamicResource Separator}" BorderThickness="0" IsEnabled="{Binding DrawerOpen,Converter={StaticResource Inverse}}">
       <DockPanel Margin="14,24,14,16">
         <StackPanel DockPanel.Dock="Top" Margin="8,0,0,24">
           <TextBlock Text="研迹" FontSize="27" FontWeight="SemiBold" Foreground="{DynamicResource Accent}" x:Name="BrandWord" Style="{StaticResource FocusTextBlock}" />
@@ -406,7 +406,7 @@
                     <ItemsControl ItemsSource="{Binding Tasks}">
                       <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                          <Border BorderBrush="{DynamicResource Line}" BorderThickness="0,0,0,1" Padding="0,8">
+                          <Border BorderBrush="{DynamicResource Separator}" BorderThickness="0,0,0,1" Padding="0,8">
                             <DockPanel>
                               <Button DockPanel.Dock="Right" Content="编辑" Tag="{Binding}" Click="EditTask_Click" Style="{StaticResource QuietButton}" />
                               <Button DockPanel.Dock="Right" Content="开始" Command="{Binding DataContext.StartTaskCommand,RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}" IsEnabled="{Binding DataContext.CanStartFocus,RelativeSource={RelativeSource AncestorType=Window}}" Style="{StaticResource QuietButton}" />
@@ -550,15 +550,14 @@
                                 <DataTrigger Binding="{Binding InMonth}" Value="False">
                                   <Setter Property="Opacity" Value="0.35" />
                                 </DataTrigger>
-                                <DataTrigger Binding="{Binding IsToday}" Value="True"><Setter Property="BorderBrush" Value="{DynamicResource Accent}" /><Setter Property="BorderThickness" Value="1" /></DataTrigger><DataTrigger Binding="{Binding Selected}" Value="True">
+                                <DataTrigger Binding="{Binding HasStudy}" Value="True"><Setter Property="Background" Value="{DynamicResource CalendarHint}"/></DataTrigger><DataTrigger Binding="{Binding IsToday}" Value="True"><Setter Property="Foreground" Value="{DynamicResource Accent}"/></DataTrigger><DataTrigger Binding="{Binding Selected}" Value="True">
                                   <Setter Property="Background" Value="{DynamicResource AccentSoft}" />
-                                  <Setter Property="BorderBrush" Value="{DynamicResource Accent}" />
-                                  <Setter Property="BorderThickness" Value="1" />
+                                  <Setter Property="BorderThickness" Value="0" />
                                   <Setter Property="Foreground" Value="{DynamicResource SelectedInk}" />
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding IsPending}" Value="True">
                                   <Setter Property="BorderBrush" Value="{DynamicResource Warning}" />
-                                  <Setter Property="BorderThickness" Value="1" />
+                                  <Setter Property="BorderThickness" Value="0,0,0,1" />
                                 </DataTrigger>
                               </Style.Triggers>
                             </Style>
@@ -829,11 +828,11 @@
                     <TextBlock Text="{Binding ZoneId,StringFormat=统计时区：{0}}" Style="{StaticResource MutedText}" Margin="0,8" />
                     <Button Content="配置考试档案与科目" Click="ConfigureExamProfile_Click" HorizontalAlignment="Left" Style="{StaticResource Primary}" />
                     <Button Content="编辑日期与计时偏好" Click="Preferences_Click" HorizontalAlignment="Left" Style="{StaticResource FocusButton}" />
-                  <Border BorderBrush="{DynamicResource Line}" BorderThickness="0,1,0,0" Margin="0,16,0,16" />
+                  <Border BorderBrush="{DynamicResource Separator}" BorderThickness="0,1,0,0" Margin="0,16,0,16" />
                     <TextBlock Text="界面与主题" Style="{StaticResource Subheading}" />
                     <CheckBox Content="深色主题" IsChecked="{Binding DarkTheme}" Style="{StaticResource FocusCheckBox}" />
                     <TextBlock Text="浅色与深色即时切换，选择保存在本机。窄窗口自动折叠侧栏与并排卡片。" Style="{StaticResource MutedText}" />
-                  <Border BorderBrush="{DynamicResource Line}" BorderThickness="0,1,0,0" Margin="0,16,0,16" />
+                  <Border BorderBrush="{DynamicResource Separator}" BorderThickness="0,1,0,0" Margin="0,16,0,16" />
                     <TextBlock Text="计时偏好" Style="{StaticResource Subheading}" />
                     <TextBlock Text="{Binding CheckpointLabel}" Style="{StaticResource FocusTextBlock}" />
                     <TextBlock Text="暂停不计时；关闭窗口进入托盘；明确退出可结束保存或暂停后退出。锁屏不自动暂停，休眠与异常间隙需要核对。" Style="{StaticResource MutedText}" Margin="0,8,0,0" />
@@ -905,7 +904,7 @@
         </Grid>
       </ScrollViewer>
 
-      <Border Grid.Row="1" Background="{DynamicResource CardBackground}" BorderBrush="{DynamicResource Line}" BorderThickness="0,1,0,0" Padding="24,8">
+      <Border Grid.Row="1" Background="{DynamicResource CardBackground}" BorderBrush="{DynamicResource Separator}" BorderThickness="0,1,0,0" Padding="24,8">
         <DockPanel>
           <TextBlock DockPanel.Dock="Right" Text="处理中…" Foreground="{DynamicResource Accent}" Visibility="{Binding Busy,Converter={StaticResource BoolVisibility}}" Style="{StaticResource FocusTextBlock}" />
           <TextBlock Text="{Binding Status}" FontSize="11" Foreground="{DynamicResource Muted}" MaxHeight="34" TextTrimming="CharacterEllipsis" ToolTip="{Binding Status}" Style="{StaticResource FocusTextBlock}" />
