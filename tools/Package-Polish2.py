@@ -22,6 +22,9 @@ def windows():
     assert not git('status','--porcelain'),'Freeze reviewed code before publishing'
     code=git('rev-parse','HEAD');stage=ART/'publish'
     assert not base.licenses.check(stage,'binary')
+    icon_spec=importlib.util.spec_from_file_location('app_icon',ROOT/'tools/Verify-AppIcon.py')
+    icons=importlib.util.module_from_spec(icon_spec);icon_spec.loader.exec_module(icons)
+    icons.verify(stage/'YanJi.exe')
     reserved={'BUILD-INFO.json','manifest-sha256.json'}
     entries=[(name,data) for name,data in files(stage) if name not in reserved]
     assert not any(k.lower().endswith(('.db','.sqlite','.yanjibak','-wal','-shm')) or k.startswith('data-') for k,_ in entries)

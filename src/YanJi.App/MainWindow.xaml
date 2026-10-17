@@ -1,4 +1,4 @@
-<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:local="clr-namespace:YanJi.App" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Class="YanJi.App.MainWindow" Style="{StaticResource {x:Type Window}}" Title="研迹 YanJi · RC-Polish.2 · 2028 备考" Width="1200" Height="800" MinWidth="900" MinHeight="600" WindowStartupLocation="CenterScreen" SizeChanged="Layout_Changed" PreviewKeyDown="Window_KeyDown">
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:local="clr-namespace:YanJi.App" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Class="YanJi.App.MainWindow" Icon="pack://application:,,,/Assets/Icons/YanJi.ico" Style="{StaticResource {x:Type Window}}" Title="研迹 YanJi · RC-Polish.2 · 2028 备考" Width="1200" Height="800" MinWidth="900" MinHeight="600" WindowStartupLocation="CenterScreen" SizeChanged="Layout_Changed" PreviewKeyDown="Window_KeyDown">
   <Window.Resources>
     <local:DurationDisplayConverter x:Key="DurationDisplay" />
     <local:PageVisibilityConverter x:Key="PageVisibility" />

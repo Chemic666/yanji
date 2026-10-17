@@ -19,3 +19,7 @@ TestResults/
 *.pyc
 *.png
 !docs/*.png
+
+# Approved application branding, not disposable screenshots.
+!design/branding/yanji-icon-v1.png
+!src/YanJi/Assets/Icons/YanJi.png

@@ -3,8 +3,13 @@
     <OutputType>WinExe</OutputType><TargetFramework>net10.0-windows</TargetFramework>
     <UseWPF>true</UseWPF><UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>disable</ImplicitUsings><ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>../YanJi/Assets/Icons/YanJi.ico</ApplicationIcon>
     <AssemblyName>YanJi</AssemblyName><RootNamespace>YanJi.App</RootNamespace>
   </PropertyGroup>
+  <ItemGroup>
+    <Resource Include="../YanJi/Assets/Icons/YanJi.ico" Link="Assets/Icons/YanJi.ico" />
+    <Resource Include="../YanJi/Assets/Icons/YanJi.png" Link="Assets/Icons/YanJi.png" />
+  </ItemGroup>
   <ItemGroup><ProjectReference Include="../YanJi.Data/YanJi.Data.csproj" /><PackageReference Include="CommunityToolkit.Mvvm" /></ItemGroup>
   <ItemGroup><None Include="../../resources/licenses/**/*" Link="licenses/%(RecursiveDir)%(Filename)%(Extension)" CopyToPublishDirectory="PreserveNewest" /></ItemGroup>
   <ItemGroup>
