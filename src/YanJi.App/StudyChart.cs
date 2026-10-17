@@ -24,6 +24,8 @@ public sealed class StudyChart : FrameworkElement
     public IReadOnlyList<PlotPoint>? Data {get=>(IReadOnlyList<PlotPoint>?)GetValue(DataProperty);set=>SetValue(DataProperty,value);}
     public string Mode {get=>(string)GetValue(ModeProperty);set=>SetValue(ModeProperty,value);}
     public string Unit {get=>(string)GetValue(UnitProperty);set=>SetValue(UnitProperty,value);}
+    public static readonly DependencyProperty CompactProperty=DependencyProperty.Register(nameof(Compact),typeof(bool),typeof(StudyChart),new FrameworkPropertyMetadata(false,FrameworkPropertyMetadataOptions.AffectsMeasure|FrameworkPropertyMetadataOptions.AffectsRender));
+    public bool Compact {get=>(bool)GetValue(CompactProperty);set=>SetValue(CompactProperty,value);}
     public event Action<PlotPoint>? PointInvoked;
     private readonly List<(Geometry Shape,PlotPoint Point)> _hits=[];
     private int _selected=-1;
@@ -38,7 +40,7 @@ public sealed class StudyChart : FrameworkElement
     protected override Size MeasureOverride(Size available)
     {
         var days=Data?.Count(p=>p.Status!="范围外")??0;
-        var height=Mode=="Heatmap"?(days is >0 and <=14?Math.Ceiling(days/7d)*104:154):Mode=="Timeline"?Math.Max(96,(Data?.Count??0)*52+28):Mode=="Ranking"?((Data?.Any(p=>p.Value>0)??false)?Data.Count*44:80):Mode=="Donut"?((Data?.Any(p=>p.Value>0)??false)?(available.Width<420?180+(Data?.Count??0)*44:Math.Max(220,(Data?.Count??0)*44+12)):80):Mode=="Sparkline"?44:((Data?.Any(p=>p.Value>0)??false)?220:80);
+        var height=Mode=="Heatmap"?(days is >0 and <=14?Math.Ceiling(days/7d)*104:154):Mode=="Timeline"?Math.Max(96,(Data?.Count??0)*52+28):Mode=="Ranking"?((Data?.Any(p=>p.Value>0)??false)?Data.Count*44:80):Mode=="Donut"?((Data?.Any(p=>p.Value>0)??false)?(Compact?126+(Data?.Count??0)*36:available.Width<420?180+(Data?.Count??0)*44:Math.Max(220,(Data?.Count??0)*44+12)):80):Mode=="Sparkline"?44:((Data?.Any(p=>p.Value>0)??false)?220:80);
         return new Size(double.IsInfinity(available.Width)?500:available.Width,Math.Min(height,available.Height));
     }
     public void RefreshTheme()=>InvalidateVisual();
@@ -76,7 +78,7 @@ public sealed class StudyChart : FrameworkElement
         }
         else if(Mode=="Donut")
         {
-            var sum=data.Sum(p=>p.Value);var stacked=width<420;var cx=stacked?width/2:86d;var cy=stacked?82d:105d;var radius=62d;var angle=-Math.PI/2;var legendX=stacked?4:180d;var legendY=stacked?170:10;
+            var sum=data.Sum(p=>p.Value);var stacked=width<420;var cx=stacked?width/2:86d;var cy=Compact?58d:stacked?82d:105d;var radius=Compact?48d:62d;var angle=-Math.PI/2;var legendX=stacked?4:180d;var legendY=Compact?124:stacked?170:10;var legendStep=Compact?36:44;
             dc.DrawEllipse(null,new Pen(ThemeService.Brush("Soft"),20),new(cx,cy),radius,radius);
             for(var i=0;i<data.Count;i++)
             {
@@ -84,13 +86,13 @@ public sealed class StudyChart : FrameworkElement
                 if(sweep>=2*Math.PI-0.000001)g=new EllipseGeometry(new(cx,cy),radius,radius);
                 else {var path=new StreamGeometry();using(var c=path.Open()){c.BeginFigure(new(cx+radius*Math.Cos(angle),cy+radius*Math.Sin(angle)),false,false);c.ArcTo(new(cx+radius*Math.Cos(angle+sweep),cy+radius*Math.Sin(angle+sweep)),new(radius,radius),0,sweep>Math.PI,SweepDirection.Clockwise,true,false);}g=path;}
                 if(p.Value>0){dc.DrawGeometry(null,new Pen(ColorBrush(p.Color),20),g);Hit(g.GetWidenedPathGeometry(new Pen(Brushes.Black,28)),p);}
-                var legend=new Rect(legendX,legendY+i*44,Math.Max(1,width-legendX),40);dc.DrawRoundedRectangle(ColorBrush(p.Color),null,new(legendX,legendY+7+i*44,8,8),3,3);
-                Text(dc,p.Label,legendX+16,legendY+i*44,12,ThemeService.Brush("Ink"),width-legendX-16);
-                Text(dc,$"{(Unit=="time"?DurationText.Compact(p.Value):Value(p,Unit))} · {(100d*p.Value/sum):0.#}%",legendX+16,legendY+18+i*44,11,null,width-legendX-16);Hit(new RectangleGeometry(legend),p);angle+=sweep;
+                var legend=new Rect(legendX,legendY+i*legendStep,Math.Max(1,width-legendX),Compact?36:40);dc.DrawRoundedRectangle(ColorBrush(p.Color),null,new(legendX,legendY+7+i*legendStep,8,8),3,3);
+                Text(dc,p.Label,legendX+16,legendY+i*legendStep,12,ThemeService.Brush("Ink"),width-legendX-16);
+                Text(dc,$"{(Unit=="time"?DurationText.Compact(p.Value):Value(p,Unit))} · {(100d*p.Value/sum):0.#}%",legendX+16,legendY+18+i*legendStep,11,null,width-legendX-16);Hit(new RectangleGeometry(legend),p);angle+=sweep;
             }
             var center=Unit!="time"?sum+" "+Unit:sum>=3600000?sum/3600000+" 小时\n"+sum/60000%60+" 分 "+sum/1000%60+" 秒":DurationText.Compact(sum);
-            CenterText(dc,"范围总计\n"+center,new(cx,cy),center.Length>20?10:12,100);
-            Hit(new EllipseGeometry(new(cx,cy),48,48),new PlotPoint("total","范围总计",sum,data[0].Color,data.Select(p=>p.SubjectId).Distinct().Count()==1?data[0].SubjectId:null));
+            CenterText(dc,"范围总计\n"+center,new(cx,cy),Compact?10:center.Length>20?10:12,Compact?80:100);
+            Hit(new EllipseGeometry(new(cx,cy),radius-14,radius-14),new PlotPoint("total","范围总计",sum,data[0].Color,data.Select(p=>p.SubjectId).Distinct().Count()==1?data[0].SubjectId:null));
         }
         else if(Mode=="Heatmap")
         {

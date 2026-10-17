@@ -6,6 +6,14 @@ using System.Windows.Controls;
 namespace YanJi.App;
 public partial class SimpleProgressWorkspace : UserControl
 {
+    private void Journal_SizeChanged(object sender,SizeChangedEventArgs e)
+    {
+        if(JournalMain==null||RecentAside==null)return;
+        var compact=e.NewSize.Width<760;
+        JournalMain.Width=new GridLength(1,GridUnitType.Star);JournalGap.Width=new GridLength(compact?0:24);JournalAside.Width=new GridLength(compact?0:232);
+        Grid.SetColumn(RecentAside,compact?0:2);Grid.SetRow(RecentAside,compact?1:0);RecentAside.Margin=new Thickness(0,compact?22:12,0,0);
+    }
+
     internal SimpleProgressViewModel? Model {get;private set;}
     private MainWindow OwnerWindow=>(MainWindow)Window.GetWindow(this);
     private bool _loading;

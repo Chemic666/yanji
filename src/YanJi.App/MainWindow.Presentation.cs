@@ -18,21 +18,34 @@ public partial class MainWindow
     private void RefreshChartThemes(){foreach(var chart in VisualChildren(this).OfType<StudyChart>())chart.RefreshTheme();}
     private static IEnumerable<DependencyObject> VisualChildren(DependencyObject root)
     {for(var i=0;i<VisualTreeHelper.GetChildrenCount(root);i++){var child=VisualTreeHelper.GetChild(root,i);yield return child;foreach(var d in VisualChildren(child))yield return d;}}
+    private DateOnly? _studioDate;
+    private void UpdateStudioDate()
+    {
+        var day=Model.LocalToday();if(_studioDate==day)return;
+        _studioDate=day;StudioDate.Text=day.ToString("MM月dd日 dddd");
+    }
     private void Layout_Changed(object sender,SizeChangedEventArgs e)
     {
-        if(NavColumn==null||TodayReflection==null)return;var narrow=ActualWidth<1100;
-        if(TimerDigits!=null)TimerDigits.FontSize=narrow?44:56;
-        NavColumn.Width=new GridLength(narrow?72:184);BrandWord.FontSize=narrow?16:27;BrandHint.Visibility=VersionHint.Visibility=narrow?Visibility.Collapsed:Visibility.Visible;ExitButton.Content=narrow?"退出":"退出应用";ExitButton.Padding=new Thickness(narrow?2:8,8,narrow?2:8,8);ExitButton.Margin=new Thickness(0);
-        foreach(var item in NavigationList.Items.OfType<ListBoxItem>())item.Padding=new Thickness(narrow?8:12,11,narrow?4:12,11);
-        foreach(var text in VisualChildren(this).OfType<TextBlock>().Where(t=>Equals(t.Tag,"NavLabel")))text.Visibility=narrow?Visibility.Collapsed:Visibility.Visible;
-        MainScroll.Padding=new Thickness(narrow?20:24,16,narrow?20:24,12);
+        if(NavColumn==null||TodayReflection==null)return;
+        var narrow=ActualWidth<1050;
+        NavColumn.Width=new GridLength(narrow?142:172);
+        BrandWord.FontSize=24;BrandHint.Visibility=VersionHint.Visibility=Visibility.Visible;
+        ExitButton.Content="退出应用";ExitButton.Padding=new Thickness(8);ExitButton.Margin=new Thickness(0);
+        foreach(var text in VisualChildren(this).OfType<TextBlock>().Where(t=>Equals(t.Tag,"NavLabel")))text.Visibility=Visibility.Visible;
+        foreach(var item in NavigationList.Items.OfType<ListBoxItem>())item.Padding=new Thickness(narrow?8:12,11,8,11);
+        MainScroll.Padding=new Thickness(narrow?24:32,narrow?22:29,narrow?24:32,20);
+        TimerDigits.FontSize=narrow?56:72;StudioTodayTitle.FontSize=narrow?28:32;
+        UpdateStudioDate();
         if(RecordList!=null)RecordList.MaxHeight=Math.Max(200,ActualHeight-300);
-        var content=Math.Max(0,ActualWidth-(narrow?72:184)-MainScroll.Padding.Left-MainScroll.Padding.Right-24);
-        void Columns(ColumnDefinition left,ColumnDefinition gap,ColumnDefinition right,FrameworkElement panel,double ratio,double threshold)
-        {var stack=content<threshold;left.Width=new GridLength(stack?1:ratio,GridUnitType.Star);gap.Width=new GridLength(stack?0:16);right.Width=new GridLength(stack?0:1,GridUnitType.Star);Grid.SetColumn(panel,stack?0:2);Grid.SetRow(panel,stack?1:0);}
-        Columns(TodayLeft,TodayGap,TodayRight,TodayReflection,1.35,800);Columns(CalendarLeft,CalendarGap,CalendarRight,CalendarDetail,1/1.35,800);Columns(StatsLeft,StatsGap,StatsRight,StatsDailyCard,1.7,850);
+        var content=Math.Max(0,ActualWidth-NavColumn.Width.Value-MainScroll.Padding.Left-MainScroll.Padding.Right-24);
+        TodayLeft.Width=new GridLength(1,GridUnitType.Star);TodayGap.Width=new GridLength(narrow?19:24);TodayRight.Width=new GridLength(narrow?170:238);
+        Grid.SetColumn(TodayReflection,2);Grid.SetRow(TodayReflection,0);
+        CalendarLeft.Width=StatsLeft.Width=new GridLength(1,GridUnitType.Star);
+        CalendarGap.Width=StatsGap.Width=new GridLength(narrow?16:24);
+        CalendarRight.Width=new GridLength(narrow?220:285);StatsRight.Width=new GridLength(narrow?190:265);
+        Grid.SetColumn(CalendarDetail,2);Grid.SetRow(CalendarDetail,0);Grid.SetColumn(StatsDailyCard,2);Grid.SetRow(StatsDailyCard,0);
         if(TimerFields!=null&&TimerChapterField!=null)
-        {var stack=content<700?content:((content-16)*1.35/2.35);var vertical=stack<280;TimerFields.ColumnDefinitions[1].Width=new GridLength(vertical?0:12);TimerFields.ColumnDefinitions[2].Width=new GridLength(vertical?0:1,GridUnitType.Star);Grid.SetColumn(TimerChapterField,vertical?0:2);Grid.SetRow(TimerChapterField,vertical?1:0);}
+        {TimerFields.ColumnDefinitions[0].Width=new GridLength(narrow?105:130);TimerFields.ColumnDefinitions[1].Width=new GridLength(12);TimerFields.ColumnDefinitions[2].Width=new GridLength(1,GridUnitType.Star);Grid.SetColumn(TimerChapterField,2);Grid.SetRow(TimerChapterField,0);}
         if(DrawerSurface!=null)DrawerSurface.Width=Math.Min(620,Math.Max(0,ActualWidth-32));
         foreach(var pair in new[]{(AuxGrid2,AuxRight2),(AuxGrid3,AuxRight3),(AuxGrid5,AuxRight5)})
         {var stack=content<740;pair.Item1.ColumnDefinitions[0].Width=new GridLength(stack?1:1.6,GridUnitType.Star);pair.Item1.ColumnDefinitions[1].Width=new GridLength(stack?0:16);pair.Item1.ColumnDefinitions[2].Width=new GridLength(stack?0:1,GridUnitType.Star);Grid.SetColumn(pair.Item2,stack?0:2);Grid.SetRow(pair.Item2,stack?1:0);}

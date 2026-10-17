@@ -16,13 +16,14 @@ public static class ThemeService
 #pragma warning disable WPF0001
         Application.Current.ThemeMode=dark?ThemeMode.Dark:ThemeMode.Light;
 #pragma warning restore WPF0001
-        var colors=dark?new[]{"#1C201D","#272D28","#30382F","#3C473D","#E6ECE4","#B5C1B4","#A3C4A5","#344737","#F1A8A0","#472D2C","#E8C18C","#433A29","#222720","#C0CEC0","#354137","#D2DFD0","#798778","#17251B"}:
-            new[]{"#F6F4EE","#FCFCF7","#EDEFE7","#D9DED3","#29352E","#57665A","#456653","#DFE8D9","#A13E36","#F7E8E3","#805817","#F4ECD9","#ECEEE5","#425448","#E1E6DA","#354D3F","#899286","#FFFFFF"};
+        var colors=dark?new[]{"#1C2621","#29382E","#30382F","#3C473D","#E8EEE4","#ACB9AB","#ABC8A2","#344737","#F1A8A0","#472D2C","#E8C18C","#433A29","#243129","#C0CEC0","#354137","#D2DFD0","#798778","#17251B"}:
+            new[]{"#F5F5F0","#FDFEFA","#EDEFE7","#D9DED3","#273C32","#5E6B61","#416853","#E4ECDF","#A13E36","#F7E8E3","#805817","#F4ECD9","#E7ECE3","#425448","#E1E6DA","#354D3F","#899286","#FFFFFF"};
         var keys=new[]{"Canvas","CardBackground","Soft","Line","Ink","Muted","Accent","AccentSoft","Danger","DangerSoft","Warning","WarningSoft","NavigationBackground","NavigationInk","Hover","Pressed","DisabledInk","AccentInk"};
         for(var i=0;i<keys.Length;i++)Application.Current.Resources[keys[i]]=new SolidColorBrush((Color)ColorConverter.ConvertFromString(colors[i]));
         var surfaceKeys=new[]{"FieldSurface","FieldEdge","FieldHover","FieldFocus","FocusOutline","PopupEdge","Separator","CalendarHint"};
-        var surfaceColors=dark?new[]{"#232C25","#354138","#2D382F","#273329","#B3A3C4A5","#3A473D","#354036","#29352B"}:new[]{"#F1F3EC","#E1E6DA","#EBEFE5","#FEFFFA","#B3456653","#E4E8DE","#E7EBE1","#EFF3EA"};
+        var surfaceColors=dark?new[]{"#232C25","#354138","#2D382F","#273329","#B3A3C4A5","#3A473D","#354036","#29352B"}:new[]{"#EDF1E9","#E1E6DA","#EBEFE5","#FEFFFA","#B3456653","#E4E8DE","#E7EBE1","#EFF3EA"};
         for(var i=0;i<surfaceKeys.Length;i++)Application.Current.Resources[surfaceKeys[i]]=new SolidColorBrush((Color)ColorConverter.ConvertFromString(surfaceColors[i]));
+        Application.Current.Resources["SelectedNavigationSurface"]=highContrast?SystemColors.HighlightBrush:Application.Current.Resources["CardBackground"];
         Application.Current.Resources["SelectedInk"]=Application.Current.Resources["Accent"];
         Application.Current.Resources["SelectionSurface"]=Application.Current.Resources["AccentSoft"];
         if(highContrast)
@@ -50,5 +51,5 @@ public static class ThemeService
     }
     public static Brush Brush(string key)=>(Brush)Application.Current.FindResource(key);
     public static string SubjectColor(string id)
-    {var colors=Dark?new[]{"#9DBBA2","#9DBED0","#BBAACB","#D3B389","#CFABB0","#A8BEC8","#BBC799","#B9B4D0"}:new[]{"#6A8875","#7B9EB4","#A79ABB","#BFA078","#B17F89","#779EAA","#83985E","#9189AC"};if(id=="math")return colors[0];if(id=="english")return colors[1];if(id=="408")return colors[2];if(id=="politics")return colors[3];uint hash=2166136261;foreach(var c in id)hash=(hash^c)*16777619;return colors[hash%(uint)colors.Length];}
+    {var colors=Dark?new[]{"#9DBBA2","#9DBED0","#BBAACB","#D3B389","#CFABB0","#A8BEC8","#BBC799","#B9B4D0"}:new[]{"#6A8875","#789B9C","#A59BB2","#BFA078","#B17F89","#779EAA","#83985E","#9189AC"};if(id=="math")return colors[0];if(id=="english")return colors[1];if(id=="408")return colors[2];if(id=="politics")return colors[3];uint hash=2166136261;foreach(var c in id)hash=(hash^c)*16777619;return colors[hash%(uint)colors.Length];}
 }

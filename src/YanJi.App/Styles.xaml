@@ -161,7 +161,7 @@
               <Setter Property="Foreground" Value="{DynamicResource Ink}" />
             </Trigger>
             <Trigger Property="IsSelected" Value="True">
-              <Setter TargetName="Item" Property="Background" Value="{DynamicResource AccentSoft}" />
+              <Setter TargetName="Item" Property="Background" Value="{DynamicResource SelectedNavigationSurface}" />
               <Setter Property="Foreground" Value="{DynamicResource SelectedInk}" />
               <Setter Property="FontWeight" Value="SemiBold" />
             </Trigger>
@@ -438,4 +438,13 @@
     <Setter Property="FontSize" Value="28" /><Setter Property="Foreground" Value="{DynamicResource Ink}" />
     <Setter Property="TextWrapping" Value="Wrap" />
   </Style>
+
+  <SolidColorBrush x:Key="SelectedNavigationSurface" Color="#FDFEFA"/>
+  <!-- Quiet Focus 2.0 / 澄境. Existing templates retain keyboard, IME and reduced-motion behavior. -->
+  <Style x:Key="StudioEyebrow" TargetType="TextBlock" BasedOn="{StaticResource FocusTextBlock}"><Setter Property="FontSize" Value="11"/><Setter Property="Foreground" Value="{DynamicResource Muted}"/><Setter Property="Margin" Value="0,0,0,8"/></Style>
+  <Style x:Key="StudioTitle" TargetType="TextBlock" BasedOn="{StaticResource FocusTextBlock}"><Setter Property="FontSize" Value="32"/><Setter Property="FontWeight" Value="SemiBold"/><Setter Property="Margin" Value="0,0,0,10"/><Setter Property="TextWrapping" Value="Wrap"/></Style>
+  <Style x:Key="StudioSubtitle" TargetType="TextBlock" BasedOn="{StaticResource FocusTextBlock}"><Setter Property="FontSize" Value="12"/><Setter Property="Foreground" Value="{DynamicResource Muted}"/><Setter Property="TextWrapping" Value="Wrap"/><Setter Property="LineHeight" Value="20"/></Style>
+  <Style x:Key="StudioSurface" TargetType="Border" BasedOn="{StaticResource SectionSurface}"><Setter Property="CornerRadius" Value="18"/><Setter Property="Padding" Value="26"/><Setter Property="Margin" Value="0,0,0,22"/></Style>
+  <Style x:Key="StudioSecondary" TargetType="Button" BasedOn="{StaticResource SecondaryButton}"><Setter Property="MinHeight" Value="38"/><Setter Property="Padding" Value="14,8"/></Style>
+  <Style x:Key="StudioPrimary" TargetType="Button" BasedOn="{StaticResource Primary}"><Setter Property="MinHeight" Value="46"/><Setter Property="Padding" Value="22,10"/></Style>
 </ResourceDictionary>
