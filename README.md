@@ -58,7 +58,7 @@ certutil -hashfile YanJi-v0.4.0-beta.1-windows-x64.zip SHA256
 
 普通启动默认使用 **`%LOCALAPPDATA%\YanJi`**，不随程序位置改变。隔离试用必须显式使用 `YanJi.exe --test-mode --data-dir "D:\YanJi-Isolated-Trial"`；仅解压到另一位置不代表数据隔离。参数无效时不回退正式目录。
 
-软件没有应用自建遥测上传、在线账号、云同步或 AI 分析。操作系统、开发工具和用户自行同步目录的行为不在此范围。用户的学习记录、个人资料与备份不会因为软件开源而公开或变更许可。
+软件没有应用自建遥测上传、在线账号、云同步或 AI 分析。操作系统、开发工具和用户自行同步目录的行为不在此范围。用户数据（学习记录、个人资料与备份）不会因为软件开源而公开或变更许可。
 
 设置与数据中可进行完整备份、校验、恢复和 CSV 导出。**恢复是完整替换，不合并**，请保留恢复前备份；CSV 不能代替完整备份，也不要只复制正在使用的 SQLite 主文件而遗漏 WAL/SHM。备份未加密，请自行保管。
 
@@ -84,6 +84,6 @@ certutil -hashfile YanJi-v0.4.0-beta.1-windows-x64.zip SHA256
 
 ## 许可证与素材
 
-原创软件代码采用 [Apache-2.0](LICENSE)，范围见 [COPYRIGHT.md](COPYRIGHT.md)。第三方组件与开发 Skill 保留各自许可和声明，详见 [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md)。自编参考目录元数据按包内 CC0-1.0 声明，不授权外部教材正文。
+原创代码采用 [Apache-2.0](LICENSE)，范围见 [COPYRIGHT.md](COPYRIGHT.md)。第三方组件与开发 Skill 保留各自许可和声明，详见 [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md)。自编参考目录元数据按包内 CC0-1.0 声明，不授权外部教材正文。
 
 应用图标、原始 A「澄境」概念图和窗景背景由维护者确认来自 AI 工具，未使用第三方网站图片；截图来自真实程序。**图片不因代码许可证自动获得相同许可**，精确文件、生成记录和仍待决定的再分发范围见[素材来源说明](docs/ASSET-RIGHTS.md)。当前历史隐私和素材许可审核未完成，尚未执行公开发行。
