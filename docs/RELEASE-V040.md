@@ -1,6 +1,6 @@
 # YanJi V0.4.0 Beta
 
-建议标签：`v0.4.0-beta.1`。本文件为准备好的发行正文，**标签、远程 Release 和附件均尚未创建或上传**；公开前仍需通过隐私及素材许可审核并获得单独授权。Beta 不代表 Stable。
+建议标签：`v0.4.0-beta.1`。本文件为待发布的发行正文，**标签、远程 Release 和附件均尚未创建或上传**。源码历史已完成隐私脱敏，AI 素材的有限范围授权已经确认；首次公开仍须最终附件核验和维护者单独授权。Beta 不代表 Stable。
 
 研迹是一款面向考研学生的本地 Windows 学习管理软件，让日常计时、章节进度和学习回顾尽量简单。
 
@@ -52,8 +52,8 @@ certutil -hashfile YanJi-v0.4.0-beta.1-windows-x64.zip SHA256
 
 ## 来源、许可与反馈
 
-原创代码 Apache-2.0；第三方组件、Skill 和知识目录保留各自声明。AI 图像来源、单独许可范围及未决事项见 `ASSET-RIGHTS.md`，不自动与代码统一授权。完整 LICENSE / NOTICE / 第三方条款随包。
+原创代码 Apache-2.0；第三方组件、Skill 和知识目录保留各自声明。维护者已将图标、派生资源、A「澄境」概念图及窗景素材在依法可许可范围按 Apache-2.0 提供；不保证输出独占性或所有法域的著作权适格性，不授权尚未确认的第三方权利。详见随包 `ASSET-RIGHTS.md`、`AI-ASSET-AUTHORIZATION.md`。完整 LICENSE / NOTICE / 第三方条款随包。
 
 项目：https://github.com/Chemic666/yanji 。普通反馈使用该仓库 Issues，附版本和脱敏步骤；不要上传数据库、备份、凭据或完整私人路径。安全问题先按 SECURITY.md 确认私密渠道，未确认前不要公开细节。
 
-本地 `BUILD-INFO.json`、构建输入清单和最终交付索引将记录源码提交、程序集及包哈希。GitHub自动源码归档、手工source.zip与完整历史是不同内容，不能互相代替隐私审核。
+Windows 包保留原始 `BUILD-INFO.json` 和构建输入清单，不改写旧构建证明；`RELEASE-PROVENANCE.json` 单独记录原始代码提交到脱敏提交的映射、当前文档及程序文件哈希。程序二进制复用已验证的 Beta 构建，未因文档和历史脱敏重新编译。手工源码 ZIP 对应本次最终干净 main，精确提交见发行清单。GitHub自动源码归档、手工source.zip与完整历史是不同内容，不能互相代替隐私审核。

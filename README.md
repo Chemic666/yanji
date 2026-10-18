@@ -4,7 +4,7 @@
 
 研迹是一款面向考研学生的本地 Windows 学习管理软件。选择科目，开始学习，记下学到哪里；日常记录尽量在 1～3 分钟内完成。无需账号、服务器或云同步，不强制连续打卡。
 
-**当前版本：YanJi V0.4.0 Beta。** Beta 仍有实机兼容性限制，不代表 Stable。项目地址为 [Chemic666/yanji](https://github.com/Chemic666/yanji)；当前材料和程序尚在本地审核，**尚未上传源码或发行附件，暂无公开可下载版本**。
+**当前版本：YanJi V0.4.0 Beta。** Beta 仍有实机兼容性限制，不代表 Stable。项目地址为 [Chemic666/yanji](https://github.com/Chemic666/yanji)；发行附件将在获准发布后出现在 Releases，下载与校验方法见下文。
 
 ## 三个日常页面
 
@@ -86,4 +86,4 @@ certutil -hashfile YanJi-v0.4.0-beta.1-windows-x64.zip SHA256
 
 原创代码采用 [Apache-2.0](LICENSE)，范围见 [COPYRIGHT.md](COPYRIGHT.md)。第三方组件与开发 Skill 保留各自许可和声明，详见 [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md)。自编参考目录元数据按包内 CC0-1.0 声明，不授权外部教材正文。
 
-应用图标、原始 A「澄境」概念图和窗景背景由维护者确认来自 AI 工具，未使用第三方网站图片；截图来自真实程序。**图片不因代码许可证自动获得相同许可**，精确文件、生成记录和仍待决定的再分发范围见[素材来源说明](docs/ASSET-RIGHTS.md)。当前历史隐私和素材许可审核未完成，尚未执行公开发行。
+应用图标、原始 A「澄境」概念图和窗景背景由维护者确认来自 AI 工具，未使用第三方网站图片；维护者已在**依法有权许可的范围内**按 Apache-2.0 允许公开、修改和再分发。截图来自真实 WPF 程序。此授权不保证 AI 输出的独占性、所有法域的著作权适格性或第三方权利；字体与其他第三方许可另行保留。详见[素材来源说明](docs/ASSET-RIGHTS.md)及[有限权利授权记录](docs/AI-ASSET-AUTHORIZATION.md)。开发历史的隐私处理与原提交追溯见[历史说明](docs/HISTORY-SANITIZATION.md)。
