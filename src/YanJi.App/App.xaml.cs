@@ -15,6 +15,9 @@ public partial class App : Application
 {
     private Mutex? _instance;
     private string _dataDirectory="";
+    public bool TestMode {get;private set;}
+    public bool RuntimeCheck {get;private set;}
+    private string? _safeDiagnosticOutput;
     public string? SmokePath {get;private set;}
     public bool Measure {get;private set;}
     public bool PerformanceOnly {get;private set;}
@@ -66,7 +69,9 @@ public partial class App : Application
             string? explicitDirectory=null;
             for(var i=0;i<e.Args.Length;i++)
             {
-                if(e.Args[i]=="--data-dir"&&i+1<e.Args.Length)explicitDirectory=e.Args[++i];
+                if(e.Args[i]=="--test-mode"){if(TestMode)throw new ArgumentException("--test-mode 不可重复。");TestMode=true;}
+                else if(e.Args[i]=="--data-dir"&&i+1<e.Args.Length){if(explicitDirectory!=null)throw new ArgumentException("--data-dir 不可重复。");explicitDirectory=e.Args[++i];}
+                else if(e.Args[i]=="--runtime-check"&&i+1<e.Args.Length){SmokePath=Path.GetFullPath(e.Args[++i]);RuntimeCheck=true;}
                 else if(e.Args[i]=="--smoke"&&i+1<e.Args.Length)SmokePath=Path.GetFullPath(e.Args[++i]);
                 else if(e.Args[i]=="--measure")Measure=true;
                 else if(e.Args[i]=="--performance"&&i+1<e.Args.Length){SmokePath=Path.GetFullPath(e.Args[++i]);PerformanceOnly=true;}
@@ -105,9 +110,11 @@ public partial class App : Application
                 else if(e.Args[i]=="--v02-visual"&&i+1<e.Args.Length){SmokePath=Path.GetFullPath(e.Args[++i]);V02Visual=true;}
                 else throw new ArgumentException("未知参数。支持 --data-dir <独立数据目录> 与 --smoke <报告目录>。");
             }
-            var candidateDefault=Path.Combine(AppContext.BaseDirectory,"data-rc-quiet");
-            if(SmokePath!=null&&explicitDirectory==null&&!(StartupOnly&&candidateDefault.StartsWith(Path.GetFullPath("artifacts")+Path.DirectorySeparatorChar,StringComparison.OrdinalIgnoreCase)&&SmokePath.StartsWith(Path.GetFullPath("artifacts")+Path.DirectorySeparatorChar,StringComparison.OrdinalIgnoreCase)))throw new ArgumentException("自动化验证必须指定独立数据目录。");
-            _dataDirectory=Path.GetFullPath(explicitDirectory??candidateDefault);
+            var localData=Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            var location=RuntimeLocation.Resolve(TestMode,explicitDirectory,SmokePath!=null||Measure||V021Fixture!=null,localData);
+            _dataDirectory=location.DataDirectory;
+            if(TestMode)RuntimeLocation.ValidateTestPath(_dataDirectory,localData);
+            if(SmokePath!=null){RuntimeLocation.ValidateTestPath(SmokePath,localData);_safeDiagnosticOutput=SmokePath;}
             if(V021Capture && (V021Fixture==null||SmokePath==null||!SmokePath.StartsWith(Path.GetFullPath("artifacts")+Path.DirectorySeparatorChar,StringComparison.OrdinalIgnoreCase)||!_dataDirectory.StartsWith(Path.GetFullPath("artifacts")+Path.DirectorySeparatorChar,StringComparison.OrdinalIgnoreCase)))throw new ArgumentException("V021 capture requires fixture and fresh project artifacts data/output.");
             if((V022Capture||V023Capture||V03Capture||V03Reopen||V03Layout||V03Recover||V031Probe||V031Check||M1Check||M2Check||M3Check||M4Check||SimpleCheck||PolishPerf||CalendarCheck||SurfaceCheck)&&(!SmokePath!.StartsWith(Path.GetFullPath("artifacts")+Path.DirectorySeparatorChar,StringComparison.OrdinalIgnoreCase)||!_dataDirectory.StartsWith(Path.GetFullPath("artifacts")+Path.DirectorySeparatorChar,StringComparison.OrdinalIgnoreCase)))throw new ArgumentException("Capture requires owned project artifacts.");
             if((PolishPerf||CalendarCheck||SurfaceCheck)&&Directory.Exists(_dataDirectory)&&Directory.EnumerateFileSystemEntries(_dataDirectory).Any())throw new ArgumentException("Performance run requires fresh synthetic data.");
@@ -117,6 +124,7 @@ public partial class App : Application
                 if(string.Equals(_dataDirectory,formal,StringComparison.OrdinalIgnoreCase)||Directory.Exists(_dataDirectory)&&Directory.EnumerateFileSystemEntries(_dataDirectory).Any())throw new ArgumentException("视觉验收必须使用新的独立数据目录。");
                 System.Windows.Media.RenderOptions.ProcessRenderMode=System.Windows.Interop.RenderMode.SoftwareOnly;
             }
+            YanJi.Data.YanJiDatabase.ValidateStartupDirectory(_dataDirectory);
             var identity=Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(_dataDirectory.TrimEnd(Path.DirectorySeparatorChar).ToUpperInvariant())))[..24];
             ShowMessage=RegisterWindowMessage("YanJi.Show."+identity);
             _instance=new Mutex(true,"Local\\YanJi."+identity,out var created);
@@ -139,7 +147,7 @@ public partial class App : Application
         }
         catch(Exception exception)
         {
-            if(SmokePath!=null){Directory.CreateDirectory(SmokePath);File.WriteAllText(Path.Combine(SmokePath,"startup-failure.txt"),exception.ToString());}
+            if(_safeDiagnosticOutput!=null){Directory.CreateDirectory(_safeDiagnosticOutput);File.WriteAllText(Path.Combine(_safeDiagnosticOutput,"startup-failure.txt"),exception.ToString());}
             else MessageBox.Show("研迹未能启动："+exception.Message+"\n已有数据未被自动恢复或清除。","研迹",MessageBoxButton.OK,MessageBoxImage.Error);
             Shutdown(1);
         }

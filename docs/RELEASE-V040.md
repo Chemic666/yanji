@@ -26,7 +26,7 @@ certutil -hashfile YanJi-V0.4.0-Publication-Candidate-windows-x64.zip SHA256
 
 ## 数据与回退
 
-当前候选数据位于解压目录旁`data-rc-quiet`，用户数据不随开源上传。删除整个目录前先备份。设置与数据可导出/校验完整`.yanjibak`；CSV不能替代完整备份。恢复是完整替换，不合并，操作前保留现有备份。
+普通启动使用`%LOCALAPPDATA%\YanJi`，不随程序位置改变。隔离试用必须显式使用`--test-mode --data-dir "独立绝对路径"`；不自动迁入旧候选数据或升级旧格式数据库。用户数据不随开源上传。设置与数据可导出/校验完整`.yanjibak`；CSV不能替代完整备份。恢复是完整替换，不合并，操作前保留现有备份。
 
 新候选建议从空档案试用；未授权自动升级真实旧库。保留旧程序及升级前备份，旧程序不能直接打开较新Schema；回退使用升级前数据。详见随包USER-GUIDE.md和UPGRADE-ROLLBACK.md。
 

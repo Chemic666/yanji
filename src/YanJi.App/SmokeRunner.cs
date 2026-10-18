@@ -60,7 +60,7 @@ public static class SmokeRunner
             await vm.StartCommand.ExecuteAsync(null);window.Close();Assert(!window.IsVisible&&vm.TimerRunning,"X hides running window and keeps timer");window.ShowFromTray();await vm.FinishCommand.ExecuteAsync(null);
             window.Hide();var secondStart=new ProcessStartInfo(Environment.ProcessPath!){UseShellExecute=false,CreateNoWindow=true};
             if(string.Equals(Path.GetFileNameWithoutExtension(Environment.ProcessPath),"dotnet",StringComparison.OrdinalIgnoreCase))secondStart.ArgumentList.Add(typeof(App).Assembly.Location);
-            secondStart.ArgumentList.Add("--data-dir");secondStart.ArgumentList.Add(vm.Database.DirectoryPath);
+            secondStart.ArgumentList.Add("--test-mode");secondStart.ArgumentList.Add("--data-dir");secondStart.ArgumentList.Add(vm.Database.DirectoryPath);
             using(var second=Process.Start(secondStart)!)
             {var finished=await Task.WhenAny(second.WaitForExitAsync(),Task.Delay(5000));if(!second.HasExited){second.Kill();throw new InvalidOperationException("Owned second instance did not exit.");}await Task.Delay(200);Assert(second.ExitCode==0&&window.IsVisible,"Actual second process activates first instance and exits");}
             vm.TimerSubject=vm.Subjects.First(s=>s.Id=="english");vm.TimerNote="恢复时显示正确科目";await vm.StartCommand.ExecuteAsync(null);await vm.InitializeAsync();

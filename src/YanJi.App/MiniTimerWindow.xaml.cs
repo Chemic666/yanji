@@ -16,6 +16,7 @@ public partial class MiniTimerWindow:Window
     public MiniTimerWindow(MainWindow main)
     {
         _main=main;InitializeComponent();DataContext=main.Model;Closing+=HideOnClose;
+        if(((App)Application.Current).TestMode){Title="研迹 · 悬浮专注 · 隔离测试";RuntimeHint.Text="研迹 · 隔离测试";}
         var work=SystemParameters.WorkArea;Left=work.Right-Width-28;Top=work.Top+60;
         var stored=main.Model.Database.Setting("mini-position","").Split(';');
         if(stored.Length==2&&double.TryParse(stored[0],NumberStyles.Float,CultureInfo.InvariantCulture,out var x)&&double.TryParse(stored[1],NumberStyles.Float,CultureInfo.InvariantCulture,out var y)&&double.IsFinite(x)&&double.IsFinite(y))

@@ -1,4 +1,4 @@
-<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:local="clr-namespace:YanJi.App" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Class="YanJi.App.MainWindow" Icon="pack://application:,,,/Assets/Icons/YanJi.ico" Style="{StaticResource {x:Type Window}}" Title="研迹 YanJi · Quiet Focus 2.0 · 隔离候选" Width="1200" Height="800" MinWidth="900" MinHeight="600" WindowStartupLocation="CenterScreen" SizeChanged="Layout_Changed" PreviewKeyDown="Window_KeyDown">
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:local="clr-namespace:YanJi.App" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Class="YanJi.App.MainWindow" Icon="pack://application:,,,/Assets/Icons/YanJi.ico" Style="{StaticResource {x:Type Window}}" Title="研迹 YanJi" Width="1200" Height="800" MinWidth="900" MinHeight="600" WindowStartupLocation="CenterScreen" SizeChanged="Layout_Changed" PreviewKeyDown="Window_KeyDown">
   <Window.Resources>
     <local:DurationDisplayConverter x:Key="DurationDisplay" />
     <local:PageVisibilityConverter x:Key="PageVisibility" />
@@ -204,7 +204,7 @@
         </StackPanel>
         <StackPanel DockPanel.Dock="Bottom">
           <Button Content="退出应用" Click="Exit_Click" x:Name="ExitButton" Style="{StaticResource QuietButton}" />
-          <TextBlock Text="QUIET FOCUS 2.0 · RC2" FontSize="11" Foreground="{DynamicResource Muted}" x:Name="VersionHint" Margin="10,8,0,0" Style="{StaticResource FocusTextBlock}" />
+          <TextBlock Text="QUIET FOCUS 2.0" FontSize="11" Foreground="{DynamicResource Muted}" x:Name="VersionHint" Margin="10,8,0,0" Style="{StaticResource FocusTextBlock}" />
         </StackPanel>
         <ListBox x:Name="NavigationList" PreviewMouseLeftButtonUp="Navigation_Click" PreviewKeyDown="Navigation_KeyDown" SelectedIndex="{Binding NavigationIndex}" BorderThickness="0" Background="Transparent" SelectionChanged="Navigation_Changed" ItemContainerStyle="{StaticResource NavigationItem}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Margin="0,28,0,0">
           <ListBoxItem ToolTip="今日">
