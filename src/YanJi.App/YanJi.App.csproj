@@ -5,6 +5,8 @@
     <ImplicitUsings>disable</ImplicitUsings><ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>../YanJi/Assets/Icons/YanJi.ico</ApplicationIcon>
     <AssemblyName>YanJi</AssemblyName><RootNamespace>YanJi.App</RootNamespace>
+    <!-- Pin the self-contained security servicing level; no UI or data semantics change. -->
+    <RuntimeFrameworkVersion>10.0.13</RuntimeFrameworkVersion>
   </PropertyGroup>
   <ItemGroup>
     <Resource Include="../YanJi/Assets/Icons/YanJi.ico" Link="Assets/Icons/YanJi.ico" />
@@ -20,12 +22,13 @@
     <None Include="../../COPYRIGHT.md" Link="COPYRIGHT.md" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <None Include="../../THIRD-PARTY-NOTICES.md" Link="THIRD-PARTY-NOTICES.md" CopyToPublishDirectory="PreserveNewest" />
     <None Include="../../resources/legal/third-party-licenses.json" Link="third-party-licenses.json" CopyToPublishDirectory="PreserveNewest" />
-    <None Include="../../docs/CHENGJING-RESTORATION.md" Link="START-HERE.md" CopyToPublishDirectory="PreserveNewest" />
-    <None Include="../../docs/CHENGJING-RESTORATION.md" Link="USER-GUIDE.md" CopyToPublishDirectory="PreserveNewest" />
-    <None Include="../../docs/V04-RCFINAL-UPGRADE.md" Link="UPGRADE-ROLLBACK.md" CopyToPublishDirectory="PreserveNewest" />
+    <None Include="../../docs/USER-GUIDE.md" Link="START-HERE.md" CopyToPublishDirectory="PreserveNewest" />
+    <None Include="../../docs/USER-GUIDE.md" Link="USER-GUIDE.md" CopyToPublishDirectory="PreserveNewest" />
+    <None Include="../../docs/UPGRADE-ROLLBACK.md" Link="UPGRADE-ROLLBACK.md" CopyToPublishDirectory="PreserveNewest" />
     <None Include="../../docs/V04-RCFINAL-MANUAL.md" Link="MANUAL-ACCEPTANCE.md" CopyToPublishDirectory="PreserveNewest" />
     <None Include="../../docs/V04-SIMPLE-REFERENCES.md" Link="KNOWLEDGE-SOURCES.md" CopyToPublishDirectory="PreserveNewest" />
-    <None Include="../../docs/CHENGJING-RESTORATION.md" Link="RELEASE-NOTES.md" CopyToPublishDirectory="PreserveNewest" />
+    <None Include="../../docs/RELEASE-V040.md" Link="RELEASE-NOTES.md" CopyToPublishDirectory="PreserveNewest" />
+    <None Include="../../docs/ASSET-RIGHTS.md" Link="ASSET-RIGHTS.md" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
   <ItemGroup><None Include="../../resources/knowledge-packages/**/*.json" Link="knowledge-packages/%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" /></ItemGroup>
 </Project>

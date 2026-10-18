@@ -2,7 +2,7 @@
   "SchemaVersion": 1,
   "ProjectLicense": "Apache-2.0",
   "ProjectLicenseScope": "original-code",
-  "RuntimeVersionsUnchanged": true,
+  "RuntimeVersionsUnchanged": false,
   "Components": [
     {
       "Name": "communitytoolkit.mvvm",
@@ -78,8 +78,8 @@
     },
     {
       "Name": "microsoft.netcore.app.runtime.win-x64",
-      "Version": "10.0.12",
-      "Source": "https://www.nuget.org/packages/microsoft.netcore.app.runtime.win-x64/10.0.12",
+      "Version": "10.0.13",
+      "Source": "https://www.nuget.org/packages/microsoft.netcore.app.runtime.win-x64/10.0.13",
       "License": "MIT",
       "SourceDistributed": false,
       "BinaryDistributed": true,
@@ -120,8 +120,8 @@
     },
     {
       "Name": "microsoft.windowsdesktop.app.runtime.win-x64",
-      "Version": "10.0.12",
-      "Source": "https://www.nuget.org/packages/microsoft.windowsdesktop.app.runtime.win-x64/10.0.12",
+      "Version": "10.0.13",
+      "Source": "https://www.nuget.org/packages/microsoft.windowsdesktop.app.runtime.win-x64/10.0.13",
       "License": "MIT",
       "SourceDistributed": false,
       "BinaryDistributed": true,
@@ -730,5 +730,6 @@
       "Sha256": "CFC7749B96F63BD31C3C42B5C471BF756814053E847C10F3EB003417BC523D30"
     }
   ],
-  "RightsBoundary": "Third-party materials keep their original terms. Knowledge packages retain their own content licenses. User learning data is never made public by this software license."
+  "RightsBoundary": "Third-party materials keep their original terms. Knowledge packages retain their own content licenses. User learning data is never made public by this software license.",
+  "RuntimeSecurityServicing": "10.0.12 -> 10.0.13, Microsoft October 2026 security advisories; other NuGet versions unchanged"
 }

@@ -15,10 +15,26 @@ TestResults/
 *.user
 *.suo
 *.tmp
+*.sqlite3
+*.sqlite3-*
+*.db3
+*.dmp
+*.trx
+*.coverage
+*.pfx
+*.p12
+*.key
+.env
+.env.*
+!.env.example
+!.env.template
+.codex/
+.impeccable/cache/
 **/__pycache__/
 *.pyc
 *.png
 !docs/*.png
+!docs/screenshots/*.png
 
 # Approved application branding, not disposable screenshots.
 !design/branding/yanji-icon-v1.png

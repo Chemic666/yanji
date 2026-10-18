@@ -1,0 +1,44 @@
+{
+  "Method": "actual WPF HWND capture, synthetic data only; not an imagegen mockup",
+  "Assembly": "0.4.0-rc.quiet.2+security.2c15bdc44857",
+  "DllSha256": "0A59D7ABFE71C68B60AF49F5B20C42F34FB80CFFD50826EC69A2DB503B1BFDE9",
+  "PrivacyReview": "demo record titles only; no user names, data paths, accounts or personal records visible",
+  "Files": [
+    {
+      "File": "today.png",
+      "Original": "today-light-1200.png",
+      "Sha256": "523059C6E83B7064ED9A2334B75E77B3A1C076C0A1710CAD1478859503CB5AF7",
+      "Bytes": 2196402,
+      "Dpi": 192,
+      "Width": 1200,
+      "Height": 800
+    },
+    {
+      "File": "progress.png",
+      "Original": "progress-light-1200.png",
+      "Sha256": "8D4F5A29AC5A3A2A3BF0294F8692E22EDCE15568FA971C5ED6B2C7D9B9556BF0",
+      "Bytes": 146601,
+      "Dpi": 192,
+      "Width": 1200,
+      "Height": 800
+    },
+    {
+      "File": "data.png",
+      "Original": "data-light-1200.png",
+      "Sha256": "E86B935C7E7087364139DD14A53A7CE62822B33F2D62FFEFC0EEDBB4941BD842",
+      "Bytes": 139218,
+      "Dpi": 192,
+      "Width": 1200,
+      "Height": 800
+    },
+    {
+      "File": "mini.png",
+      "Original": "mini-light.png",
+      "Sha256": "1C3D91F0479934070D8DCBF99A02E356D4E7C601EDF53DE7D8C3E1B33615146E",
+      "Bytes": 21991,
+      "Dpi": 192,
+      "Width": 420,
+      "Height": 244
+    }
+  ]
+}

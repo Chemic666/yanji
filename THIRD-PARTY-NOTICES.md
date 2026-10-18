@@ -11,10 +11,10 @@ YanJi原创代码采用Apache-2.0；第三方内容及知识包保留各自条�
 | microsoft.data.sqlite | 10.0.12 | MIT | 否 | 是 | resources/licenses/EFCore-Sqlite-MIT.txt |
 | microsoft.data.sqlite.core | 10.0.12 | MIT | 否 | 是 | resources/licenses/EFCore-Sqlite-MIT.txt |
 | microsoft.net.test.sdk | 18.10.1 | MIT | 否 | 否 | NuGet链接/元数据；无包内容再分发 |
-| microsoft.netcore.app.runtime.win-x64 | 10.0.12 | MIT | 否 | 是 | resources/licenses/DotNet-Runtime-MIT.txt<br>resources/licenses/DotNet-ThirdPartyNotices.txt |
+| microsoft.netcore.app.runtime.win-x64 | 10.0.13 | MIT | 否 | 是 | resources/licenses/DotNet-Runtime-MIT.txt<br>resources/licenses/DotNet-ThirdPartyNotices.txt |
 | microsoft.testplatform.objectmodel | 18.10.1 | MIT | 否 | 否 | NuGet链接/元数据；无包内容再分发 |
 | microsoft.testplatform.testhost | 18.10.1 | MIT | 否 | 否 | NuGet链接/元数据；无包内容再分发 |
-| microsoft.windowsdesktop.app.runtime.win-x64 | 10.0.12 | MIT | 否 | 是 | resources/licenses/WindowsDesktop-MIT.txt<br>resources/licenses/DotNet-ThirdPartyNotices.txt |
+| microsoft.windowsdesktop.app.runtime.win-x64 | 10.0.13 | MIT | 否 | 是 | resources/licenses/WindowsDesktop-MIT.txt<br>resources/licenses/DotNet-ThirdPartyNotices.txt |
 | sqlitepclraw.bundle_e_sqlite3 | 2.1.12 | Apache-2.0 | 否 | 是 | resources/licenses/SQLitePCLRaw-Apache-2.0.txt |
 | sqlitepclraw.core | 2.1.12 | Apache-2.0 | 否 | 是 | resources/licenses/SQLitePCLRaw-Apache-2.0.txt |
 | sqlitepclraw.lib.e_sqlite3 | 2.1.12 | Apache-2.0 | 否 | 是 | resources/licenses/SQLitePCLRaw-Apache-2.0.txt |
@@ -50,3 +50,5 @@ YanJi原创代码采用Apache-2.0；第三方内容及知识包保留各自条�
 .NET完整集合第三方声明、CommunityToolkit NOTICE和Impeccable NOTICE保持全文。字体仅按名称使用，未打包字体文件；图表/导航为原生代码绘制，未替换已有应用图标。
 
 知识包CC0只覆盖自编参考目录，不授权外部教材/课程/题库；408不是官方年度完整大纲。Skill只含字体/图标索引元数据，没有对应资产文件。用户数据库和备份不受代码许可影响，也不随发行分发。
+
+2026-10-18发行准备：仅将自包含.NET/WindowsDesktop运行时更新为10.0.13以处理已知安全公告，其他锁定NuGet版本不变。10.0.13运行时许可/NOTICE逐字节对比既有文本相同。当前图标是项目提供的独立资源，旧表中SystemIcons.Application行仅描述历史阶段，不是当前应用图标；图标/背景/概念图权利审查见docs/ASSET-RIGHTS.md。
