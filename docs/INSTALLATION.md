@@ -2,11 +2,11 @@
 
 **普通用户：下载 Setup.exe → 双击安装 → 从开始菜单启动研迹。** 不需要手动解压、计算 SHA-256 或安装 .NET SDK/运行时。
 
-v0.4.0-beta.1 已公开为 Pre-release，原绿色 ZIP 保留。新增 `YanJi-v0.4.0-beta.1-Setup.exe` 当前是本地候选，等待维护者单独授权后才会加入[同一 Release](https://github.com/Chemic666/yanji/releases/tag/v0.4.0-beta.1)。页面暂时没有 Setup 时，可使用原 ZIP；不要从不明网站下载。
+v0.4.0-beta.1 已公开为 Pre-release，原绿色 ZIP 保留。安装版 `YanJi-v0.4.0-beta.1-Setup.exe` 与绿色 ZIP 使用[同一 Release](https://github.com/Chemic666/yanji/releases/tag/v0.4.0-beta.1) 的下载入口。请只从项目 Release 下载。
 
 ## 安装与启动
 
-1. 在项目 Release 的 Assets 中下载 `YanJi-v0.4.0-beta.1-Setup.exe`（附件发布后）。
+1. 在项目 Release 的 Assets 中下载 `YanJi-v0.4.0-beta.1-Setup.exe`。
 2. 双击安装；阅读说明和许可。仅安装给当前 Windows 用户，通常不需要管理员权限。可选创建桌面快捷方式。
 3. 安装完成后，从开始菜单打开“研迹 YanJi”，建立学习档案。安装器本身不自动启动应用。
 

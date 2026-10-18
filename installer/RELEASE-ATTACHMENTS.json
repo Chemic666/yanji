@@ -1,0 +1,15 @@
+{
+  "Format": "YanJi fixed installer release preparation v1",
+  "OriginalPublicMain": "dc1038e62b8046584d7d7dd5f48f17275ce98c44",
+  "BuildInputCommit": "d0f7acf5a194e6e8c9fdb9bfd7f82c721fe62978",
+  "SetupName": "YanJi-v0.4.0-beta.1-Setup.exe",
+  "SetupSha256": "fc33564333de81cdc2471ec62adf74f5da3f69a293a2bf233d1c7c5e55d8cce5",
+  "SetupBytes": 56721342,
+  "FinalInstallerChecks": 75,
+  "ApplicationRecompiled": false,
+  "RebuildApprovedInstaller": false,
+  "ExistingFullSourceZipIncludesInstaller": false,
+  "RawValidationSha256": "76db02d4ad4cd011450a98da6337805a8987c37f2d0e8ae1964a1d70a8236c0c",
+  "SourceIntegrationCommit": "Resolved by git rev-parse HEAD and recorded in external release sidecar; never a self-referential field",
+  "RemoteWritesAuthorized": false
+}

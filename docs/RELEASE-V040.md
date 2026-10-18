@@ -1,6 +1,6 @@
 # YanJi V0.4.0 Beta
 
-已发布标签：`v0.4.0-beta.1`，对应 [GitHub Pre-release](https://github.com/Chemic666/yanji/releases/tag/v0.4.0-beta.1)。原程序 ZIP、源码 ZIP 和校验文件已公开。新增 Setup 安装器目前仅在本地完成构建与验证准备，尚待单独发布授权；本轮不修改远程标签、Release 或已有附件。源码历史已完成隐私脱敏，AI 素材的有限范围授权已经确认。Beta 不代表 Stable。
+已发布标签：`v0.4.0-beta.1`，对应 [GitHub Pre-release](https://github.com/Chemic666/yanji/releases/tag/v0.4.0-beta.1)。本次为同一版本补充 Windows 安装方式，保留原程序 ZIP、原源码 ZIP、校验文件和标签。源码历史已完成隐私脱敏，AI 素材的有限范围授权已经确认。Beta 不代表 Stable。
 
 研迹是一款面向考研学生的本地 Windows 学习管理软件，让日常计时、章节进度和学习回顾尽量简单。
 
@@ -11,17 +11,20 @@
 - 学习数据：日/周/月投入、学习日历、趋势、科目与章节分布、历史记录下钻、热力和复盘。
 - Quiet Focus 2.0「澄境」浅深主题；本地 SQLite、修订历史、完整备份校验恢复与 CSV 导出。
 
-本次发行准备不新增业务功能，不改冻结视觉或数据结构。程序集版本调整为 `0.4.0-beta.1`，继续使用已修补的自包含 .NET / WindowsDesktop 10.0.13；原始有效毫秒、节点 ID、数据目录隔离和备份规则不变。
+本次安装方式增补不新增业务功能，不改冻结视觉或数据结构。程序集版本保持 `0.4.0-beta.1`，继续使用已修补的自包含 .NET / WindowsDesktop 10.0.13；原始有效毫秒、节点 ID、数据目录隔离和备份规则不变。
 
 ## Windows x64 安装
 
 适用于 Windows 11 x64。**推荐：下载 Setup.exe → 双击安装 → 从开始菜单启动**，无需手动解压、计算 SHA-256 或安装 .NET SDK/运行时。附件如下：
 
-- `YanJi-v0.4.0-beta.1-Setup.exe`：新增的当前用户安装版，本地候选，待授权上传；默认 `%LOCALAPPDATA%\Programs\YanJi`，含开始菜单、可选桌面快捷方式及卸载入口。
+- `YanJi-v0.4.0-beta.1-Setup.exe`：当前用户安装版，默认 `%LOCALAPPDATA%\Programs\YanJi`，含开始菜单、可选桌面快捷方式及卸载入口。
 - `YanJi-v0.4.0-beta.1-windows-x64.zip`：已公开绿色版，程序与必要许可/使用说明，包含运行时，原附件保持不变。
-- `YanJi-v0.4.0-beta.1-source.zip`：对应本地交付提交的完整受控源码树，不含 `.git` 历史。
+- `YanJi-v0.4.0-beta.1-source.zip`：原发行 clean main `dc1038e62b8046584d7d7dd5f48f17275ce98c44` 的完整源码树，不含 `.git` 历史及本次新增安装器工程；原字节不变。
 - `SHA256SUMS.txt`：原有两个 ZIP 的可选校验，保持不变。
-- `SHA256SUMS-INSTALLER.txt`：新增安装器及同字节绿色 ZIP 的可选校验，待授权上传。
+- `SHA256SUMS-INSTALLER.txt`：新增附件和原绿色 ZIP 的可选校验。
+- `YanJi-v0.4.0-beta.1-installer-source.zip`：相对原 clean main 的安装工程/必要脚本/文档增量，含精确构建快照和提交追溯，不冒充完整应用源码。
+- `INSTALLER-VALIDATION.md`：75项安装验收、复核结果和未测边界。
+- `INSTALLER-RELEASE-PROVENANCE.json`：已验收安装器、精确构建输入提交及后续文档提交的关联。
 
 安装版完成后从开始菜单启动。安装器不自动运行应用，不访问、迁移或删除学习数据库；卸载仅移除登记的程序文件及入口，保留 `%LOCALAPPDATA%\YanJi` 学习记录和备份。重装前先结束计时并退出。绿色版完整解压到新的可写目录后双击 `YanJi.exe`，不覆盖旧安装，不在 ZIP 内直接运行。详见 [安装说明](INSTALLATION.md)。
 
@@ -58,4 +61,4 @@ SHA-256 对普通用户可选；哈希不是代码签名或安全认证。安装
 
 项目：https://github.com/Chemic666/yanji 。普通反馈使用该仓库 Issues，附版本和脱敏步骤；不要上传数据库、备份、凭据或完整私人路径。安全问题先按 SECURITY.md 确认私密渠道，未确认前不要公开细节。
 
-Windows 包保留原始 `BUILD-INFO.json` 和构建输入清单，不改写旧构建证明；`RELEASE-PROVENANCE.json` 单独记录原始代码提交到脱敏提交的映射、当前文档及程序文件哈希。程序二进制复用已验证的 Beta 构建，未因文档和历史脱敏重新编译。手工源码 ZIP 对应本次最终干净 main，精确提交见发行清单。GitHub自动源码归档、手工source.zip与完整历史是不同内容，不能互相代替隐私审核。
+Windows 包保留原始 `BUILD-INFO.json` 和构建输入清单，不改写旧构建证明；`RELEASE-PROVENANCE.json` 单独记录原始代码提交到脱敏提交的映射、当前文档及程序文件哈希。程序二进制复用已验证的 Beta 构建，未因文档和历史脱敏重新编译。原手工源码 ZIP 继续对应原发行 main，不包含新增安装器工程。安装器增量源码和提交追溯另行提供；安装器保持已验收的固定哈希，后续发布文案未写入既有二进制。GitHub自动源码归档、手工source.zip与完整历史是不同内容，不能互相代替隐私审核。

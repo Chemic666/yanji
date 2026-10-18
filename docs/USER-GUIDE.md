@@ -6,7 +6,7 @@
 
 ## 开始
 
-Windows11 x64。推荐从项目Release下载`YanJi-v0.4.0-beta.1-Setup.exe`，双击安装，从开始菜单启动；新增安装器附件上传前，可使用已公开的绿色ZIP。无需.NET SDK/运行时、账号、网络或手动计算SHA-256。安装仅限当前用户，程序放在`%LOCALAPPDATA%\Programs\YanJi`；可选桌面快捷方式，从Windows设置可卸载。卸载保留`%LOCALAPPDATA%\YanJi`内的学习记录和备份。详见[安装说明](INSTALLATION.md)。
+Windows11 x64。推荐从项目Release下载`YanJi-v0.4.0-beta.1-Setup.exe`，双击安装，从开始菜单启动；也可选择保留的绿色ZIP。无需.NET SDK/运行时、账号、网络或手动计算SHA-256。安装仅限当前用户，程序放在`%LOCALAPPDATA%\Programs\YanJi`；可选桌面快捷方式，从Windows设置可卸载。卸载保留`%LOCALAPPDATA%\YanJi`内的学习记录和备份。详见[安装说明](INSTALLATION.md)。
 
 绿色版完整解压ZIP到全新目录后双击YanJi.exe，SHA-256可选。不要覆盖旧安装或直接在压缩包内运行。普通启动使用固定的Windows用户数据目录；如果仅想试用而不打开正式学习库，请使用下面的显式隔离启动方式。
 
