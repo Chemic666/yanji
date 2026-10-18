@@ -30,7 +30,7 @@ public partial class MainWindow
             values=>values["existing"].Length>0&&values["title"].Trim().Length>0?"请分别执行关联现有薄弱点和新建薄弱点。":null);
         if(v==null)return;
         if(v["title"].Trim().Length>0)
-        {await Model.RunAsync(()=>Model.Database.AddWeakPointToStudy(record.Id,record.Version,v["title"],v["detail"]),"薄弱点及关联已原子保存");return;}
+        {await Model.RunAsync(()=>Model.Database.AddWeakPointToStudy(record.Id,record.Version,v["title"],v["detail"]),"薄弱点及关联已保存");return;}
         var ids=(v["remove"]=="clear"?Array.Empty<string>():record.Context!.WeakPoints?.Select(w=>w.Id).ToArray()??[]).Concat(v["existing"].Length==0?[]:new[]{v["existing"]}).Distinct().ToArray();
         await Model.RunAsync(()=>Model.Database.SetStudyLinks(record.Id,record.Version,record.Context!.ProfileId,record.ChapterId,record.Context.TaskId,ids),"薄弱点关联已更新，时长不变");
     }
@@ -39,7 +39,7 @@ public partial class MainWindow
         if(Model.CompletedStudy is not {} previous)return;
         var record=Model.Database.Records().SingleOrDefault(r=>r.Id==previous.Id);
         if(record==null){Model.CompletedStudy=null;Model.Status="这条学习记录已删除或不在当前数据中，未修改任何内容。";return;}
-        var v=Edit("已保存 · 可选补充",[new("note","本次备注（可选）",record.Note,Multiline:true),new("state","知识节点学习状态","keep",[new("keep","不修改"),new("0","未开始"),new("1","学习中"),new("2","已学习"),new("3","暂缓")]),new("weak","继续记录薄弱点","0",[new("0","跳过"),new("1","打开薄弱点关联")])],"关闭即可跳过，实际学习时间已保存。进度、自评掌握和验收独立。知识进度作为独立用户操作记录。",commit:async v=>{
+        var v=Edit("已保存 · 可选补充",[new("note","本次备注（可选）",record.Note,Multiline:true),new("state","知识节点学习状态","keep",[new("keep","不修改"),new("0","未开始"),new("1","学习中"),new("2","已学习"),new("3","暂缓")]),new("weak","继续记录薄弱点","0",[new("0","跳过"),new("1","打开薄弱点关联")])],"学习记录已保存，可直接关闭。备注和进度均可稍后补充；更新进度不会自动改变掌握程度或验收结果。",commit:async v=>{
         if(!await Model.RunAsync(()=>{if(record.Note!=v["note"])Model.Database.SaveRecord(record with{Note=v["note"]},"学习结束补充备注");},"学习备注已保存"))return false;
         record=Model.Database.Records().Single(r=>r.Id==record.Id);
         if(v["state"]!="keep"&&record.ChapterId is {} nodeId)

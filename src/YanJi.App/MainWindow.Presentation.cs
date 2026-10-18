@@ -75,7 +75,7 @@ public partial class MainWindow
         if(Model.Subjects.Count==0){Model.Status="请先添加或恢复一个使用中的科目，再补录学习。";return;}
         var requestId=Id();
         await EditPersistAsync("快速补录 · 追加一次学习",[new("date","日期 *（yyyy-MM-dd）",Model.LocalToday().ToString("yyyy-MM-dd")),new("subject","科目 *",Model.ManualSubject?.Id??Model.Subjects.First().Id,SubjectChoices(includeArchived:false)),new("minutes","时长（分钟）*","30"),new("chapter","主要章节（可选）","",ChapterChoices(includeArchived:false)),new("task","任务（可选）","",TaskChoices()),new("note","备注（可选）","",Multiline:true)],
-            "仅日期、科目、时长必填。纯时长不虚构起止位置；已有记录请使用“编辑”，不要重复追加。",v=>{Date(v["date"]);if(!double.TryParse(v["minutes"],out var m)||!double.IsFinite(m)||m<=0||m>1440)return "分钟数必须大于 0、最多 1440。";return Required(v,"date","subject","minutes")??CheckChapter(v);},commit:async v=>
+            "日期、科目和时长为必填项。不填写起止时间；如需修正已有记录，请使用“编辑”，避免重复补录。",v=>{Date(v["date"]);if(!double.TryParse(v["minutes"],out var m)||!double.IsFinite(m)||m<=0||m>1440)return "分钟数必须大于 0、最多 1440。";return Required(v,"date","subject","minutes")??CheckChapter(v);},commit:async v=>
         {
             Model.ManualDate=Date(v["date"])!.Value.ToDateTime(TimeOnly.MinValue);Model.ManualSubject=Model.Subjects.FirstOrDefault(s=>s.Id==v["subject"]);
         Model.ManualChapter=Model.ManualChapters.FirstOrDefault(c=>c.Id==v["chapter"]);Model.ManualMinutes=v["minutes"];Model.ManualNote=v["note"];Model.ManualTask=Model.Database.Tasks().FirstOrDefault(t=>t.Id==v["task"]);
@@ -101,7 +101,7 @@ public partial class MainWindow
     private void EditReview_Click(object sender,RoutedEventArgs e){Model.EditPeriodReview((ReviewRow)((Button)sender).Tag);ReviewEditor.BringIntoView();}
     private void ReviewRecords_Click(object sender,RoutedEventArgs e){var row=(ReviewRow)((Button)sender).Tag;Model.OpenRecords(row.Review.From,row.Review.To,row.Review.SubjectId);MainScroll.ScrollToTop();}
     private async void DeleteReview_Click(object sender,RoutedEventArgs e)
-    {var row=(ReviewRow)((Button)sender).Tag;if(Confirm("删除阶段复盘",row.Label+"\n可在显示已删除复盘后恢复。","软删除复盘"))await Model.RunAsync(()=>Model.Database.SetPeriodReviewDeleted(row.Review.Id,row.Review.Version,true),"复盘已软删除");}
+    {var row=(ReviewRow)((Button)sender).Tag;if(Confirm("删除阶段复盘",row.Label+"\n可在显示已删除复盘后恢复。","删除复盘"))await Model.RunAsync(()=>Model.Database.SetPeriodReviewDeleted(row.Review.Id,row.Review.Version,true),"复盘已删除，可在已删除列表中恢复");}
     private async void RestoreReview_Click(object sender,RoutedEventArgs e)
     {var row=(ReviewRow)((Button)sender).Tag;await Model.RunAsync(()=>Model.Database.SetPeriodReviewDeleted(row.Review.Id,row.Review.Version,false),"复盘已恢复");}
     private async void Chart_Drill(PlotPoint point)
@@ -118,7 +118,7 @@ public partial class MainWindow
     private async void RestDay_Click(object sender,RoutedEventArgs e)=>await Model.ToggleRestDayAsync();
     internal static string DeletionImpact(RecordRow row)=>$"科目：{row.Subject}\n整次时长：{row.Duration}\n受影响日期：{row.Dates}\n{row.Record.Parts.Count} 个有效片段\n\n删除的是整次学习，所有上述日期的贡献会从日历与统计移除。记录和修订历史保留，可在已删除明细中恢复。";
     private async void DeleteRecord_Click(object sender,RoutedEventArgs e)
-    {if(((FrameworkElement)sender).Tag is not RecordRow row||row.Deleted)return;if(Confirm("删除整次学习",DeletionImpact(row),"软删除整次记录"))await Model.RunAsync(()=>Model.Database.DeleteRecord(row.Record.Id,row.Record.Version),"整次记录已软删除，日历与统计已同步更新");}
+    {if(((FrameworkElement)sender).Tag is not RecordRow row||row.Deleted)return;if(Confirm("删除整次学习",DeletionImpact(row),"删除整条记录"))await Model.RunAsync(()=>Model.Database.DeleteRecord(row.Record.Id,row.Record.Version),"学习记录已删除，日历与统计已更新；可在已删除列表中恢复");}
     private async void RestoreRecord_Click(object sender,RoutedEventArgs e)
     {if(((Button)sender).Tag is RecordRow row&&row.Deleted)await Model.RunAsync(()=>Model.Database.RestoreRecord(row.Record.Id,row.Record.Version),"整次记录已恢复，统计已更新");}
     private async void ExcludePart_Click(object sender,RoutedEventArgs e)

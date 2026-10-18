@@ -35,7 +35,8 @@ public partial class MainWindow : Window
         Model=model;InitializeComponent();DataContext=model;RefreshAtelier();
         var runtime=(App)Application.Current;
         Title=RuntimeLocation.TitleFor(runtime.TestMode);
-        VersionHint.Text=runtime.TestMode?"隔离测试":"QUIET FOCUS 2.0";
+        VersionHint.Text=ProductCopy.Footer(runtime.TestMode,ProductCopy.FullVersion);
+        VersionHint.ToolTip="研迹 "+ProductCopy.ShortVersion(ProductCopy.FullVersion)+"\n版本详情："+ProductCopy.FullVersion;
         ThemeService.Changed+=RefreshChartThemes;ThemeService.Changed+=RefreshAtelier;
         Width=Math.Min(1200,SystemParameters.WorkArea.Width);Height=Math.Min(800,SystemParameters.WorkArea.Height);
         var menu=new Forms.ContextMenuStrip();menu.Items.Add("打开研迹",null,(_,_)=>Dispatcher.Invoke(ShowFromTray));menu.Items.Add("退出应用",null,async(_,_)=>await Dispatcher.InvokeAsync(RequestExitAsync).Task.Unwrap());
@@ -205,7 +206,7 @@ public partial class MainWindow : Window
         var subject=Model.AllSubjects.FirstOrDefault(s=>s.Id==record.SubjectId)?.Name??record.SubjectId;
         var chapter=Model.AllChapters.FirstOrDefault(c=>c.Id==record.ChapterId)?.Name??"未指定章节";
         var lines=record.Parts.Select(p=>$"{p.Date:yyyy-MM-dd} · {MainViewModel.Duration(p.DurationMs)}"+(p.Kind==PartKind.DurationOnly?"（纯时长）":$" · {TimeZoneInfo.ConvertTime(DateTimeOffset.FromUnixTimeMilliseconds(p.StartUtcMs!.Value),TimeParts.ResolveZone(p.ZoneId)):HH:mm:ss} — {TimeZoneInfo.ConvertTime(DateTimeOffset.FromUnixTimeMilliseconds(p.EndUtcMs!.Value),TimeParts.ResolveZone(p.ZoneId)):HH:mm:ss}"));
-        return $"科目：{subject} · 章节：{chapter}\n来源：{(record.Source==SessionSource.Timer?"计时":"补录")} · 状态：{(record.Deleted?"已删除":"有效")}\n总时长：{MainViewModel.Duration(record.DurationMs)}\n{string.Join('\n',lines)}\n备注：{record.Note}\n学习时路径：{record.Context?.NodePath??"历史记录未采集路径"}\n关联任务：{record.Context?.TaskTitle??"无"}\n关联薄弱点：{string.Join("、",record.Context?.WeakPoints?.Select(w=>w.Title)??[])}";
+        return $"科目：{subject} · 章节：{chapter}\n来源：{(record.Source==SessionSource.Timer?"计时":"补录")} · 状态：{(record.Deleted?"已删除":"有效")}\n总时长：{MainViewModel.Duration(record.DurationMs)}\n{string.Join('\n',lines)}\n备注：{record.Note}\n学习时路径：{record.Context?.NodePath??"这条历史记录未保留学习时的章节路径"}\n关联任务：{record.Context?.TaskTitle??"无"}\n关联薄弱点：{string.Join("、",record.Context?.WeakPoints?.Select(w=>w.Title)??[])}";
     }
     private void ShowText(string title,string text){var dialog=new Window{Owner=this,Title=title,Width=700,Height=600,WindowStartupLocation=WindowStartupLocation.CenterOwner};dialog.Content=new TextBox{Text=text,IsReadOnly=true,TextWrapping=TextWrapping.Wrap,VerticalScrollBarVisibility=ScrollBarVisibility.Auto,Margin=new Thickness(24)};dialog.ShowDialog();}
     private async void ReviewAdd_Click(object sender,RoutedEventArgs e)
@@ -220,14 +221,14 @@ public partial class MainWindow : Window
     private string? OutputFile(string filter,string extension)
     {var dialog=new SaveFileDialog{Filter=filter,FileName="YanJi-"+DateTime.Now.ToString("yyyyMMdd-HHmmss")+extension,OverwritePrompt=true};return dialog.ShowDialog(this)==true?dialog.FileName:null;}
     private string? BackupFile(){var dialog=new OpenFileDialog{Filter="研迹完整备份|*.yanjibak"};return dialog.ShowDialog(this)==true?dialog.FileName:null;}
-    private async void Backup_Click(object sender,RoutedEventArgs e){var path=OutputFile("研迹完整备份|*.yanjibak",".yanjibak");if(path==null)return;try{await Model.FlushTimerAsync();await Model.RunAsync(()=>Model.Database.Backup(path),"完整备份已导出并校验",false);}catch(Exception exception){Model.Status=exception.Message;}}
-    private async void ValidateBackup_Click(object sender,RoutedEventArgs e){var path=BackupFile();if(path!=null)await Model.RunAsync(()=>Model.Database.ValidateBackup(path),"备份结构、数据和完整性校验通过",false);}
+    private async void Backup_Click(object sender,RoutedEventArgs e){var path=OutputFile("研迹完整备份|*.yanjibak",".yanjibak");if(path==null)return;try{await Model.FlushTimerAsync();await Model.RunAsync(()=>Model.Database.Backup(path),"备份已完成并通过校验",false);}catch(Exception exception){Model.Status=exception.Message;}}
+    private async void ValidateBackup_Click(object sender,RoutedEventArgs e){var path=BackupFile();if(path!=null)await Model.RunAsync(()=>Model.Database.ValidateBackup(path),"备份校验通过",false);}
     private async void RestoreBackup_Click(object sender,RoutedEventArgs e)
     {if(Model.TimerActive){MessageBox.Show(this,"请先结束活动计时，再恢复备份。","研迹");return;}var path=BackupFile();if(path==null)return;
-        if(MessageBox.Show(this,"整体恢复会替换当前数据，不进行合并。当前数据会先完整备份。确认恢复？","恢复完整备份",MessageBoxButton.OKCancel,MessageBoxImage.Question)!=MessageBoxResult.OK)return;
+        if(MessageBox.Show(this,ProductCopy.RestoreWarning,"恢复备份前请确认",MessageBoxButton.OKCancel,MessageBoxImage.Question)!=MessageBoxResult.OK)return;
         if(!await Model.SaveReflectionAsync())return;await RestoreDataAsync(path);}
-    private async void Export_Click(object sender,RoutedEventArgs e){var path=OutputFile("CSV 文件|*.csv",".csv");if(path!=null)await Model.RunAsync(()=>Model.Database.ExportCsv(path),"CSV 已导出",false);}
-    private async void Integrity_Click(object sender,RoutedEventArgs e)=>await Model.RunAsync(()=>{if(Model.Database.Integrity()!="ok")throw new InvalidDataException("数据库检查失败。");},"数据库完整性检查通过",false);
+    private async void Export_Click(object sender,RoutedEventArgs e){var path=OutputFile("CSV 文件|*.csv",".csv");if(path!=null)await Model.RunAsync(()=>Model.Database.ExportCsv(path),"学习记录已导出为 CSV",false);}
+    private async void Integrity_Click(object sender,RoutedEventArgs e)=>await Model.RunAsync(()=>{if(Model.Database.Integrity()!="ok")throw new InvalidDataException("数据库检查失败。");},"数据完整性检查通过",false);
     public void SmokeClose(){_exiting=true;Close();}
 }
 

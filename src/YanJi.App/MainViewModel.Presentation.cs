@@ -71,7 +71,7 @@ public sealed partial class MainViewModel
     public ObservableCollection<Choice> ChapterFilters {get;}=[];
     public List<Choice> SourceFilters {get;}=[new("","全部来源"),new("manual","手动补录"),new("timer","实时计时")];
     public List<Choice> RecordStates {get;}=[new("active","有效记录"),new("deleted","已删除"),new("all","全部状态")];
-    public List<Choice> WeakStates {get;}=[new("","全部状态"),new("0","待复习"),new("1","巩固中"),new("2","已验收")];
+    public List<Choice> WeakStates {get;}=[new("","全部状态"),new("0","待复习"),new("1","复习中"),new("2","已验收")];
     private bool _themeLoading;
     private void RefreshPresentation()
     {
@@ -82,7 +82,7 @@ public sealed partial class MainViewModel
         RecordSubjectId=subject;StatsSubjectId=stats;WeakSubjectId=weak;
         RefreshChapterFilters();
         _themeLoading=true;DarkTheme=_settings.GetValueOrDefault("theme")=="dark";_themeLoading=false;ThemeService.Apply(DarkTheme);
-        CheckpointLabel="约 "+_settings.GetValueOrDefault("checkpoint-seconds","15")+" 秒 · 不是实时保证";
+        CheckpointLabel="自动保存：约 "+_settings.GetValueOrDefault("checkpoint-seconds","15")+" 秒";
         Replace(SubjectGroups,AllSubjects.Select(s=>new SubjectGroup(s,AllChapters.Where(c=>c.SubjectId==s.Id).Select(c=>new ChapterRow(c,MasteryName(c.Mastery),c.Archived?"已归档":"使用中")).ToList())));
         TaskSummary=$"{Tasks.Count(t=>t.Done)} / {Tasks.Count} 项完成；计划不代表已学习";
         MiniTrend=DailyPoints(StudyAnalytics.Build(_records,AllSubjects,LocalToday().AddDays(-6),LocalToday(),LocalToday()).Daily);
@@ -117,7 +117,7 @@ public sealed partial class MainViewModel
         Replace(FilteredRecords,rows);RecordSummary=$"{rows.Count} 次学习 · 范围内有效贡献 {Duration(rows.Where(r=>!r.Deleted).Sum(r=>r.Contribution??0))} · 每行保留整次身份";
     }
     private static string MasteryName(Mastery state)=>state switch{Mastery.Unknown=>"掌握：未评估",Mastery.Weak=>"掌握：薄弱",Mastery.Reviewing=>"掌握：巩固中",_=>"掌握：已掌握"};
-    private static string WeakName(WeakPointState state)=>state switch{WeakPointState.Open=>"待复习",WeakPointState.Reviewing=>"巩固中",_=>"已验收"};
+    private static string WeakName(WeakPointState state)=>state switch{WeakPointState.Open=>"待复习",WeakPointState.Reviewing=>"复习中",_=>"已验收"};
     private void RefreshWeakFilters()
     {
         var rows=WeakPoints.Where(w=>(string.IsNullOrEmpty(WeakSubjectId)||w.SubjectId==WeakSubjectId)&&(string.IsNullOrEmpty(WeakState)||((int)w.State).ToString()==WeakState)

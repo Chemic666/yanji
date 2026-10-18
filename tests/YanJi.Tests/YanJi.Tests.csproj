@@ -10,4 +10,5 @@
   </ItemGroup>
   <ItemGroup><None Include="../../resources/knowledge-packages/**/*.json" Link="knowledge-packages/%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" /></ItemGroup>
   <ItemGroup><Compile Include="../../src/YanJi.App/RuntimeLocation.cs" Link="RuntimeLocation.cs" /></ItemGroup>
+  <ItemGroup><Compile Include="../../src/YanJi.App/ProductCopy.cs" Link="ProductCopy.cs" /></ItemGroup>
 </Project>

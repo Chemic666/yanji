@@ -17,14 +17,14 @@ public partial class MainWindow
     }
     private async void UpgradeCopy_Click(object sender,RoutedEventArgs e)
     {
-        var v=Edit("旧版升级 · 生成独立新目录",[new("source","旧版数据目录（含yanji.sqlite）*"),new("target","全新目标目录 *")],"本轮候选版尚未授权真实用户升级，请只选择隔离测试数据。源目录保持原格式；先验证完整备份，再升级到新目录。请先关闭对应旧版与托盘进程。",values=>Required(values,"source","target"));
+        var v=Edit("旧版升级 · 生成独立新目录",[new("source","旧版数据目录（含yanji.sqlite）*"),new("target","全新目标目录 *")],"此升级流程目前仅完成隔离数据验证，请勿用于真实学习数据。请先关闭旧版及托盘程序。原目录保持不变；系统会先备份并校验，再生成新版数据副本。",values=>Required(values,"source","target"));
         if(v==null||!Confirm("确认生成升级副本","旧目录："+v["source"]+"\n新目录："+v["target"]+"\n\n不覆盖旧源或已有目标。升级后新学习不会自动合并回旧版。","生成新副本"))return;
-        UpgradeCopyResult? result=null;if(await Model.RunAsync(()=>result=YanJiDatabase.PrepareUpgradeCopy(v["source"],v["target"]),"升级副本已生成并对账，当前窗口仍使用原目录",false))ShowText("升级副本已准备",$"Schema {result!.SourceSchema} → 4\n新目录：{result.TargetDirectory}\n升级前完整备份：{result.BackupPath}\n原始时长：{MainViewModel.Duration(result.OriginalDurationMs)}\n前后事实摘要一致。请关闭当前窗口后使用指定新目录启动；真实数据升级仍需单独授权。");
+        UpgradeCopyResult? result=null;if(await Model.RunAsync(()=>result=YanJiDatabase.PrepareUpgradeCopy(v["source"],v["target"]),"升级副本已生成并通过数据核对，当前窗口仍使用原目录",false))ShowText("升级副本已准备",$"原数据格式：{result!.SourceSchema}，已生成新版格式副本。\n新目录：{result.TargetDirectory}\n升级前完整备份：{result.BackupPath}\n有效学习时长：{MainViewModel.Duration(result.OriginalDurationMs)}\n升级前后学习数据核对一致。当前窗口仍使用原目录。本流程仅供隔离数据验证，请勿用于真实学习数据。");
     }
     private async void OriginalRollback_Click(object sender,RoutedEventArgs e)
     {
         var backup=BackupFile();if(backup==null)return;var v=Edit("恢复旧格式到新目录",[new("target","全新回退目录 *")],"只解包校验后的原格式备份，不升级、不覆盖、不合并。保留升级后新学习的完整备份，再决定是否使用旧程序。",values=>Required(values,"target"));
-        if(v==null||!Confirm("确认恢复原格式",backup+"\n目标："+v["target"]+"\n\n旧程序只能打开对应旧格式，不能直接打开Schema4。","恢复至新目录"))return;
+        if(v==null||!Confirm("确认恢复原格式",backup+"\n目标："+v["target"]+"\n\n旧程序只能打开兼容的旧格式，不能直接使用新版数据。","恢复至新目录"))return;
         await Model.RunAsync(()=>YanJiDatabase.RestoreOriginalToNewDirectory(backup,v["target"]),"原格式已恢复到新目录，当前数据未被替换",false);
     }
 }

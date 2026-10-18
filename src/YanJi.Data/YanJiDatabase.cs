@@ -196,7 +196,7 @@ public sealed partial class YanJiDatabase : IDisposable
     {
         lock(_gate){var record=Records(null,true).Single(x=>x.Id==id);
             if(record.Deleted)throw new InvalidOperationException("请先恢复整次学习记录。");
-            if(record.Parts.Count<=1)throw new InvalidOperationException("最后一个片段请使用整次记录软删除，可完整恢复。");
+            if(record.Parts.Count<=1)throw new InvalidOperationException("若只剩一个片段，请删除整条学习记录；之后仍可完整恢复。");
             if(!record.Parts.Any(p=>p.Id==partId))throw new InvalidOperationException("片段已变化，请刷新。");
             SaveRecord(record with{Version=version,Parts=record.Parts.Where(p=>p.Id!=partId).ToList()},"排除学习片段 "+partId);}
     }

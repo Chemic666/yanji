@@ -1,0 +1,261 @@
+{
+  "Baseline": "0eb1c291f4e7c15618d9b55facbb440025b367ce",
+  "Method": "Exact, file-scoped reviewed wording substitutions; no keyword-wide replacement.",
+  "Changes": [
+    {
+      "File": "src/YanJi.App/MainWindow.xaml",
+      "Before": "从统计回到事实，修正一条记录，所有视图同步更新。",
+      "After": "查看和修正学习记录，日历与统计会同步更新。",
+      "Reason": "用具体操作替代工程概念"
+    },
+    {
+      "File": "src/YanJi.App/MainWindow.xaml",
+      "Before": "排除仅影响选中片段与对应日期；最后一段请使用整次软删除。",
+      "After": "仅排除选中的片段及对应日期。若只剩一段，请删除整条记录；之后仍可恢复。",
+      "Reason": "说明影响范围及恢复能力"
+    },
+    {
+      "File": "src/YanJi.App/MainWindow.xaml",
+      "Before": "暂停不计时；关闭窗口进入托盘；明确退出可结束保存或暂停后退出。锁屏不自动暂停，休眠与异常间隙需要核对。",
+      "After": "无计时时关闭会退出；计时中可结束保存或后台继续。锁屏不暂停，休眠与异常间隙需核对；意外关闭时仅恢复已保存的时间。",
+      "Reason": "纠正已经过时的窗口关闭说明"
+    },
+    {
+      "File": "src/YanJi.App/MainWindow.xaml",
+      "Before": "导出完整备份",
+      "After": "备份数据",
+      "Reason": "明确动作，保留完整备份语义于说明中"
+    },
+    {
+      "File": "src/YanJi.App/MainWindow.xaml",
+      "Before": "恢复完整备份",
+      "After": "恢复备份",
+      "Reason": "统一动作名称"
+    },
+    {
+      "File": "src/YanJi.App/MainWindow.xaml",
+      "Before": "检查数据库",
+      "After": "检查数据完整性",
+      "Reason": "面向用户的操作名称"
+    },
+    {
+      "File": "src/YanJi.App/MainWindow.xaml",
+      "Before": "独立保存范围、科目、正文与修订；每日感想是回顾材料，不推断效率。",
+      "After": "复盘会保留所选日期、科目和修改历史。每日感想可供回顾，不用于推断学习效率。",
+      "Reason": "保留统计语义，降低理解成本"
+    },
+    {
+      "File": "src/YanJi.App/MainWindow.Presentation.cs",
+      "Before": "软删除复盘",
+      "After": "删除复盘",
+      "Reason": "存储机制不应成为按钮名称"
+    },
+    {
+      "File": "src/YanJi.App/MainWindow.Presentation.cs",
+      "Before": "复盘已软删除",
+      "After": "复盘已删除，可在已删除列表中恢复",
+      "Reason": "保留可恢复性说明"
+    },
+    {
+      "File": "src/YanJi.App/MainWindow.Presentation.cs",
+      "Before": "软删除整次记录",
+      "After": "删除整条记录",
+      "Reason": "清楚说明删除范围"
+    },
+    {
+      "File": "src/YanJi.App/MainWindow.Presentation.cs",
+      "Before": "整次记录已软删除，日历与统计已同步更新",
+      "After": "学习记录已删除，日历与统计已更新；可在已删除列表中恢复",
+      "Reason": "动作反馈及恢复入口"
+    },
+    {
+      "File": "src/YanJi.App/MainWindow.Learning.cs",
+      "Before": "薄弱点及关联已原子保存",
+      "After": "薄弱点及关联已保存",
+      "Reason": "不展示事务实现术语"
+    },
+    {
+      "File": "src/YanJi.App/MainWindow.Learning.cs",
+      "Before": "关闭即可跳过，实际学习时间已保存。进度、自评掌握和验收独立。知识进度作为独立用户操作记录。",
+      "After": "学习记录已保存，可直接关闭。备注和进度均可稍后补充；更新进度不会自动改变掌握程度或验收结果。",
+      "Reason": "完成反馈优先，保留状态独立性"
+    },
+    {
+      "File": "src/YanJi.App/MainWindow.Release.cs",
+      "Before": "本轮候选版尚未授权真实用户升级，请只选择隔离测试数据。源目录保持原格式；先验证完整备份，再升级到新目录。请先关闭对应旧版与托盘进程。",
+      "After": "此升级流程目前仅完成隔离数据验证，请勿用于真实学习数据。请先关闭旧版及托盘程序。原目录保持不变；系统会先备份并校验，再生成新版数据副本。",
+      "Reason": "去除内部审批措辞，保留真实升级限制和风险提示"
+    },
+    {
+      "File": "src/YanJi.App/MainWindow.Release.cs",
+      "Before": "升级副本已生成并对账，当前窗口仍使用原目录",
+      "After": "升级副本已生成并通过数据核对，当前窗口仍使用原目录",
+      "Reason": "自然说明核对结果"
+    },
+    {
+      "File": "src/YanJi.App/MainWindow.Release.cs",
+      "Before": "Schema {result!.SourceSchema} → 4\\n新目录：{result.TargetDirectory}\\n升级前完整备份：{result.BackupPath}\\n原始时长：{MainViewModel.Duration(result.OriginalDurationMs)}\\n前后事实摘要一致。请关闭当前窗口后使用指定新目录启动；真实数据升级仍需单独授权。",
+      "After": "原数据格式：{result!.SourceSchema}，已生成新版格式副本。\\n新目录：{result.TargetDirectory}\\n升级前完整备份：{result.BackupPath}\\n有效学习时长：{MainViewModel.Duration(result.OriginalDurationMs)}\\n升级前后学习数据核对一致。当前窗口仍使用原目录。本流程仅供隔离数据验证，请勿用于真实学习数据。",
+      "Reason": "去除Schema和事实摘要，保留来源、备份、时长与使用限制"
+    },
+    {
+      "File": "src/YanJi.App/MainWindow.Release.cs",
+      "Before": "旧程序只能打开对应旧格式，不能直接打开Schema4。",
+      "After": "旧程序只能打开兼容的旧格式，不能直接使用新版数据。",
+      "Reason": "普通用户只需理解格式兼容性"
+    },
+    {
+      "File": "src/YanJi.App/MainWindow.xaml.cs",
+      "Before": "完整备份已导出并校验",
+      "After": "备份已完成并通过校验",
+      "Reason": "统一完成反馈"
+    },
+    {
+      "File": "src/YanJi.App/MainWindow.xaml.cs",
+      "Before": "备份结构、数据和完整性校验通过",
+      "After": "备份校验通过",
+      "Reason": "精简成功反馈"
+    },
+    {
+      "File": "src/YanJi.App/MainWindow.xaml.cs",
+      "Before": "整体恢复会替换当前数据，不进行合并。当前数据会先完整备份。确认恢复？",
+      "After": "恢复备份将替换当前全部数据，不会合并。恢复前会为当前数据创建完整备份。请确认已选择正确的备份文件，是否继续？",
+      "Reason": "保留覆盖及回退警告",
+      "AfterResource": "src/YanJi.App/ProductCopy.cs:RestoreWarning"
+    },
+    {
+      "File": "src/YanJi.App/MainWindow.xaml.cs",
+      "Before": "\"恢复完整备份\",MessageBoxButton.OKCancel",
+      "After": "\"恢复备份前请确认\",MessageBoxButton.OKCancel",
+      "Reason": "安全确认标题"
+    },
+    {
+      "File": "src/YanJi.App/MainWindow.xaml.cs",
+      "Before": "CSV 已导出",
+      "After": "学习记录已导出为 CSV",
+      "Reason": "说明导出内容及格式"
+    },
+    {
+      "File": "src/YanJi.App/MainWindow.xaml.cs",
+      "Before": "数据库完整性检查通过",
+      "After": "数据完整性检查通过",
+      "Reason": "统一操作名称"
+    },
+    {
+      "File": "src/YanJi.App/MainWindow.xaml.cs",
+      "Before": "历史记录未采集路径",
+      "After": "这条历史记录未保留学习时的章节路径",
+      "Reason": "明确真实限制"
+    },
+    {
+      "File": "src/YanJi.App/MainViewModel.Presentation.cs",
+      "Before": "\"巩固中\"",
+      "After": "\"复习中\"",
+      "Count": 2,
+      "Reason": "薄弱点筛选、列表与编辑器统一；掌握程度的巩固中不改"
+    },
+    {
+      "File": "src/YanJi.App/KnowledgeWorkspace.xaml",
+      "Before": "学习状态由你确认；时长、完成任务、自评掌握与验收彼此独立。",
+      "After": "学习进度由你更新；任务完成、掌握程度和验收结果分别记录。",
+      "Reason": "自然说明状态独立性"
+    },
+    {
+      "File": "src/YanJi.App/KnowledgePackageViewModel.cs",
+      "Before": "所有模板均为纯数据；学习时长和掌握程度不会随模板更新改变。",
+      "After": "模板只提供参考目录，不会改变你的学习时长或掌握程度。",
+      "Reason": "解释模板作用而不是实现格式"
+    },
+    {
+      "File": "src/YanJi.App/KnowledgePackageViewModel.cs",
+      "Before": " 当前学习数据未被部分修改。",
+      "After": " 请保留当前数据和备份，确认提示后重试。",
+      "Reason": "避免异常反馈作过度保证，保留排查建议"
+    },
+    {
+      "File": "src/YanJi.App/KnowledgePackageWindow.xaml.cs",
+      "Before": "导入纯数据知识包",
+      "After": "导入知识包",
+      "Reason": "简化文件选择窗口标题，格式限制仍保留"
+    },
+    {
+      "File": "src/YanJi.App/App.xaml.cs",
+      "Before": "视觉验收必须使用新的独立数据目录。",
+      "After": "此项测试需要全新的隔离数据目录。",
+      "Reason": "仅改诊断错误说明，不改变任何隔离校验"
+    },
+    {
+      "File": "src/YanJi.Data/YanJiDatabase.cs",
+      "Before": "最后一个片段请使用整次记录软删除，可完整恢复。",
+      "After": "若只剩一个片段，请删除整条学习记录；之后仍可完整恢复。",
+      "Reason": "保留约束、删除范围与恢复能力，不改变检查行为"
+    },
+    {
+      "File": "src/YanJi.App/MainWindow.xaml",
+      "Before": "浅色与深色即时切换，选择保存在本机。窄窗口自动折叠侧栏与并排卡片。",
+      "After": "可随时切换浅色或深色主题，选择会保存在本机。",
+      "Reason": "移除与现有侧栏不符的旧说明"
+    },
+    {
+      "File": "src/YanJi.App/MainWindow.xaml",
+      "Before": "完整恢复整体替换，不合并；先校验，再自动备份当前库并保留回退副本。CSV 不能替代备份。每日快照不自动清理，同一磁盘不能防止磁盘故障。",
+      "After": "恢复将替换全部数据，不会合并。程序会先校验备份，并保留恢复前的数据副本。CSV 不能替代备份。自动备份不会自行清理，请定期另存到其他磁盘。",
+      "Reason": "自然说明覆盖、校验、回退与磁盘安全"
+    },
+    {
+      "File": "src/YanJi.App/MainWindow.Presentation.cs",
+      "Before": "仅日期、科目、时长必填。纯时长不虚构起止位置；已有记录请使用“编辑”，不要重复追加。",
+      "After": "日期、科目和时长为必填项。不填写起止时间；如需修正已有记录，请使用“编辑”，避免重复补录。",
+      "Reason": "保持补录与修正的区别，去除实现措辞"
+    },
+    {
+      "File": "src/YanJi.App/MainViewModel.cs",
+      "Before": "纯时长不生成起止时间；无法确定重叠时，不扣减学习时间。",
+      "After": "只记录学习时长，不自动推算起止时间；无法确定是否重叠时，不扣减时长。",
+      "Reason": "自然说明不伪造区间和不擅自扣减",
+      "Count": 2
+    },
+    {
+      "File": "src/YanJi.App/MainViewModel.cs",
+      "Before": "这一天已有该科目记录。追加前请核对；纯时长可能重叠，但不会擅自扣减。",
+      "After": "当天已有该科目的记录，补录前请核对，避免重复。未指定起止时间时，程序不会自动扣减。",
+      "Reason": "重复补录提示明确可操作"
+    },
+    {
+      "File": "src/YanJi.App/MainViewModel.Presentation.cs",
+      "Before": "CheckpointLabel=\"约 \"+_settings.GetValueOrDefault(\"checkpoint-seconds\",\"15\")+\" 秒 · 不是实时保证\";",
+      "After": "CheckpointLabel=\"自动保存：约 \"+_settings.GetValueOrDefault(\"checkpoint-seconds\",\"15\")+\" 秒\";",
+      "Reason": "清楚说明间隔，风险放在相邻说明中，未改保存周期"
+    }
+  ],
+  "Keep": [
+    {
+      "Category": "隔离测试及路径拒绝提示",
+      "Reason": "必须准确表明环境并阻止正式目录回退"
+    },
+    {
+      "Category": "待核对、未知间隙、保存失败、覆盖恢复、备份警告",
+      "Reason": "真实数据安全信息不得隐藏"
+    },
+    {
+      "Category": "已验收、掌握程度、学习进度、任务完成",
+      "Reason": "真实业务状态，不能当作开发验收文字删除"
+    },
+    {
+      "Category": "记录修订号与原始审计原因",
+      "Reason": "它们是数据追溯信息，不是软件构建编号；不重写历史"
+    },
+    {
+      "Category": "格式拒绝、迁移登记等异常中的技术细节",
+      "Reason": "仅在异常/高级操作中说明兼容性，保留排查信息；数据隔离机制不改"
+    },
+    {
+      "Category": "受显式测试参数约束的合成数据和诊断字符串",
+      "Reason": "不属于普通启动内容，不伪称程序集内不存在任何测试文字"
+    },
+    {
+      "Category": "现有科目及参考知识目录",
+      "Reason": "产品预设而非演示数据，不删除或更换稳定节点"
+    }
+  ]
+}

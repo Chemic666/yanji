@@ -46,7 +46,7 @@ public sealed partial class KnowledgePackageViewModel : ObservableObject
     [ObservableProperty] private bool busy;
     [ObservableProperty] private string feedback="浏览参考目录，或导入本地 JSON 知识包。";
     [ObservableProperty] private string packageName="尚未选择知识包";
-    [ObservableProperty] private string description="所有模板均为纯数据；学习时长和掌握程度不会随模板更新改变。";
+    [ObservableProperty] private string description="模板只提供参考目录，不会改变你的学习时长或掌握程度。";
     [ObservableProperty] private string sourceText="";
     [ObservableProperty] private string summary="先选择模板和安装目标，再生成差异预览。";
     [ObservableProperty] private IReadOnlyList<PackageTargetRow> targets=[];
@@ -174,7 +174,7 @@ public sealed partial class KnowledgePackageViewModel : ObservableObject
     private async Task RunAsync(Func<Task> action)
     {
         if(Busy)return;Busy=true;
-        try{await action();}catch(Exception e) when(e is InvalidDataException or IOException or ArgumentException or InvalidOperationException or Microsoft.Data.Sqlite.SqliteException){Feedback="未完成："+e.Message+" 当前学习数据未被部分修改。";CanApply=false;}
+        try{await action();}catch(Exception e) when(e is InvalidDataException or IOException or ArgumentException or InvalidOperationException or Microsoft.Data.Sqlite.SqliteException){Feedback="未完成："+e.Message+" 请保留当前数据和备份，确认提示后重试。";CanApply=false;}
         finally{Busy=false;}
     }
 }

@@ -1,7 +1,7 @@
-param([Parameter(Mandatory=$true)][string]$Executable,[string]$RunName='native')
+param([Parameter(Mandatory=$true)][string]$Executable,[string]$RunName='native',[ValidateSet('runtime-location','ui-copy')][string]$ArtifactName='runtime-location')
 $ErrorActionPreference='Stop'
 $repo=Split-Path $PSScriptRoot
-$run=Join-Path $repo ('artifacts\runtime-location\'+$RunName)
+$run=Join-Path $repo ('artifacts\'+$ArtifactName+'\'+$RunName)
 if(Test-Path -LiteralPath $run){throw 'Preserve existing evidence; choose a new RunName.'}
 $exe=(Resolve-Path -LiteralPath $Executable).Path
 New-Item -ItemType Directory -Path $run | Out-Null

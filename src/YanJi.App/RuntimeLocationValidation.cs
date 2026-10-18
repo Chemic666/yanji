@@ -50,6 +50,7 @@ internal static class RuntimeLocationValidation
                 d.SaveSetting("runtime-probe-total",saved.ToString());
             }
             m.Page=5;await Shot(window,"settings-test");m.Page=0;
+            if(!reopened)await UiCopyValidation.RunAsync(window,output);
             Write("result.json",new{Status="PASS",Checks=checks,Reopened=reopened,RawMs=d.Records().Sum(r=>r.DurationMs),SavedMs=saved,Title=window.Title,Footer=window.VersionHint.Text,DataDirectory=d.DirectoryPath,Source=typeof(App).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion,DllSha256=Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(typeof(App).Assembly.Location))),Dpi=VisualTreeHelper.GetDpi(window).PixelsPerInchX,PhysicalIME="NOT TESTED",RealUserDirectoryAccess=false});
         }
         catch(Exception ex){app.ValidationFailed=true;Write("failure.json",new{Error=ex.ToString(),Checks=checks});}

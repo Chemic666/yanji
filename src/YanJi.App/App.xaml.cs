@@ -121,7 +121,7 @@ public partial class App : Application
             if(V02Visual||V021Capture||V022Capture||V023Capture||V03Capture||V03Layout||V031Probe||V031Check||M1Check||M2Check||M3Check||M4Check||SimpleCheck)
             {
                 var formal=Path.GetFullPath(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"YanJi"));
-                if(string.Equals(_dataDirectory,formal,StringComparison.OrdinalIgnoreCase)||Directory.Exists(_dataDirectory)&&Directory.EnumerateFileSystemEntries(_dataDirectory).Any())throw new ArgumentException("视觉验收必须使用新的独立数据目录。");
+                if(string.Equals(_dataDirectory,formal,StringComparison.OrdinalIgnoreCase)||Directory.Exists(_dataDirectory)&&Directory.EnumerateFileSystemEntries(_dataDirectory).Any())throw new ArgumentException("此项测试需要全新的隔离数据目录。");
                 System.Windows.Media.RenderOptions.ProcessRenderMode=System.Windows.Interop.RenderMode.SoftwareOnly;
             }
             YanJi.Data.YanJiDatabase.ValidateStartupDirectory(_dataDirectory);

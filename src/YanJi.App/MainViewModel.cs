@@ -62,7 +62,7 @@ public sealed partial class MainViewModel : ObservableObject
     [ObservableProperty] private DateTime manualDate=DateTime.Today;
     [ObservableProperty] private string manualMinutes="30";
     [ObservableProperty] private string manualNote="";
-    [ObservableProperty] private string manualWarning="纯时长不生成起止时间；无法确定重叠时，不扣减学习时间。";
+    [ObservableProperty] private string manualWarning="只记录学习时长，不自动推算起止时间；无法确定是否重叠时，不扣减时长。";
     [ObservableProperty] private DateTime selectedDate=DateTime.Today;
     [ObservableProperty] private DateTime calendarMonth=DateTime.Today;
     [ObservableProperty] private string monthLabel="";
@@ -115,7 +115,7 @@ public sealed partial class MainViewModel : ObservableObject
     partial void OnReflectionChanged(string value){if(!_loadingReflection)_reflectionDirty=true;}
     private void UpdateWarning()
     {if(ManualSubject==null)return;var day=DateOnly.FromDateTime(ManualDate);var any=Database.Records(day).Any(r=>r.SubjectId==ManualSubject.Id);
-        ManualWarning=any?"这一天已有该科目记录。追加前请核对；纯时长可能重叠，但不会擅自扣减。":"纯时长不生成起止时间；无法确定重叠时，不扣减学习时间。";}
+        ManualWarning=any?"当天已有该科目的记录，补录前请核对，避免重复。未指定起止时间时，程序不会自动扣减。":"只记录学习时长，不自动推算起止时间；无法确定是否重叠时，不扣减时长。";}
     private RecordRow Row(StudyRecord record,DateOnly? focus=null)=>new(record,AllSubjects.FirstOrDefault(s=>s.Id==record.SubjectId)?.Name??record.SubjectId,
         AllChapters.FirstOrDefault(c=>c.Id==record.ChapterId)?.Name??"未指定章节",Duration(record.DurationMs),
         string.Join(" · ",record.Parts.GroupBy(p=>p.Date).Select(g=>$"{g.Key:MM-dd} {Duration(g.Sum(p=>p.DurationMs))}")),record.Source==SessionSource.Timer?"计时":"补录",focus==null?null:record.Parts.Where(p=>p.Date==focus).Sum(p=>p.DurationMs),record.Id==Timer.SessionId&&Timer.State==TimerState.NeedsReview,focus,focus);

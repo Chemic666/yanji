@@ -16,6 +16,6 @@ public partial class KnowledgePackageWindow : Window
     }
     private async void Import_Click(object sender,RoutedEventArgs e)
     {
-        var file=new OpenFileDialog{Title="导入纯数据知识包",Filter="知识包 JSON|*.yanji-knowledge.json;*.json"};if(file.ShowDialog(this)==true)await Model.LoadFileAsync(file.FileName);
+        var file=new OpenFileDialog{Title="导入知识包",Filter="知识包 JSON|*.yanji-knowledge.json;*.json"};if(file.ShowDialog(this)==true)await Model.LoadFileAsync(file.FileName);
     }
 }

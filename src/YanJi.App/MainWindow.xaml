@@ -934,7 +934,7 @@
                         <Button Content="新建复盘" Click="NewReview_Click" Style="{StaticResource QuietButton}" />
                         <CheckBox Content="显示已删除复盘" IsChecked="{Binding ShowDeletedReviews}" VerticalAlignment="Center" />
                       </WrapPanel>
-                      <TextBlock Text="独立保存范围、科目、正文与修订；每日感想是回顾材料，不推断效率。" Style="{StaticResource MutedText}" />
+                      <TextBlock Text="复盘会保留所选日期、科目和修改历史。每日感想可供回顾，不用于推断学习效率。" Style="{StaticResource MutedText}" />
                     </StackPanel>
                   </Border>
                   <ItemsControl ItemsSource="{Binding PeriodReviews}">
@@ -1074,11 +1074,11 @@
                     <Border BorderBrush="{DynamicResource Separator}" BorderThickness="0,1,0,0" Margin="0,16,0,16" />
                     <TextBlock Text="界面与主题" Style="{StaticResource Subheading}" />
                     <CheckBox Content="深色主题" IsChecked="{Binding DarkTheme}" Style="{StaticResource FocusCheckBox}" />
-                    <TextBlock Text="浅色与深色即时切换，选择保存在本机。窄窗口自动折叠侧栏与并排卡片。" Style="{StaticResource MutedText}" />
+                    <TextBlock Text="可随时切换浅色或深色主题，选择会保存在本机。" Style="{StaticResource MutedText}" />
                     <Border BorderBrush="{DynamicResource Separator}" BorderThickness="0,1,0,0" Margin="0,16,0,16" />
                     <TextBlock Text="计时偏好" Style="{StaticResource Subheading}" />
                     <TextBlock Text="{Binding CheckpointLabel}" Style="{StaticResource FocusTextBlock}" />
-                    <TextBlock Text="暂停不计时；关闭窗口进入托盘；明确退出可结束保存或暂停后退出。锁屏不自动暂停，休眠与异常间隙需要核对。" Style="{StaticResource MutedText}" Margin="0,8,0,0" />
+                    <TextBlock Text="无计时时关闭会退出；计时中可结束保存或后台继续。锁屏不暂停，休眠与异常间隙需核对；意外关闭时仅恢复已保存的时间。" Style="{StaticResource MutedText}" Margin="0,8,0,0" />
                   </StackPanel>
                 </Border>
               </StackPanel>
@@ -1088,17 +1088,17 @@
                     <TextBlock Text="数据备份与恢复" Style="{StaticResource Subheading}" />
                     <TextBlock Text="{Binding Database.DirectoryPath}" FontSize="11" Foreground="{DynamicResource Muted}" Style="{StaticResource FocusTextBlock}" />
                     <WrapPanel Margin="0,16,0,4">
-                      <Button Content="导出完整备份" Style="{StaticResource Primary}" Click="Backup_Click" />
+                      <Button Content="备份数据" Style="{StaticResource Primary}" Click="Backup_Click" />
                       <Button Content="校验备份" Click="ValidateBackup_Click" Style="{StaticResource FocusButton}" />
                       <Button Content="导出 CSV" Click="Export_Click" Style="{StaticResource FocusButton}" />
-                      <Button Content="检查数据库" Click="Integrity_Click" Style="{StaticResource FocusButton}" />
+                      <Button Content="检查数据完整性" Click="Integrity_Click" Style="{StaticResource FocusButton}" />
                     </WrapPanel>
-                    <Button Content="恢复完整备份" Click="RestoreBackup_Click" Style="{StaticResource DangerButton}" HorizontalAlignment="Left" Margin="0,12,0,8" />
+                    <Button Content="恢复备份" Click="RestoreBackup_Click" Style="{StaticResource DangerButton}" HorizontalAlignment="Left" Margin="0,12,0,8" />
                     <WrapPanel>
                       <Button Content="旧版升级到新目录" Click="UpgradeCopy_Click" Style="{StaticResource QuietButton}" />
                       <Button Content="原格式回退" Click="OriginalRollback_Click" Style="{StaticResource QuietButton}" />
                     </WrapPanel>
-                    <TextBlock Text="完整恢复整体替换，不合并；先校验，再自动备份当前库并保留回退副本。CSV 不能替代备份。每日快照不自动清理，同一磁盘不能防止磁盘故障。" Style="{StaticResource MutedText}" />
+                    <TextBlock Text="恢复将替换全部数据，不会合并。程序会先校验备份，并保留恢复前的数据副本。CSV 不能替代备份。自动备份不会自行清理，请定期另存到其他磁盘。" Style="{StaticResource MutedText}" />
                   </StackPanel>
                 </Border>
               </StackPanel>
@@ -1109,7 +1109,7 @@
               <Button DockPanel.Dock="Right" Content="＋ 快速补录" Click="QuickAdd_Click" Style="{StaticResource Primary}" />
               <TextBlock Text="学习记录明细" Style="{StaticResource Heading}" />
             </DockPanel>
-            <TextBlock Text="从统计回到事实，修正一条记录，所有视图同步更新。" Style="{StaticResource MutedText}" />
+            <TextBlock Text="查看和修正学习记录，日历与统计会同步更新。" Style="{StaticResource MutedText}" />
             <Border Style="{StaticResource FilterBar}">
               <WrapPanel>
                 <StackPanel Margin="0,4,12,0">
@@ -1180,7 +1180,7 @@
               <TextBlock Text="{Binding SelectedRecord.LearningEvidence}" Style="{StaticResource MutedText}" TextWrapping="Wrap" Margin="0,8,0,12" />
               <TextBlock Text="{Binding SelectedRecord.Record.Note}" Margin="0,0,0,16" Style="{StaticResource FocusTextBlock}" />
               <TextBlock Text="有效学习片段" Style="{StaticResource Subheading}" />
-              <TextBlock Text="排除仅影响选中片段与对应日期；最后一段请使用整次软删除。" Style="{StaticResource MutedText}" />
+              <TextBlock Text="仅排除选中的片段及对应日期。若只剩一段，请删除整条记录；之后仍可恢复。" Style="{StaticResource MutedText}" />
               <ItemsControl ItemsSource="{Binding DetailParts}" ItemTemplate="{StaticResource StudyPartRow}" />
               <Expander Header="已排除片段 · 可恢复" IsExpanded="True" Style="{StaticResource FocusExpander}">
                 <ItemsControl ItemsSource="{Binding ExcludedDetailParts}" ItemTemplate="{StaticResource StudyPartRow}" />
