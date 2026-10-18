@@ -1,0 +1,895 @@
+{
+  "Baseline": "16db09c7f9afee8af4b3bfa045e3f14e49ffc968",
+  "Scope": "Pre-preparation baseline 90 commits. Final local preparation commit uses configured I1 identity and is enumerated in local FINAL evidence; no history/identity publication approved.",
+  "Identities": [
+    {
+      "Name": "C***c",
+      "Email": "27***@qq.com",
+      "NameFingerprint": "d28b44013fb4a051",
+      "EmailFingerprint": "ac376d31c3601494",
+      "AuthorCommits": [
+        "16db09c7f9afee8af4b3bfa045e3f14e49ffc968",
+        "0eb1c291f4e7c15618d9b55facbb440025b367ce",
+        "5d6e2a0737f7c094d13cca65ca9faddd33c2504f",
+        "b389dfafd656bece20ad0d2583d64951c35b7128",
+        "481b1db88166934c28be18de572ca7c2c2733be0",
+        "03f741e22fbd8fc533c152e1e0d93c122735c392",
+        "7d7acfd9885f75c92b95248c58f14a8c03637e94",
+        "fcfda5f7307b37adc3ac675cfa190aa384a78dba",
+        "6f50e9082088db75533e77ca521b10a807c22a1c",
+        "5e61faba6a437b18ac179c1bd51cd0777ce7ee56",
+        "31fe8eef6d8581fc31637f36ad34c2456ee55ad4",
+        "de82781e8386a6a3596de21c55c7add5662a8325",
+        "a8e26fc765aad0d7e7f4b085983880180b73dbc3",
+        "acd9b4c691da69956e238f6809e6ed86394f8084",
+        "d992fb3f8b1141eaff0893020931b222002541e6",
+        "1dc7484619932a0f7139c5d3a5c2c7ffc2d01022",
+        "11fa64022d09ca74d0404f6fa9acdae16d23b3dc",
+        "b055e884d61f06059fa4d6df861434e0e8fff133",
+        "3c8b059b437d09361ee42ca7596e3d365fb8cad9",
+        "bfb9d29e8eb7efc0e018d4e95fb94c3f3437a9c8",
+        "e62aa0ff29f4f5cfca6037d00882489417e8108c",
+        "5e4a87890f8814ad45c234a7695a6154e4ab857e",
+        "baf8c0975a074cadb3edf6a32e99e5d0a99a70a3",
+        "7f2e9f1497ca26aaf258f44462df731af6911d0c",
+        "098fe89173e97356a9b5edfba2c2c708e3da2467",
+        "f81f49ee76b443df90279b385dec5de7f144eef6",
+        "3021c41f0747b3af3d22b0a8f80985c97dd3848c",
+        "dd0b13019a366dedb0f093c5d65123901967f896",
+        "dea22db1dcf4c8c5173ecdd78418c6e20c4b31cb",
+        "f97169b017888a6fc0bb6f048c731713353f54b3",
+        "e195c3f880305126dae548dfb2631d0c29db8c2b",
+        "5bf7aa95111eab4c25bea6a04ce8d27868125132",
+        "31a5cedca63fe0f4b18983b07cad85f1bd15bb3c",
+        "ce217d3839e1a181884335c7a110e6f98e568269",
+        "e0e710c0ebd209adb84f82efb22886ffa99ef22a",
+        "6388daafe44dd482ed1d2d1921ad1bd79b257072",
+        "39e6ba46d5248d4e52e6ed6c43653ed4cf3f7b14",
+        "2ebe0b9308678820c168957446954b039ed848c6",
+        "8151da54684d0bcae9c82a29a1b0bc70e18fa0f3",
+        "458e5d699c87da6d0dd4b89af69276851e5ec5a2",
+        "430a67bb0fe186572a230d3dcef2461d8ae272cd",
+        "b39f58ef87efed594f35e86e9e9c7a0413a1eb13",
+        "5172fecd9f1e4e090627ef94f76c52de64e9bccd",
+        "f5f189aefa8136ea20e07e9a3fef49a80b94c901",
+        "309c74966880c69605304e7b73196e6eb3de7119",
+        "1ad8882cc9ffdf76aa7009c275b7068b42d3b451",
+        "01247ba21c67c80eacc40bca41337a52e1de543a",
+        "c5d6ab126152fb6cc9eb1dd1f509ecc6eb8822bd",
+        "d1505c9358357210ee42049d9d46fbe3e794060f",
+        "77f036d20844f529c9f19b7ee9558ec2eed108f2",
+        "40022179b05161fee5c0300c546a670082025ae5",
+        "6bd33095d60b07f468ce0c7f012e37f8c8f02dfa",
+        "869e410c282ca5b4feb699f5839d48b8ea74d0f6",
+        "85f43e640194d0876101f133161b373489358622",
+        "b1380cbc6313ca5852b47faccd1d1ca555bd403a",
+        "9a53923e19239c8c12b851606c660eccb4e145e5",
+        "b80c88836906d041376c8850a900aa9dc26fc883",
+        "9cd5443e91ec8b2fb5e9036a5f56433d97fc632c",
+        "4428a797a8e6ae2532238cd277374ec8488392a0",
+        "d8d1aa9bcd81cddb69a113f6bb87e6ab4c0343c5",
+        "dc3ce53ca8e9b097f40f7fd552b23d95c80e9ca0",
+        "81eea673489451e19f90d98e84a260d5308fa095",
+        "eabb7f48c0ea24342c19fa7a5fb6c0a7e6687292",
+        "872bd646d3f3c59cd198d2da30baec527f8c35ed",
+        "12e45fd5a2831563b49a43e6f6e5867583512821",
+        "0ca43a83969e33ef5f28344cf7290c465ff6add6",
+        "d9a50ed2f9b4b31545a32d3d717647f29ff10233",
+        "ceed244cf8ba1ea14b566d8cf6c752a411007b17",
+        "56eb27e15e733dd536c2fbeed04362f27f306a60",
+        "3503d2aab614c9d6740ca9e257d9d002a896ad23",
+        "36115839b0439214976b864f8dd75511657d9f58",
+        "bfe616e0a1cfaef74694ecf6b46b11722f47b592",
+        "1d6acc336c11402d076925e9447d34fbf8f6ef58",
+        "5104db6b22df7548c91d63de9b2b60f0b45b981f",
+        "3aac0e7d90564114ade589875c209941f1ce2072",
+        "7abf1902c9921b041878117aac3874b4de9368d8",
+        "c839d09e2d420e82750fddc50d4b1556fcaac4e0",
+        "824020c2a26e7d58c8ad2a66119b4fa9446a5371",
+        "fd12f36c47fc7a6b73d0c03246e0d2a42d6eb9e3",
+        "ce53c246dc4b3356dee445893e9cef5acf7f7431"
+      ],
+      "CommitterCommits": [
+        "16db09c7f9afee8af4b3bfa045e3f14e49ffc968",
+        "0eb1c291f4e7c15618d9b55facbb440025b367ce",
+        "5d6e2a0737f7c094d13cca65ca9faddd33c2504f",
+        "b389dfafd656bece20ad0d2583d64951c35b7128",
+        "481b1db88166934c28be18de572ca7c2c2733be0",
+        "03f741e22fbd8fc533c152e1e0d93c122735c392",
+        "7d7acfd9885f75c92b95248c58f14a8c03637e94",
+        "fcfda5f7307b37adc3ac675cfa190aa384a78dba",
+        "6f50e9082088db75533e77ca521b10a807c22a1c",
+        "5e61faba6a437b18ac179c1bd51cd0777ce7ee56",
+        "31fe8eef6d8581fc31637f36ad34c2456ee55ad4",
+        "de82781e8386a6a3596de21c55c7add5662a8325",
+        "a8e26fc765aad0d7e7f4b085983880180b73dbc3",
+        "acd9b4c691da69956e238f6809e6ed86394f8084",
+        "d992fb3f8b1141eaff0893020931b222002541e6",
+        "1dc7484619932a0f7139c5d3a5c2c7ffc2d01022",
+        "11fa64022d09ca74d0404f6fa9acdae16d23b3dc",
+        "b055e884d61f06059fa4d6df861434e0e8fff133",
+        "3c8b059b437d09361ee42ca7596e3d365fb8cad9",
+        "bfb9d29e8eb7efc0e018d4e95fb94c3f3437a9c8",
+        "e62aa0ff29f4f5cfca6037d00882489417e8108c",
+        "5e4a87890f8814ad45c234a7695a6154e4ab857e",
+        "baf8c0975a074cadb3edf6a32e99e5d0a99a70a3",
+        "7f2e9f1497ca26aaf258f44462df731af6911d0c",
+        "098fe89173e97356a9b5edfba2c2c708e3da2467",
+        "f81f49ee76b443df90279b385dec5de7f144eef6",
+        "3021c41f0747b3af3d22b0a8f80985c97dd3848c",
+        "dd0b13019a366dedb0f093c5d65123901967f896",
+        "dea22db1dcf4c8c5173ecdd78418c6e20c4b31cb",
+        "f97169b017888a6fc0bb6f048c731713353f54b3",
+        "e195c3f880305126dae548dfb2631d0c29db8c2b",
+        "5bf7aa95111eab4c25bea6a04ce8d27868125132",
+        "31a5cedca63fe0f4b18983b07cad85f1bd15bb3c",
+        "ce217d3839e1a181884335c7a110e6f98e568269",
+        "e0e710c0ebd209adb84f82efb22886ffa99ef22a",
+        "6388daafe44dd482ed1d2d1921ad1bd79b257072",
+        "39e6ba46d5248d4e52e6ed6c43653ed4cf3f7b14",
+        "2ebe0b9308678820c168957446954b039ed848c6",
+        "8151da54684d0bcae9c82a29a1b0bc70e18fa0f3",
+        "458e5d699c87da6d0dd4b89af69276851e5ec5a2",
+        "430a67bb0fe186572a230d3dcef2461d8ae272cd",
+        "b39f58ef87efed594f35e86e9e9c7a0413a1eb13",
+        "5172fecd9f1e4e090627ef94f76c52de64e9bccd",
+        "f5f189aefa8136ea20e07e9a3fef49a80b94c901",
+        "309c74966880c69605304e7b73196e6eb3de7119",
+        "1ad8882cc9ffdf76aa7009c275b7068b42d3b451",
+        "01247ba21c67c80eacc40bca41337a52e1de543a",
+        "c5d6ab126152fb6cc9eb1dd1f509ecc6eb8822bd",
+        "d1505c9358357210ee42049d9d46fbe3e794060f",
+        "77f036d20844f529c9f19b7ee9558ec2eed108f2",
+        "40022179b05161fee5c0300c546a670082025ae5",
+        "6bd33095d60b07f468ce0c7f012e37f8c8f02dfa",
+        "869e410c282ca5b4feb699f5839d48b8ea74d0f6",
+        "85f43e640194d0876101f133161b373489358622",
+        "b1380cbc6313ca5852b47faccd1d1ca555bd403a",
+        "9a53923e19239c8c12b851606c660eccb4e145e5",
+        "b80c88836906d041376c8850a900aa9dc26fc883",
+        "9cd5443e91ec8b2fb5e9036a5f56433d97fc632c",
+        "4428a797a8e6ae2532238cd277374ec8488392a0",
+        "d8d1aa9bcd81cddb69a113f6bb87e6ab4c0343c5",
+        "dc3ce53ca8e9b097f40f7fd552b23d95c80e9ca0",
+        "81eea673489451e19f90d98e84a260d5308fa095",
+        "eabb7f48c0ea24342c19fa7a5fb6c0a7e6687292",
+        "872bd646d3f3c59cd198d2da30baec527f8c35ed",
+        "12e45fd5a2831563b49a43e6f6e5867583512821",
+        "0ca43a83969e33ef5f28344cf7290c465ff6add6",
+        "d9a50ed2f9b4b31545a32d3d717647f29ff10233",
+        "ceed244cf8ba1ea14b566d8cf6c752a411007b17",
+        "56eb27e15e733dd536c2fbeed04362f27f306a60",
+        "3503d2aab614c9d6740ca9e257d9d002a896ad23",
+        "36115839b0439214976b864f8dd75511657d9f58",
+        "bfe616e0a1cfaef74694ecf6b46b11722f47b592",
+        "1d6acc336c11402d076925e9447d34fbf8f6ef58",
+        "5104db6b22df7548c91d63de9b2b60f0b45b981f",
+        "3aac0e7d90564114ade589875c209941f1ce2072",
+        "7abf1902c9921b041878117aac3874b4de9368d8",
+        "c839d09e2d420e82750fddc50d4b1556fcaac4e0",
+        "824020c2a26e7d58c8ad2a66119b4fa9446a5371",
+        "fd12f36c47fc7a6b73d0c03246e0d2a42d6eb9e3",
+        "ce53c246dc4b3356dee445893e9cef5acf7f7431"
+      ],
+      "Id": "I1",
+      "Counts": {
+        "Author": 80,
+        "Committer": 80
+      }
+    },
+    {
+      "Name": "C***x",
+      "Email": "co***@localhost",
+      "NameFingerprint": "616efbe96852d8c9",
+      "EmailFingerprint": "63dc9f4a8bd6ff91",
+      "AuthorCommits": [
+        "f8e5cd8eb2fca333c2d1988f78cae8e3c771194b",
+        "97ecaaaf46f38265f53569fa4d6467c3802a4a30",
+        "cb32efe8ad78c7b681619516c9a07f1b32a1abc9",
+        "8047876b8f1d6dcc9f16f0324e592d2b149d3e0f",
+        "8027c663be3295903a042a4343495a86dda10e20",
+        "ecc535acfd819f366a6aa5721a89e792219cc13b",
+        "681cc99df17e62a95e841249bca549df222f3abf",
+        "e4d06924da29a3c4eda9d16838cdec14200777a2",
+        "0cba62d482c0cf42c0ba228bcbca640a2b0b6f9c",
+        "3d90f9075fb13dab20a4f2f97a7192646d6be1eb"
+      ],
+      "CommitterCommits": [
+        "f8e5cd8eb2fca333c2d1988f78cae8e3c771194b",
+        "97ecaaaf46f38265f53569fa4d6467c3802a4a30",
+        "cb32efe8ad78c7b681619516c9a07f1b32a1abc9",
+        "8047876b8f1d6dcc9f16f0324e592d2b149d3e0f",
+        "8027c663be3295903a042a4343495a86dda10e20",
+        "ecc535acfd819f366a6aa5721a89e792219cc13b",
+        "681cc99df17e62a95e841249bca549df222f3abf",
+        "e4d06924da29a3c4eda9d16838cdec14200777a2",
+        "0cba62d482c0cf42c0ba228bcbca640a2b0b6f9c",
+        "3d90f9075fb13dab20a4f2f97a7192646d6be1eb"
+      ],
+      "Id": "I2",
+      "Counts": {
+        "Author": 10,
+        "Committer": 10
+      }
+    }
+  ],
+  "PathFindings": [
+    {
+      "Masked": "C:/Users/C***c/Documents/Codex/2026-10-13/yanji-windows-windows-11-2028-1/work/v04-m0/schema-probe.json、timer-evidence-review.json、wpf-skill-search.txt。6 项 Python SQLite 3.45.3 内存探针为 SIMULATED PASS，验证追加字段保留引用/原始毫秒、旧严格 Schema 失配、旧 ",
+      "File": "docs/V04-CURRENT-ARCHITECTURE.md",
+      "Line": 125,
+      "Object": "881400b34a937921ec3a1cce9b761a24d83ec41c",
+      "CurrentHead": true,
+      "OccurrencesInBlob": 1,
+      "Risk": "P2 local profile/toolchain location, not credential or learning facts",
+      "VisibleAncestorSnapshots": 36,
+      "ExampleCommit": "16db09c7f9afee8af4b3bfa045e3f14e49ffc968"
+    },
+    {
+      "Masked": "C:\\Users\\C***c\\Documents\\Codex\\2026-10-13\\yanji-windows-windows-11-2028-1",
+      "File": "tools/Invoke-Build.ps1",
+      "Line": 3,
+      "Object": "848ef825262dde3d75a555848d3b71edfd9f71ee",
+      "CurrentHead": true,
+      "OccurrencesInBlob": 1,
+      "Risk": "P2 local profile/toolchain location, not credential or learning facts",
+      "VisibleAncestorSnapshots": 89,
+      "ExampleCommit": "16db09c7f9afee8af4b3bfa045e3f14e49ffc968"
+    },
+    {
+      "Masked": "C:\\Users\\C***c\\Documents\\Codex\\2026-10-13\\yanji-windows-windows-11-2028-1\\work\\phase1\\toolchain",
+      "File": "tools/Invoke-V022Run.ps1",
+      "Line": 4,
+      "Object": "9f8fbc7c275773973c587ef5d39c7d56cc66b20b",
+      "CurrentHead": true,
+      "OccurrencesInBlob": 1,
+      "Risk": "P2 local profile/toolchain location, not credential or learning facts",
+      "VisibleAncestorSnapshots": 66,
+      "ExampleCommit": "16db09c7f9afee8af4b3bfa045e3f14e49ffc968"
+    },
+    {
+      "Masked": "C:/Users/C***c/Documents/Codex/2026-10-13/yanji-windows-windows-11-2028-1/work/phase1/toolchain/sdk-path.txt",
+      "File": "tools/Invoke-VisualLab.ps1",
+      "Line": 8,
+      "Object": "e22b58eb43d258bd8ee8e99380d6a534639f5bd7",
+      "CurrentHead": true,
+      "OccurrencesInBlob": 1,
+      "Risk": "P2 local profile/toolchain location, not credential or learning facts",
+      "VisibleAncestorSnapshots": 80,
+      "ExampleCommit": "16db09c7f9afee8af4b3bfa045e3f14e49ffc968"
+    },
+    {
+      "Masked": "C:\\Users\\C***c\\Documents\\Codex\\2026-10-13\\yanji-windows-windows-11-2028-1\\outputs",
+      "File": "tools/Package-Release.ps1",
+      "Line": 1,
+      "Object": "f5f2ff815e939ad1aa0d9c9853abe79d17de9640",
+      "CurrentHead": true,
+      "OccurrencesInBlob": 1,
+      "Risk": "P2 local profile/toolchain location, not credential or learning facts",
+      "VisibleAncestorSnapshots": 88,
+      "ExampleCommit": "16db09c7f9afee8af4b3bfa045e3f14e49ffc968"
+    },
+    {
+      "Masked": "C:\\Users\\C***c\\Documents\\Codex\\2026-10-13\\yanji-windows-windows-11-2028-1\\outputs\\v0.1.1",
+      "File": "tools/Package-V011.ps1",
+      "Line": 1,
+      "Object": "a016c654f13fbeb02054233d087f247f21503623",
+      "CurrentHead": true,
+      "OccurrencesInBlob": 1,
+      "Risk": "P2 local profile/toolchain location, not credential or learning facts",
+      "VisibleAncestorSnapshots": 82,
+      "ExampleCommit": "16db09c7f9afee8af4b3bfa045e3f14e49ffc968"
+    },
+    {
+      "Masked": "C:\\Users\\C***c\\Documents\\Codex\\2026-10-13\\yanji-windows-windows-11-2028-1\\outputs\\v0.2-quiet-focus",
+      "File": "tools/Package-V02.ps1",
+      "Line": 1,
+      "Object": "e2d5b5b35e8e7a89967fb19e49d2b4b83bfc58c6",
+      "CurrentHead": true,
+      "OccurrencesInBlob": 1,
+      "Risk": "P2 local profile/toolchain location, not credential or learning facts",
+      "VisibleAncestorSnapshots": 74,
+      "ExampleCommit": "16db09c7f9afee8af4b3bfa045e3f14e49ffc968"
+    },
+    {
+      "Masked": "C:\\Users\\C***c\\Documents\\Codex\\2026-10-13\\yanji-windows-windows-11-2028-1\\outputs\\v0.2-quiet-focus",
+      "File": "tools/Package-V02.ps1",
+      "Line": 1,
+      "Object": "a8acdc670a48fccd5dd953b5b8eee625ef1c8e87",
+      "CurrentHead": false,
+      "OccurrencesInBlob": 1,
+      "Risk": "P2 local profile/toolchain location, not credential or learning facts",
+      "VisibleAncestorSnapshots": 2,
+      "ExampleCommit": "3aac0e7d90564114ade589875c209941f1ce2072"
+    },
+    {
+      "Masked": "C:\\Users\\C***c\\Documents\\Codex\\2026-10-13\\yanji-windows-windows-11-2028-1\\outputs\\v0.1.1",
+      "File": "tools/Package-V011.ps1",
+      "Line": 1,
+      "Object": "0c6ee11283de349aa9b6d3b86d7b85b5528917b0",
+      "CurrentHead": false,
+      "OccurrencesInBlob": 1,
+      "Risk": "P2 local profile/toolchain location, not credential or learning facts",
+      "VisibleAncestorSnapshots": 1,
+      "ExampleCommit": "cb32efe8ad78c7b681619516c9a07f1b32a1abc9"
+    },
+    {
+      "Masked": "C:\\Users\\C***c\\Documents\\Codex\\2026-10-13\\yanji-windows-windows-11-2028-1",
+      "File": "tools/Invoke-Build.ps1",
+      "Line": 3,
+      "Object": "939f9bd9f5b2627eee5af093dba73d0d209cc1ec",
+      "CurrentHead": false,
+      "OccurrencesInBlob": 1,
+      "Risk": "P2 local profile/toolchain location, not credential or learning facts",
+      "VisibleAncestorSnapshots": 1,
+      "ExampleCommit": "3d90f9075fb13dab20a4f2f97a7192646d6be1eb"
+    }
+  ],
+  "AbsolutePathBlobs": [
+    {
+      "File": ".agents/design-skill-sources.json",
+      "Object": "adb003a6349acc4e46cf3a6965ff12b569fa9837",
+      "Occurrences": 5,
+      "Lines": [
+        9,
+        25,
+        41,
+        48,
+        64
+      ]
+    },
+    {
+      "File": ".agents/skills/ui-ux-pro-max/data/stacks/avalonia.csv",
+      "Object": "c67f4117105865587eda9020c57d8c209f3a929a",
+      "Occurrences": 2,
+      "Lines": [
+        21,
+        22
+      ]
+    },
+    {
+      "File": ".agents/skills/ui-ux-pro-max/data/stacks/uno.csv",
+      "Object": "9cab32326b4ad3a3cf43451a3c24553a41126cc1",
+      "Occurrences": 1,
+      "Lines": [
+        38
+      ]
+    },
+    {
+      "File": ".agents/skills/ui-ux-pro-max/data/stacks/wpf.csv",
+      "Object": "4e88d6750833a74f85ba487cf2b8f4ff6ebd2f4a",
+      "Occurrences": 1,
+      "Lines": [
+        20
+      ]
+    },
+    {
+      "File": ".agents/skills/winui-ui-testing/SKILL.md",
+      "Object": "c160f7793e12986fe32ee8bd01aa614ea55b0ac4",
+      "Occurrences": 1,
+      "Lines": [
+        320
+      ]
+    },
+    {
+      "File": "README.md",
+      "Object": "787c0eef82c6a2370fcec6903f9dddb9afbb4f8c",
+      "Occurrences": 1,
+      "Lines": [
+        57
+      ]
+    },
+    {
+      "File": "docs/ARTIFACT-RETENTION.md",
+      "Object": "4db6e6d76cbc811dd3ab7968e32e4bf15641371d",
+      "Occurrences": 1,
+      "Lines": [
+        12
+      ]
+    },
+    {
+      "File": "docs/DEVELOPMENT.md",
+      "Object": "d978d4688ed4e6aa08008527c8ac224ec9b10a72",
+      "Occurrences": 1,
+      "Lines": [
+        3
+      ]
+    },
+    {
+      "File": "docs/RUNTIME-ISOLATION.md",
+      "Object": "4a781abb7036fd471fb4bd23d0fe95b7c2490ed7",
+      "Occurrences": 1,
+      "Lines": [
+        22
+      ]
+    },
+    {
+      "File": "docs/UPGRADE-ROLLBACK.md",
+      "Object": "15a382552ef9fb819db15802494cc266500a1eb6",
+      "Occurrences": 1,
+      "Lines": [
+        6
+      ]
+    },
+    {
+      "File": "docs/USER-GUIDE.md",
+      "Object": "6e693eff3af9a1eff7ef38f7ba8997c5c5f10518",
+      "Occurrences": 1,
+      "Lines": [
+        29
+      ]
+    },
+    {
+      "File": "docs/V011-USER-GUIDE.md",
+      "Object": "e272cf097d79c51105c0737a83d14b674a9ebfdb",
+      "Occurrences": 1,
+      "Lines": [
+        3
+      ]
+    },
+    {
+      "File": "docs/V02-LEDGER.md",
+      "Object": "c4389e8f07efe5b8b67f51b0e78f03770f70a641",
+      "Occurrences": 1,
+      "Lines": [
+        8
+      ]
+    },
+    {
+      "File": "docs/V02-SKILLS.md",
+      "Object": "2495ae598eeb32ca9a969f4f930b552b48f55e25",
+      "Occurrences": 1,
+      "Lines": [
+        16
+      ]
+    },
+    {
+      "File": "docs/V02-USER-GUIDE.md",
+      "Object": "7d71829940171cc18e908992260a79cdd58656bd",
+      "Occurrences": 1,
+      "Lines": [
+        3
+      ]
+    },
+    {
+      "File": "docs/V021-DELIVERY.md",
+      "Object": "dbe6e24339e623b63eff1fc8c41e68f50a427082",
+      "Occurrences": 2,
+      "Lines": [
+        3,
+        5
+      ]
+    },
+    {
+      "File": "docs/V021-PLAN.md",
+      "Object": "6a433cb4a6be3b3801017cdcc760c3e4ecbdbd06",
+      "Occurrences": 1,
+      "Lines": [
+        15
+      ]
+    },
+    {
+      "File": "docs/V021-SKILL-USAGE.md",
+      "Object": "fed503596fcf702047710b07d41e135635cd3acb",
+      "Occurrences": 6,
+      "Lines": [
+        7,
+        21,
+        42,
+        43,
+        44,
+        148
+      ]
+    },
+    {
+      "File": "docs/V022-SKILL-USAGE.md",
+      "Object": "c11b6dcf8aedd911ee08a86ab47f636861e14c6a",
+      "Occurrences": 1,
+      "Lines": [
+        3
+      ]
+    },
+    {
+      "File": "docs/V03-SKILLS.md",
+      "Object": "aab5fb1400954700bdecfc99327873b53ca4e88e",
+      "Occurrences": 1,
+      "Lines": [
+        16
+      ]
+    },
+    {
+      "File": "docs/V04-CURRENT-ARCHITECTURE.md",
+      "Object": "881400b34a937921ec3a1cce9b761a24d83ec41c",
+      "Occurrences": 17,
+      "Lines": [
+        91,
+        109,
+        110,
+        111,
+        112,
+        113,
+        114,
+        115,
+        116,
+        117,
+        118,
+        119,
+        120,
+        121,
+        122,
+        123,
+        125
+      ]
+    },
+    {
+      "File": "docs/V04-FINAL-MANUAL-ACCEPTANCE.md",
+      "Object": "d757d8d2851808767ec2723c9f9f1fc51b3ebf41",
+      "Occurrences": 1,
+      "Lines": [
+        7
+      ]
+    },
+    {
+      "File": "docs/V04-M2-IMPLEMENTATION.md",
+      "Object": "4a315f3e2c9dacf8feabf4493a5214dd7eb646bb",
+      "Occurrences": 1,
+      "Lines": [
+        3
+      ]
+    },
+    {
+      "File": "docs/V04-M3-USER-GUIDE.md",
+      "Object": "2033bc3aa5a07a2b2a28aa428f6f8369a0a72117",
+      "Occurrences": 1,
+      "Lines": [
+        12
+      ]
+    },
+    {
+      "File": "docs/V04-RC-DELIVERY.md",
+      "Object": "1c53574dcf6f4788df73d647f72f328606d052c1",
+      "Occurrences": 1,
+      "Lines": [
+        7
+      ]
+    },
+    {
+      "File": "docs/V04-RC-USER-GUIDE.md",
+      "Object": "75260c457d824a32407fb555bf6834c675aa1f21",
+      "Occurrences": 1,
+      "Lines": [
+        14
+      ]
+    },
+    {
+      "File": "docs/V04-RCFINAL-DELIVERY.md",
+      "Object": "9d6cf773dd1fbe3ac3dc78272af26388fd450109",
+      "Occurrences": 1,
+      "Lines": [
+        7
+      ]
+    },
+    {
+      "File": "docs/V04-RCFINAL-USER-GUIDE.md",
+      "Object": "5cdbaedd45014b876448ebf1e7f6fe1131e327b2",
+      "Occurrences": 1,
+      "Lines": [
+        14
+      ]
+    },
+    {
+      "File": "docs/V04-SIMPLE-DELIVERY.md",
+      "Object": "142d08a85e196f629cca102f5e619da4aa606da8",
+      "Occurrences": 1,
+      "Lines": [
+        16
+      ]
+    },
+    {
+      "File": "docs/VALIDATION.md",
+      "Object": "a19a8759bd437c432881462df72dafe3313e1f9a",
+      "Occurrences": 1,
+      "Lines": [
+        21
+      ]
+    },
+    {
+      "File": "docs/design/v02/PLAN.md",
+      "Object": "1c260ce6b08eb4a4b3db1dc310d896f1bc9e2a00",
+      "Occurrences": 1,
+      "Lines": [
+        13
+      ]
+    },
+    {
+      "File": "docs/skills/v03-installed.json",
+      "Object": "d09c8e3a955459a604c47cbc78f40e81d17021a0",
+      "Occurrences": 4,
+      "Lines": [
+        13,
+        36,
+        94,
+        117
+      ]
+    },
+    {
+      "File": "tests/YanJi.Tests/RuntimeLocationTests.cs",
+      "Object": "f5ec1a339e3ed2c9f9672231a6d3621a8833de0b",
+      "Occurrences": 1,
+      "Lines": [
+        25
+      ]
+    },
+    {
+      "File": "tools/Invoke-Build.ps1",
+      "Object": "848ef825262dde3d75a555848d3b71edfd9f71ee",
+      "Occurrences": 1,
+      "Lines": [
+        3
+      ]
+    },
+    {
+      "File": "tools/Invoke-V022Run.ps1",
+      "Object": "9f8fbc7c275773973c587ef5d39c7d56cc66b20b",
+      "Occurrences": 1,
+      "Lines": [
+        4
+      ]
+    },
+    {
+      "File": "tools/Invoke-VisualLab.ps1",
+      "Object": "e22b58eb43d258bd8ee8e99380d6a534639f5bd7",
+      "Occurrences": 1,
+      "Lines": [
+        8
+      ]
+    },
+    {
+      "File": "tools/Package-Release.ps1",
+      "Object": "f5f2ff815e939ad1aa0d9c9853abe79d17de9640",
+      "Occurrences": 1,
+      "Lines": [
+        1
+      ]
+    },
+    {
+      "File": "tools/Package-V011.ps1",
+      "Object": "a016c654f13fbeb02054233d087f247f21503623",
+      "Occurrences": 1,
+      "Lines": [
+        1
+      ]
+    },
+    {
+      "File": "tools/Package-V02.ps1",
+      "Object": "e2d5b5b35e8e7a89967fb19e49d2b4b83bfc58c6",
+      "Occurrences": 1,
+      "Lines": [
+        1
+      ]
+    },
+    {
+      "File": "tools/Package-V021.ps1",
+      "Object": "b3f54ded77dd127560329bd9300d999a39377468",
+      "Occurrences": 2,
+      "Lines": [
+        1,
+        69
+      ]
+    },
+    {
+      "File": "tools/Write-ValidationReport.ps1",
+      "Object": "77793622879a810804500f9f3ee41846f892f15f",
+      "Occurrences": 1,
+      "Lines": [
+        88
+      ]
+    },
+    {
+      "File": "docs/USER-GUIDE.md",
+      "Object": "c1a0798d9eafac7b7e765fb833772290a3ffe96d",
+      "Occurrences": 1,
+      "Lines": [
+        27
+      ]
+    },
+    {
+      "File": "docs/USER-GUIDE.md",
+      "Object": "399512bc5d0d57c8e946a9c5fdaca9c07d395051",
+      "Occurrences": 1,
+      "Lines": [
+        7
+      ]
+    },
+    {
+      "File": "README.md",
+      "Object": "46538e3809cf05c095ac06c6b65a293e5ec9ac73",
+      "Occurrences": 4,
+      "Lines": [
+        5,
+        45,
+        46,
+        47
+      ]
+    },
+    {
+      "File": "README.md",
+      "Object": "66141823c7ae8deea62bdd5b707250ae37381d8d",
+      "Occurrences": 4,
+      "Lines": [
+        5,
+        43,
+        44,
+        45
+      ]
+    },
+    {
+      "File": "docs/V021-SKILL-USAGE.md",
+      "Object": "122f28e645d0cc5bf37c9a61f264eb3a97df9e4f",
+      "Occurrences": 6,
+      "Lines": [
+        7,
+        21,
+        42,
+        43,
+        44,
+        148
+      ]
+    },
+    {
+      "File": "tools/Package-V021.ps1",
+      "Object": "e3a0030560c2ee916e2a82f235d8bc22818dea5c",
+      "Occurrences": 2,
+      "Lines": [
+        1,
+        67
+      ]
+    },
+    {
+      "File": "tools/Package-V021.ps1",
+      "Object": "c47cb04ba66dbe620ca6f514f39cfe4118263972",
+      "Occurrences": 1,
+      "Lines": [
+        1
+      ]
+    },
+    {
+      "File": "docs/V021-PLAN.md",
+      "Object": "2c6db48f84d8b2ff86d31ec932daf08f20f47187",
+      "Occurrences": 1,
+      "Lines": [
+        15
+      ]
+    },
+    {
+      "File": "docs/V021-SKILL-USAGE.md",
+      "Object": "813f5660849e8008cf0ecafaf7cd63f7dd98ef3f",
+      "Occurrences": 5,
+      "Lines": [
+        7,
+        21,
+        42,
+        43,
+        44
+      ]
+    },
+    {
+      "File": "docs/V02-LEDGER.md",
+      "Object": "b81141874636bdb09b85e5561ff669578113ce3a",
+      "Occurrences": 1,
+      "Lines": [
+        8
+      ]
+    },
+    {
+      "File": "tools/Package-V02.ps1",
+      "Object": "a8acdc670a48fccd5dd953b5b8eee625ef1c8e87",
+      "Occurrences": 1,
+      "Lines": [
+        1
+      ]
+    },
+    {
+      "File": "docs/V02-LEDGER.md",
+      "Object": "fe5af6ae14214f4475cf91a2932ccbf7c4f0e7f6",
+      "Occurrences": 1,
+      "Lines": [
+        8
+      ]
+    },
+    {
+      "File": "README.md",
+      "Object": "48e46f0084df0bbbb085185b6ee28ce609a97950",
+      "Occurrences": 4,
+      "Lines": [
+        5,
+        42,
+        43,
+        44
+      ]
+    },
+    {
+      "File": "docs/V02-LEDGER.md",
+      "Object": "1a12e690e4e59d5035c8d2768172dd436114fce0",
+      "Occurrences": 1,
+      "Lines": [
+        8
+      ]
+    },
+    {
+      "File": "docs/V02-LEDGER.md",
+      "Object": "06ccc450c35c2bc6c78cac2e18cdb960172f789f",
+      "Occurrences": 1,
+      "Lines": [
+        8
+      ]
+    },
+    {
+      "File": "docs/design/v02/PLAN.md",
+      "Object": "f31e650235b8202751018a90646b8ff7b7d1ff8a",
+      "Occurrences": 1,
+      "Lines": [
+        13
+      ]
+    },
+    {
+      "File": "docs/DEVELOPMENT.md",
+      "Object": "a1275ebe2713d7b29f49535bcea5263f0948dc3c",
+      "Occurrences": 1,
+      "Lines": [
+        3
+      ]
+    },
+    {
+      "File": "tools/Package-V011.ps1",
+      "Object": "0c6ee11283de349aa9b6d3b86d7b85b5528917b0",
+      "Occurrences": 1,
+      "Lines": [
+        1
+      ]
+    },
+    {
+      "File": "README.md",
+      "Object": "a8ad1240e8fa5e0ec6d6c396cb2c8ed2dac17d68",
+      "Occurrences": 4,
+      "Lines": [
+        5,
+        39,
+        40,
+        41
+      ]
+    },
+    {
+      "File": "docs/DEVELOPMENT.md",
+      "Object": "79299a7e35ea04cac4ddc0d3cc9bd424a7c0066e",
+      "Occurrences": 1,
+      "Lines": [
+        3
+      ]
+    },
+    {
+      "File": "docs/DEVELOPMENT.md",
+      "Object": "725dae14fdf969fac0c72952df971531b0977520",
+      "Occurrences": 1,
+      "Lines": [
+        3
+      ]
+    },
+    {
+      "File": "tools/Invoke-Build.ps1",
+      "Object": "939f9bd9f5b2627eee5af093dba73d0d209cc1ec",
+      "Occurrences": 1,
+      "Lines": [
+        3
+      ]
+    }
+  ],
+  "CurrentComputerLiteralMatches": [],
+  "Limits": "Unique blob occurrence counts, not sum across commits. Masked metadata only; no reflog/unreachable/LFS scan, credential verification or OCR.",
+  "LocalCommitIdentity": {
+    "Name": "C***c",
+    "Email": "27***@qq.com",
+    "NameFingerprint": "d28b44013fb4a051",
+    "EmailFingerprint": "ac376d31c3601494"
+  }
+}
