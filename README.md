@@ -4,7 +4,7 @@
 
 研迹是一款面向考研学生的本地 Windows 学习管理软件。选择科目，开始学习，记下学到哪里；日常记录尽量在 1～3 分钟内完成。无需账号、服务器或云同步，不强制连续打卡。
 
-**当前版本：YanJi V0.4.0 Beta。** Beta 仍有实机兼容性限制，不代表 Stable。项目地址为 [Chemic666/yanji](https://github.com/Chemic666/yanji)；发行附件将在获准发布后出现在 Releases，下载与校验方法见下文。
+**当前版本：YanJi V0.4.0 Beta。** Beta 仍有实机兼容性限制，不代表 Stable。项目地址为 [Chemic666/yanji](https://github.com/Chemic666/yanji)，[v0.4.0-beta.1 Pre-release](https://github.com/Chemic666/yanji/releases/tag/v0.4.0-beta.1) 已公开。新增安装器目前为本地候选，等待单独发布授权；原绿色 ZIP 已可下载。
 
 ## 三个日常页面
 
@@ -40,11 +40,13 @@
 
 ## 系统要求与安装
 
-支持 **Windows 11 x64**。Windows ZIP 包含 .NET 运行时，使用时无需安装 SDK、创建账号或联网。
+支持 **Windows 11 x64**。推荐安装流程：**下载 `YanJi-v0.4.0-beta.1-Setup.exe` → 双击安装 → 从开始菜单启动研迹**。安装器新增附件获准上传后，可在[同一 Release 的 Assets](https://github.com/Chemic666/yanji/releases/tag/v0.4.0-beta.1) 下载；如果暂未看到 Setup，请使用已发布的绿色 ZIP。无需安装 .NET SDK/运行时、创建账号或联网，SHA-256 对普通用户可选。
 
-公开发行获准并上传后，请仅从[项目 Releases](https://github.com/Chemic666/yanji/releases)下载 `YanJi-v0.4.0-beta.1-windows-x64.zip` 和 `SHA256SUMS.txt`。当前该附件尚未公开上传。
+安装器仅安装给当前 Windows 用户，通常无需管理员权限。程序固定放在 `%LOCALAPPDATA%\Programs\YanJi`，提供开始菜单入口、可选桌面快捷方式和 Windows 设置卸载入口。卸载保留 `%LOCALAPPDATA%\YanJi` 内的学习记录和备份，安装和重装不迁移数据库。详见[安装、重装与卸载说明](docs/INSTALLATION.md)。
 
-1. 核对 SHA-256，完整解压到新的可写目录；不要覆盖旧安装，也不要在压缩包内直接运行。
+绿色版继续提供 `YanJi-v0.4.0-beta.1-windows-x64.zip`，原附件和哈希保持不变：
+
+1. 完整解压到新的可写目录；不要覆盖旧安装，也不要在压缩包内直接运行。
 2. 双击 `YanJi.exe`，创建档案，选择方向或暂未确定，按需应用参考目录。
 3. 选择科目即可开始学习。[基础使用说明](docs/USER-GUIDE.md)
 
@@ -52,7 +54,7 @@
 certutil -hashfile YanJi-v0.4.0-beta.1-windows-x64.zip SHA256
 ```
 
-程序**尚未代码签名**，SmartScreen 表现未验证。哈希用于核对内容，不等于签名或安全认证；出现警告先核对来源，不要关闭系统安全功能。
+上面的 SHA-256 命令是可选校验。应用和安装器**尚未代码签名**，SmartScreen 仍可能警告，实际信誉表现未验证。哈希用于核对内容，不等于签名或安全认证；出现警告先核对来源，不要关闭系统安全功能。
 
 ## 本地数据、隐私与备份
 

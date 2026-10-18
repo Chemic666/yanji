@@ -1,0 +1,47 @@
+{
+  "Format": "YanJi verified installer immutable inputs v1",
+  "BaseCommit": "dc1038e62b8046584d7d7dd5f48f17275ce98c44",
+  "SetupSha256": "fc33564333de81cdc2471ec62adf74f5da3f69a293a2bf233d1c7c5e55d8cce5",
+  "SetupBytes": 56721342,
+  "InstallerChecks": 75,
+  "RuntimeZipSha256": "b0bec5ba1fb85984b44c6ca726bc7492116298b6acc5e4c5fc06de5e2e2f576b",
+  "ApplicationRecompiled": false,
+  "BuildInputs": {
+    "installer/YanJi.iss": "013847a4a164864b0da11b737fd8c124a8f0cf7750d45656c214c260e8902d8b",
+    "installer/ChineseSimplified.isl": "7d544b9bb1d142cfa11f2e5d3cc8abe2e55f8e066c5124e3772675aa236e1278",
+    "tools/Build-Installer.py": "ddecadbc7362ced10de94f8f4858071064d2612b8a2e59f8d2509fe11d47cc68",
+    "README.md": "3bb096c576cd598627f79ca2b7aa15d963d66534f7f565740b66e103eb24c594",
+    "src/YanJi/Assets/Icons/YanJi.ico": "5390eb4629a383397820457937ce483acf8c6bd32d2a785ddade99037caf2010",
+    "docs/RELEASE-V040.md": "1b0379a932581f8e16d3b6cae7b400b8e3b082e7909b7496c1a123ebf285a04e",
+    "docs/INSTALLATION.md": "85dc34d30a5dd813a6f8597ffd2dbd2701fc1ecdec5723ad83e26d483c01d949",
+    "docs/USER-GUIDE.md": "d11d40a972ca2e8bfe4ed7bd7ae1a2774e796baf6cbffd2b957ec037d2fe83d0",
+    "docs/UPGRADE-ROLLBACK.md": "e99b720629dfaa509299edca1a021b6bcdf0502610dd0094e7809ad1757904a4"
+  },
+  "EvidenceFiles": {
+    "INSTALLER-PROVENANCE.json": {
+      "Bytes": 1299,
+      "Sha256": "492a84e42945ca3a28b219b3210270e6d6b2159a767fdd56bdfb0fe193665608"
+    },
+    "installer-validation.json": {
+      "Bytes": 8280,
+      "Sha256": "76db02d4ad4cd011450a98da6337805a8987c37f2d0e8ae1964a1d70a8236c0c"
+    },
+    "build-result.json": {
+      "Bytes": 1683,
+      "Sha256": "2a9d68094451ebde696648eca272d3273e20bfa24ddb37e07ef86fd1a9a67bce"
+    },
+    "payload-manifest.json": {
+      "Bytes": 82903,
+      "Sha256": "bebeb9423155d63b1024608e2bb046745d83f1ebb513a12ba7e85958fd2a2840"
+    },
+    "original-source-manifest.json": {
+      "Bytes": 2101,
+      "Sha256": "9a4d5a2232f741aa4ba625d75395115ca25610d7414494cb0fc0f56e7c43d991"
+    },
+    "validation-driver.ps1": {
+      "Bytes": 18827,
+      "Sha256": "71b3116be82810067a7f957bda64853f495458f496a448c23cd2f8732cd7702d"
+    }
+  },
+  "Scope": "Original exact bytes, including pre-integration documentation. Later release-copy edits do not rebuild or relabel the approved installer."
+}

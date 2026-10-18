@@ -1,0 +1,57 @@
+{
+  "BaseCommit": "dc1038e62b8046584d7d7dd5f48f17275ce98c44",
+  "Branch": "installer/first-release-experience",
+  "LocalCommitCreated": false,
+  "RemoteWrites": false,
+  "Scope": "Incremental installer/scripts/docs source only; overlay on clean baseline. Not a replacement for the existing full source ZIP.",
+  "Files": {
+    "README.md": {
+      "Bytes": 7774,
+      "Sha256": "3bb096c576cd598627f79ca2b7aa15d963d66534f7f565740b66e103eb24c594"
+    },
+    "docs/INSTALLATION.md": {
+      "Bytes": 4553,
+      "Sha256": "85dc34d30a5dd813a6f8597ffd2dbd2701fc1ecdec5723ad83e26d483c01d949"
+    },
+    "docs/RELEASE-V040.md": {
+      "Bytes": 5973,
+      "Sha256": "1b0379a932581f8e16d3b6cae7b400b8e3b082e7909b7496c1a123ebf285a04e"
+    },
+    "docs/UPGRADE-ROLLBACK.md": {
+      "Bytes": 2407,
+      "Sha256": "e99b720629dfaa509299edca1a021b6bcdf0502610dd0094e7809ad1757904a4"
+    },
+    "docs/USER-GUIDE.md": {
+      "Bytes": 4509,
+      "Sha256": "d11d40a972ca2e8bfe4ed7bd7ae1a2774e796baf6cbffd2b957ec037d2fe83d0"
+    },
+    "installer/ChineseSimplified.isl": {
+      "Bytes": 20905,
+      "Sha256": "7d544b9bb1d142cfa11f2e5d3cc8abe2e55f8e066c5124e3772675aa236e1278"
+    },
+    "installer/INNO-LICENSE.txt": {
+      "Bytes": 1521,
+      "Sha256": "2e5346868c2a18434489824e11d65c3031620f792fefc415d05f19cd441abf5c"
+    },
+    "installer/README.md": {
+      "Bytes": 5106,
+      "Sha256": "94094a3e83a7a8319832311f5ac665fb9b4722e103706378a27e2669d46fc86e"
+    },
+    "installer/YanJi.iss": {
+      "Bytes": 8159,
+      "Sha256": "013847a4a164864b0da11b737fd8c124a8f0cf7750d45656c214c260e8902d8b"
+    },
+    "tools/Build-Installer.py": {
+      "Bytes": 9369,
+      "Sha256": "ddecadbc7362ced10de94f8f4858071064d2612b8a2e59f8d2509fe11d47cc68"
+    },
+    "tools/Test-Installer.ps1": {
+      "Bytes": 18827,
+      "Sha256": "71b3116be82810067a7f957bda64853f495458f496a448c23cd2f8732cd7702d"
+    },
+    "tools/test_installer_package.py": {
+      "Bytes": 4018,
+      "Sha256": "e2a28d86c98b7d0a366ea0bba9e4fa26a65938a7ab5d8beed9c4afb1b287174e"
+    }
+  }
+}

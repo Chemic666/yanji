@@ -1,0 +1,319 @@
+{
+  "Status": "PASS",
+  "Failure": null,
+  "SetupSha256": "FC33564333DE81CDC2471EC62ADF74F5DA3F69A293A2BF233D1C7C5E55D8CCE5",
+  "WindowsVersion": "10.0.26200.0",
+  "TestProcessElevated": false,
+  "RealLearningDataAccessed": false,
+  "ApplicationDataIsolation": "--test-mode --data-dir (owned artifacts only)",
+  "Checks": [
+    {
+      "Name": "Reject abnormal path case 0",
+      "Status": "PASS"
+    },
+    {
+      "Name": "Reject abnormal path case 1",
+      "Status": "PASS"
+    },
+    {
+      "Name": "Reject abnormal path case 2",
+      "Status": "PASS"
+    },
+    {
+      "Name": "Reject abnormal path case 3",
+      "Status": "PASS"
+    },
+    {
+      "Name": "Reject abnormal path case 4",
+      "Status": "PASS"
+    },
+    {
+      "Name": "Reject abnormal path case 5",
+      "Status": "PASS"
+    },
+    {
+      "Name": "Reject abnormal path case 6",
+      "Status": "PASS"
+    },
+    {
+      "Name": "Reject abnormal path case 7",
+      "Status": "PASS"
+    },
+    {
+      "Name": "Reject Start menu group junction before installation",
+      "Status": "PASS"
+    },
+    {
+      "Name": "No shortcut written through Start menu junction",
+      "Status": "PASS"
+    },
+    {
+      "Name": "Reject default program directory junction",
+      "Status": "PASS"
+    },
+    {
+      "Name": "Junction target preserved",
+      "Status": "PASS"
+    },
+    {
+      "Name": "Reject file in place of default program directory",
+      "Status": "PASS"
+    },
+    {
+      "Name": "Program-path file not overwritten",
+      "Status": "PASS"
+    },
+    {
+      "Name": "First install exits successfully",
+      "Status": "PASS"
+    },
+    {
+      "Name": "Installed payload exact hashes (531 entries)",
+      "Status": "PASS"
+    },
+    {
+      "Name": "Start menu present; desktop opt-in defaults off",
+      "Status": "PASS"
+    },
+    {
+      "Name": "Start menu targets installed EXE without data override",
+      "Status": "PASS"
+    },
+    {
+      "Name": "Current-user Windows Settings uninstall registration",
+      "Status": "PASS"
+    },
+    {
+      "Name": "No all-user uninstall registration",
+      "Status": "PASS"
+    },
+    {
+      "Name": "first-start process exit",
+      "Status": "PASS"
+    },
+    {
+      "Name": "first-start explicit isolated database",
+      "Status": "PASS"
+    },
+    {
+      "Name": "first-start bundled runtime (no SDK/shared runtime)",
+      "Status": "PASS"
+    },
+    {
+      "Name": "first-start startup/SQLite assertions",
+      "Status": "PASS"
+    },
+    {
+      "Name": "Reject desktop shortcut reparse path",
+      "Status": "PASS"
+    },
+    {
+      "Name": "Uninstall ignores unowned desktop path when task was never selected",
+      "Status": "PASS"
+    },
+    {
+      "Name": "Install without desktop task ignores unrelated desktop path",
+      "Status": "PASS"
+    },
+    {
+      "Name": "Desktop shortcut junction target preserved",
+      "Status": "PASS"
+    },
+    {
+      "Name": "Program directory contains no learning database or backup",
+      "Status": "PASS"
+    },
+    {
+      "Name": "Reinstall rejects program subtree junction",
+      "Status": "PASS"
+    },
+    {
+      "Name": "Uninstall rejects program subtree junction",
+      "Status": "PASS"
+    },
+    {
+      "Name": "Nested junction target preserved",
+      "Status": "PASS"
+    },
+    {
+      "Name": "Same-version reinstall succeeds",
+      "Status": "PASS"
+    },
+    {
+      "Name": "Installed payload exact hashes (531 entries)",
+      "Status": "PASS"
+    },
+    {
+      "Name": "Reinstall preserves isolated database and backup bytes",
+      "Status": "PASS"
+    },
+    {
+      "Name": "Opt-in desktop shortcut created",
+      "Status": "PASS"
+    },
+    {
+      "Name": "Desktop shortcut ownership registered outside Inno-managed uninstall key",
+      "Status": "PASS"
+    },
+    {
+      "Name": "Reinstall can deselect desktop task normally",
+      "Status": "PASS"
+    },
+    {
+      "Name": "Desktop ownership survives later task deselection",
+      "Status": "PASS"
+    },
+    {
+      "Name": "Uninstall rejects replaced owned desktop shortcut junction",
+      "Status": "PASS"
+    },
+    {
+      "Name": "Deselecting task does not bypass historical desktop ownership guard",
+      "Status": "PASS"
+    },
+    {
+      "Name": "Owned desktop junction target preserved",
+      "Status": "PASS"
+    },
+    {
+      "Name": "reinstalled-start process exit",
+      "Status": "PASS"
+    },
+    {
+      "Name": "reinstalled-start explicit isolated database",
+      "Status": "PASS"
+    },
+    {
+      "Name": "reinstalled-start bundled runtime (no SDK/shared runtime)",
+      "Status": "PASS"
+    },
+    {
+      "Name": "reinstalled-start startup/SQLite assertions",
+      "Status": "PASS"
+    },
+    {
+      "Name": "Owned isolated application running",
+      "Status": "PASS"
+    },
+    {
+      "Name": "Reinstall refuses while YanJi is running",
+      "Status": "PASS"
+    },
+    {
+      "Name": "Uninstall refuses while YanJi is running",
+      "Status": "PASS"
+    },
+    {
+      "Name": "No forced app termination or binary overwrite",
+      "Status": "PASS"
+    },
+    {
+      "Name": "Uninstall exits successfully",
+      "Status": "PASS"
+    },
+    {
+      "Name": "Program executable and uninstall registration removed",
+      "Status": "PASS"
+    },
+    {
+      "Name": "Installer-owned desktop tracking key removed",
+      "Status": "PASS"
+    },
+    {
+      "Name": "Start menu and desktop entries removed",
+      "Status": "PASS"
+    },
+    {
+      "Name": "Unknown program-directory file preserved",
+      "Status": "PASS"
+    },
+    {
+      "Name": "Uninstall preserves isolated database and backup bytes",
+      "Status": "PASS"
+    },
+    {
+      "Name": "Install again after uninstall succeeds",
+      "Status": "PASS"
+    },
+    {
+      "Name": "after-uninstall-start process exit",
+      "Status": "PASS"
+    },
+    {
+      "Name": "after-uninstall-start explicit isolated database",
+      "Status": "PASS"
+    },
+    {
+      "Name": "after-uninstall-start bundled runtime (no SDK/shared runtime)",
+      "Status": "PASS"
+    },
+    {
+      "Name": "after-uninstall-start startup/SQLite assertions",
+      "Status": "PASS"
+    },
+    {
+      "Name": "Final uninstall succeeds",
+      "Status": "PASS"
+    },
+    {
+      "Name": "Owned program directory cleaned; isolated data retained",
+      "Status": "PASS"
+    },
+    {
+      "Name": "Synthetic prior-version installer fixture installs",
+      "Status": "PASS"
+    },
+    {
+      "Name": "Prior fixture registered lower installer version",
+      "Status": "PASS"
+    },
+    {
+      "Name": "Production Setup upgrades prior installer registration in place",
+      "Status": "PASS"
+    },
+    {
+      "Name": "Upgraded current-user registration version correct",
+      "Status": "PASS"
+    },
+    {
+      "Name": "Installed payload exact hashes (531 entries)",
+      "Status": "PASS"
+    },
+    {
+      "Name": "Installer upgrade preserves isolated database and backup bytes",
+      "Status": "PASS"
+    },
+    {
+      "Name": "upgraded-start process exit",
+      "Status": "PASS"
+    },
+    {
+      "Name": "upgraded-start explicit isolated database",
+      "Status": "PASS"
+    },
+    {
+      "Name": "upgraded-start bundled runtime (no SDK/shared runtime)",
+      "Status": "PASS"
+    },
+    {
+      "Name": "upgraded-start startup/SQLite assertions",
+      "Status": "PASS"
+    },
+    {
+      "Name": "Upgraded installation uninstalls successfully",
+      "Status": "PASS"
+    },
+    {
+      "Name": "No test installation left behind",
+      "Status": "PASS"
+    }
+  ],
+  "RemoteWrites": false,
+  "UpgradeScope": "Optional synthetic beta.0 installer fixture uses identical app binaries; tests installer upgrade mechanics only, never app/schema migration",
+  "NotTested": [
+    "Downloaded-file SmartScreen reputation",
+    "Clean Windows offline machine",
+    "Physical IME/DPI/power compatibility",
+    "Different application-version/schema upgrades"
+  ]
+}

@@ -1,0 +1,5 @@
+# Preserve reviewed upstream bytes and immutable evidence, including CRLF.
+ChineseSimplified.isl -text -whitespace
+INNO-LICENSE.txt -text -whitespace
+verified-beta1/** -text -whitespace
+YanJi.iss text eol=lf

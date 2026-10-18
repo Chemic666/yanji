@@ -1,0 +1,20 @@
+{
+  "Version": "0.4.0-beta.1",
+  "BaseCommit": "dc1038e62b8046584d7d7dd5f48f17275ce98c44",
+  "RuntimeZipSha256": "b0bec5ba1fb85984b44c6ca726bc7492116298b6acc5e4c5fc06de5e2e2f576b",
+  "ApplicationRecompiled": false,
+  "SourceChangesSha256": {
+    "installer/YanJi.iss": "013847a4a164864b0da11b737fd8c124a8f0cf7750d45656c214c260e8902d8b",
+    "installer/ChineseSimplified.isl": "7d544b9bb1d142cfa11f2e5d3cc8abe2e55f8e066c5124e3772675aa236e1278",
+    "tools/Build-Installer.py": "ddecadbc7362ced10de94f8f4858071064d2612b8a2e59f8d2509fe11d47cc68",
+    "README.md": "3bb096c576cd598627f79ca2b7aa15d963d66534f7f565740b66e103eb24c594",
+    "src/YanJi/Assets/Icons/YanJi.ico": "5390eb4629a383397820457937ce483acf8c6bd32d2a785ddade99037caf2010",
+    "docs/RELEASE-V040.md": "1b0379a932581f8e16d3b6cae7b400b8e3b082e7909b7496c1a123ebf285a04e",
+    "docs/INSTALLATION.md": "85dc34d30a5dd813a6f8597ffd2dbd2701fc1ecdec5723ad83e26d483c01d949",
+    "docs/USER-GUIDE.md": "d11d40a972ca2e8bfe4ed7bd7ae1a2774e796baf6cbffd2b957ec037d2fe83d0",
+    "docs/UPGRADE-ROLLBACK.md": "e99b720629dfaa509299edca1a021b6bcdf0502610dd0094e7809ad1757904a4"
+  },
+  "CompilerVersionEvidence": "compiler.log (ISCC banner)",
+  "CompilerSha256": "0a8757031b33777e4c9cbffee40f11a5062b36d25cbe144c1db73b6102b80ad7",
+  "RemoteWrites": false
+}
