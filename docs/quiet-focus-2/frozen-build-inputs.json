@@ -1,0 +1,560 @@
+{
+  "BaseCommit": "481b1db88166934c28be18de572ca7c2c2733be0",
+  "PriorSnapshot": "814C3196DBB94BE99A3E0234E5FC79B6C534DFA67DA8107CD59ADAB7F7B90464",
+  "WorktreeInputsSha256": "3E12DDFAA090D07D3300A8E83AE18C7F2B9F5DAA52A32B1AC13A578022497CA6",
+  "InformationalVersion": "0.4.0-rc.quiet.2+visual-polish.3e12ddfaa090",
+  "ChangedFromRC2": [
+    "src/YanJi.App/Atelier.xaml",
+    "src/YanJi.App/AtelierValidation.Review.cs",
+    "src/YanJi.App/MainWindow.Atelier.cs",
+    "src/YanJi.App/MainWindow.Presentation.cs",
+    "src/YanJi.App/MainWindow.xaml"
+  ],
+  "Files": {
+    "Directory.Build.props": {
+      "Bytes": 531,
+      "Sha256": "F21E98B0D273EBD1CE9ADDB4A11EC16509A9381968A0E9631D9AB600449A8EF0"
+    },
+    "Directory.Packages.props": {
+      "Bytes": 501,
+      "Sha256": "1DE7524EDC4ED1BF77CED99CE2988660D8EBAF311EB0D657B565C1F94F952F2D"
+    },
+    "YanJi.slnx": {
+      "Bytes": 424,
+      "Sha256": "BFFB7580E1ED10F9D069100FCB29215B9A690EFC75796077E4202B94E9D787A4"
+    },
+    "global.json": {
+      "Bytes": 71,
+      "Sha256": "809EF39278887CCEC467C604387BB2560824FDC16BFDBA712E015E8B117B2C27"
+    },
+    "resources/knowledge-packages/index.json": {
+      "Bytes": 1980,
+      "Sha256": "0288D21F90EEAF47838A853957072EDD7949AFDB99DE58691CF81E939C98F3C2"
+    },
+    "resources/knowledge-packages/org.yanji.reference.408/1.0.0/package.yanji-knowledge.json": {
+      "Bytes": 32494,
+      "Sha256": "28C0A3A09F841560C48C8D7B6FFD9C1F2CFE85E75EAD2A8028A8C0A341664A9B"
+    },
+    "resources/knowledge-packages/org.yanji.reference.408/1.1.0/package.yanji-knowledge.json": {
+      "Bytes": 38092,
+      "Sha256": "438E5BAD5BA418E05148839762023B59D6BFC5789A2CDE537306DA41EFD56280"
+    },
+    "resources/knowledge-packages/org.yanji.reference.blank/1.0.0/package.yanji-knowledge.json": {
+      "Bytes": 989,
+      "Sha256": "F854EC675D7E295F3CD913A9534519B6A208BBDED11C8010B7B55ABF011F7B9F"
+    },
+    "resources/knowledge-packages/org.yanji.reference.english1/1.0.0/package.yanji-knowledge.json": {
+      "Bytes": 4873,
+      "Sha256": "836F461DCC679A54E36E9F79009C0F837CF54995F5618375F5D7B9022FA4EA09"
+    },
+    "resources/knowledge-packages/org.yanji.reference.english1/1.1.0/package.yanji-knowledge.json": {
+      "Bytes": 22450,
+      "Sha256": "05977E48CD57A2D1F599C235E937FFD48D15644722645859827DB796337F417B"
+    },
+    "resources/knowledge-packages/org.yanji.reference.english2/1.0.0/package.yanji-knowledge.json": {
+      "Bytes": 4873,
+      "Sha256": "E1704EE5A889EEB343BE0DF537108ABC0C59F0CC12B7F67CFF2F6B957B4075D9"
+    },
+    "resources/knowledge-packages/org.yanji.reference.english2/1.1.0/package.yanji-knowledge.json": {
+      "Bytes": 22450,
+      "Sha256": "D050DF40F11E206EF1F69929034BFAC67963DEBC1848E287B8BDD4CA882A0D35"
+    },
+    "resources/knowledge-packages/org.yanji.reference.math1/1.0.0/package.yanji-knowledge.json": {
+      "Bytes": 10900,
+      "Sha256": "C753395EE8022FFA27FB52CCFE256B31A7122DB819E7DCE232246C0F2793AF16"
+    },
+    "resources/knowledge-packages/org.yanji.reference.math1/1.1.0/package.yanji-knowledge.json": {
+      "Bytes": 28589,
+      "Sha256": "075F856B785208119DEB4FAA0C0C4274A027869F577E4922E7647E3EB2DA76FE"
+    },
+    "resources/knowledge-packages/org.yanji.reference.math2/1.0.0/package.yanji-knowledge.json": {
+      "Bytes": 8302,
+      "Sha256": "2A7B83E4861C36DA3461D08B07097CED320754FE0F86DF2A1B2F5B541C310549"
+    },
+    "resources/knowledge-packages/org.yanji.reference.math2/1.1.0/package.yanji-knowledge.json": {
+      "Bytes": 28589,
+      "Sha256": "EE07CF8C493ABF2D3A9C90A8FC00B1C31D002987989AE6AE23D56109CF9F7347"
+    },
+    "resources/knowledge-packages/org.yanji.reference.politics/1.0.0/package.yanji-knowledge.json": {
+      "Bytes": 3645,
+      "Sha256": "48277493D07F2418604625EA0D7FBD704504A6951804499604330D27B1EEDBC0"
+    },
+    "resources/knowledge-packages/reference-scopes.json": {
+      "Bytes": 83314,
+      "Sha256": "FFE84F5237B969564446900836F19BECF71E209EB2BC13A2A4AB98204DB9DCE5"
+    },
+    "resources/legal/third-party-licenses.json": {
+      "Bytes": 32771,
+      "Sha256": "A9DE415E6F474E26B03E8A53751FB42886A877A3DC11CD4D693B18AFC08C493F"
+    },
+    "resources/licenses/CommunityToolkit-MIT.md": {
+      "Bytes": 1158,
+      "Sha256": "651997EF19DBB9ECB8DD660DBC86444A65AF21F18CFE08DAA69BF201CD5CFDFC"
+    },
+    "resources/licenses/CommunityToolkit-NOTICES.txt": {
+      "Bytes": 8600,
+      "Sha256": "7774F8B0AB66BFB47EC154CE24A2D6D574FEBC44A74D940B8A037D1C56756163"
+    },
+    "resources/licenses/DotNet-Runtime-MIT.txt": {
+      "Bytes": 1139,
+      "Sha256": "D7A68596AB69B06F51CA278A6545148E4269A9381C26D597C13DF5D88E08CF5B"
+    },
+    "resources/licenses/DotNet-ThirdPartyNotices.txt": {
+      "Bytes": 78041,
+      "Sha256": "6D15E10A101C6BFFF2AB4429ED061BF76C456FC4B23AD6B03E0D0F8377148A21"
+    },
+    "resources/licenses/EFCore-Sqlite-MIT.txt": {
+      "Bytes": 1115,
+      "Sha256": "AE48DF11A335DC1A615F4F938B69CBA73BCF4485C4F97AF49B38EFB0F216353B"
+    },
+    "resources/licenses/KnowledgePack-CC0-1.0.txt": {
+      "Bytes": 7048,
+      "Sha256": "A2010F343487D3F7618AFFE54F789F5487602331C0A8D03F49E9A7C547CF0499"
+    },
+    "resources/licenses/SQLitePCLRaw-Apache-2.0.txt": {
+      "Bytes": 11358,
+      "Sha256": "CFC7749B96F63BD31C3C42B5C471BF756814053E847C10F3EB003417BC523D30"
+    },
+    "resources/licenses/WindowsDesktop-MIT.txt": {
+      "Bytes": 1137,
+      "Sha256": "A89886665765362EB77E0F8E26602C924520041D1711B2EEDC136434FE4D01AB"
+    },
+    "src/YanJi.App/App.xaml": {
+      "Bytes": 483,
+      "Sha256": "BBA3C0F7657AC2C079C91FDA51AD77D8574AD6912BE8AC59E03E2C152FFB5F38"
+    },
+    "src/YanJi.App/App.xaml.cs": {
+      "Bytes": 13174,
+      "Sha256": "4816CED80BF4077CA3D4218DCC67868190F86A2739830395185E219A285E0517"
+    },
+    "src/YanJi.App/Assets/Atmosphere/README.md": {
+      "Bytes": 1846,
+      "Sha256": "29409B6F32BBC6F220F6C549E964AECF4F5C119F26656CA0F804EE5AB5299D26"
+    },
+    "src/YanJi.App/Assets/Atmosphere/window-light-v1.png": {
+      "Bytes": 1753677,
+      "Sha256": "524FCF84FCEF1114AA1DB50ECE0A0150B6180C708EAA47C9A580BE821A54D6CD"
+    },
+    "src/YanJi.App/Atelier.xaml": {
+      "Bytes": 7882,
+      "Sha256": "410C602DA0373FB58B233664A14CB0FACBC16D8650579EB543B3F71960CB2DBB"
+    },
+    "src/YanJi.App/AtelierValidation.Review.cs": {
+      "Bytes": 12829,
+      "Sha256": "F1B11A4F2995E4F1483467ADD1298A331E704C763B98C57D868D906611771C2E"
+    },
+    "src/YanJi.App/AtelierValidation.cs": {
+      "Bytes": 4859,
+      "Sha256": "BACFA48BC2BA0F5925FB226C41C03F99E3CF9FDE188F42D0323D3FA9FAE9FC29"
+    },
+    "src/YanJi.App/ButtonFeedback.cs": {
+      "Bytes": 2961,
+      "Sha256": "7741282B1FD205BE9E1469CD9FA22A256620A87614C8BD29AD3988453611F0B9"
+    },
+    "src/YanJi.App/CalendarValidation.cs": {
+      "Bytes": 12937,
+      "Sha256": "DF7BB30FD0ACFD1DC5588353B3493E15963EFFF1AC5DE7B77AAC30CB83911E81"
+    },
+    "src/YanJi.App/ConfirmDialog.cs": {
+      "Bytes": 1339,
+      "Sha256": "0A52735F969AC4F955D31D9193EF86E3CCC4C0D65FB95FD01236DF2111EB9D23"
+    },
+    "src/YanJi.App/Converters.cs": {
+      "Bytes": 1948,
+      "Sha256": "CA09F192BD0D280B35A48BB8BCC51002049373AE5F432DFC37C98140CB3C86E0"
+    },
+    "src/YanJi.App/DurationDisplayConverter.cs": {
+      "Bytes": 800,
+      "Sha256": "8ED9FA475A2A06622610EC464DFF87A1855AD29C8E21413373C882E2239A73DE"
+    },
+    "src/YanJi.App/EditorDialog.cs": {
+      "Bytes": 7255,
+      "Sha256": "7982FA7ECD51EB5C5AD264A6B20DE6DD71CA731135FA7C01BE11C17A29824184"
+    },
+    "src/YanJi.App/FocusIcon.cs": {
+      "Bytes": 2089,
+      "Sha256": "3654A6679DB9C2B384F2CA17C1F82B7307F89DC7DD95E7C215D2DD58BFC71825"
+    },
+    "src/YanJi.App/IconValidation.cs": {
+      "Bytes": 3023,
+      "Sha256": "1263E4D08D46C7FA2E22820E058D55A6197701E4B06F73506CF402CC1968FB7A"
+    },
+    "src/YanJi.App/KnowledgePackageViewModel.cs": {
+      "Bytes": 14710,
+      "Sha256": "8D550C9F4C85BC17E44BF6320F5CDDAB5E0F99B98FCBA64558840A1B8A56CE85"
+    },
+    "src/YanJi.App/KnowledgePackageWindow.xaml": {
+      "Bytes": 10031,
+      "Sha256": "CC338D5FDA6B2A930B3B2D55B786297462E9B2854C904FE09A7DFC60793F8448"
+    },
+    "src/YanJi.App/KnowledgePackageWindow.xaml.cs": {
+      "Bytes": 1080,
+      "Sha256": "F0D92327698C9043287198F30995E660D6FD279E7737F2FEA5AF5C7926AE3716"
+    },
+    "src/YanJi.App/KnowledgeTreeStyles.xaml": {
+      "Bytes": 3421,
+      "Sha256": "44B65DB6C69CDFB67A653D0BA7785E7BF071E2AE59FD57A891C76A993D070B68"
+    },
+    "src/YanJi.App/KnowledgeWorkspace.xaml": {
+      "Bytes": 13367,
+      "Sha256": "0D712D1958F3B203C5587F096BFF3AB30FA0BA5E28B0571D3FF53C2858A95E20"
+    },
+    "src/YanJi.App/KnowledgeWorkspace.xaml.cs": {
+      "Bytes": 5154,
+      "Sha256": "C03E84D764FFE16410545FABDF43C1E347D927830337AE3DEA5D05FB512FF1D2"
+    },
+    "src/YanJi.App/KnowledgeWorkspaceViewModel.cs": {
+      "Bytes": 15558,
+      "Sha256": "18D88817E4DF5A7D983E6B409D94C2AC80D9828247FA146BAB2E92F047FF69FD"
+    },
+    "src/YanJi.App/M1WindowValidation.cs": {
+      "Bytes": 9083,
+      "Sha256": "32B5C51AD474551AA65214216C3DECBB395CA8113CC1FA8939FC271F48D53406"
+    },
+    "src/YanJi.App/M2WindowValidation.cs": {
+      "Bytes": 11259,
+      "Sha256": "60334430C7EC03F34F4E52656AB250C2C64E8CA73A824F9916A2D84DF9F1ACCB"
+    },
+    "src/YanJi.App/M3ReviewValidation.cs": {
+      "Bytes": 2170,
+      "Sha256": "2168D656CAA0C84D4F6C7775DBC4C755B1E42FE2585F62D038AAEC46A460DB8F"
+    },
+    "src/YanJi.App/M3WindowValidation.cs": {
+      "Bytes": 11094,
+      "Sha256": "C0B337B54DECEAEFCD5CF139155E56F253F6CFC91B8FD787CCD9766260E26B03"
+    },
+    "src/YanJi.App/M4WindowValidation.cs": {
+      "Bytes": 13586,
+      "Sha256": "5DC2F0BB8ED459AD1F0C0C1191F4683C067421B23829FD6664FFE1A9605E4733"
+    },
+    "src/YanJi.App/MainViewModel.Focus.cs": {
+      "Bytes": 8085,
+      "Sha256": "D5155091294807DE8968990BA613B5E97CEB781EC1D269A9933774FCD77612E6"
+    },
+    "src/YanJi.App/MainViewModel.Learning.cs": {
+      "Bytes": 3011,
+      "Sha256": "BAB766836A4C93E4C541AC1A5FE8F68F73464D1D18AE178CBD0788F2157C40A8"
+    },
+    "src/YanJi.App/MainViewModel.Presentation.cs": {
+      "Bytes": 21397,
+      "Sha256": "DA9A17637B127448102791C0F44AD8EAC9E26EEAFAF24DC7DA8A717CB1AA0FC2"
+    },
+    "src/YanJi.App/MainViewModel.Reviews.cs": {
+      "Bytes": 4617,
+      "Sha256": "DD9F52CED1EE727016D4CBE2F3A940897456258B9CB8104915450C3EF43ED8FE"
+    },
+    "src/YanJi.App/MainViewModel.Simple.cs": {
+      "Bytes": 3657,
+      "Sha256": "22224B1D0623C720B65B7E02D09862BD19E94815745A0823C2DD6D346430F76E"
+    },
+    "src/YanJi.App/MainViewModel.cs": {
+      "Bytes": 23123,
+      "Sha256": "DB670242FA32BB3C2DE08252A1DDCF6CDEC64D82F870B10C6E5E002D8717643E"
+    },
+    "src/YanJi.App/MainWindow.Atelier.cs": {
+      "Bytes": 2690,
+      "Sha256": "DA6B086F905E2A634313568BEF3018384CA327D1E5D47C0BD31E4847BAE11CAD"
+    },
+    "src/YanJi.App/MainWindow.Focus.cs": {
+      "Bytes": 450,
+      "Sha256": "3C4917E28137A3CC40F650E58BA03B1E641A7DB1C664DA4171BB9D024704B6E0"
+    },
+    "src/YanJi.App/MainWindow.Knowledge.cs": {
+      "Bytes": 1439,
+      "Sha256": "DD4BFAF8BC7DB67B21792D53A62BDB3B0D644A2C69F92A91BEF0775300D45ACD"
+    },
+    "src/YanJi.App/MainWindow.Learning.cs": {
+      "Bytes": 5255,
+      "Sha256": "DB2A5237D7BEF51E2581552AE136DE73180780ABD86888C555334EF155E9F81B"
+    },
+    "src/YanJi.App/MainWindow.Presentation.cs": {
+      "Bytes": 13960,
+      "Sha256": "CF2396702AD78A83F136034CC35B816F87AAAFF99825CAB0D39794432522B5FA"
+    },
+    "src/YanJi.App/MainWindow.Release.cs": {
+      "Bytes": 3963,
+      "Sha256": "07BBC53E6A6D7F57DCECD5E1FA37EB2CB7F415863C8F6EE5FDCA07F8ADFEEE82"
+    },
+    "src/YanJi.App/MainWindow.Simple.cs": {
+      "Bytes": 5493,
+      "Sha256": "1DE5AEDADE13EA81F55F2CEBA61E6A18F84D3F72EF4DF532545CCB77F1DD3DDA"
+    },
+    "src/YanJi.App/MainWindow.xaml": {
+      "Bytes": 103332,
+      "Sha256": "25592C2A034DC90507D370806F7394E394C50D28A278B8F79D3935F56E3AF837"
+    },
+    "src/YanJi.App/MainWindow.xaml.cs": {
+      "Bytes": 29960,
+      "Sha256": "63C1CA6C6DA50CAE1382B243B3C0F54FDF73110BE3A19C209B7FB393D48FFB5F"
+    },
+    "src/YanJi.App/MetricCard.cs": {
+      "Bytes": 907,
+      "Sha256": "33983EDD6816AA9DF9908EBAA5A5C08ABF8AA6ACF696F60268FA53FF5D36EF84"
+    },
+    "src/YanJi.App/MiniTimerWindow.xaml": {
+      "Bytes": 5091,
+      "Sha256": "D9197E328B1090CABD04772EDB0BE04C7ACEEF21450060ACC0CA91ACDB73122D"
+    },
+    "src/YanJi.App/MiniTimerWindow.xaml.cs": {
+      "Bytes": 3332,
+      "Sha256": "2BB36DEE96C7108DB9D4790F2EB0DB61E9A2131E3A65F6696F99CC0E1C1060AE"
+    },
+    "src/YanJi.App/NativeCapture.cs": {
+      "Bytes": 4479,
+      "Sha256": "C0F21B75F9391E64CCE689B8304A46351B4EF5FB737EEB384E4F82B594965E98"
+    },
+    "src/YanJi.App/NaturalDuration.cs": {
+      "Bytes": 1726,
+      "Sha256": "98DF4EA5017ECC2DCECA76FECC3E6E68A5AB0A6E8C65A3118B5183DC2200BA7B"
+    },
+    "src/YanJi.App/PerfTrace.cs": {
+      "Bytes": 1159,
+      "Sha256": "CF254B2F963DEEA31051F94BA78307BF3797A2C6F4862C0DED64C99E6F227227"
+    },
+    "src/YanJi.App/PerformanceRunner.cs": {
+      "Bytes": 3111,
+      "Sha256": "235E91F622E88B75870707E2DC60A2EB926F03CFA8B9CD58126AD8940E7C89C9"
+    },
+    "src/YanJi.App/Polish2Validation.cs": {
+      "Bytes": 19438,
+      "Sha256": "27625C547843F278F3AD2807A74ED2E3F101D88C7E8B609BC5984E062E0907F4"
+    },
+    "src/YanJi.App/PolishPerformance.cs": {
+      "Bytes": 5722,
+      "Sha256": "B5F034F33738CBE7C6F61B1DAB6A2571442CF8E488FFEF219C7E911C7614810D"
+    },
+    "src/YanJi.App/PolishUiChecks.cs": {
+      "Bytes": 11306,
+      "Sha256": "BE6454A2A5B73C12CC6BB5CADB2D9A02ED053694AEDB08765EFDD9C3D457D400"
+    },
+    "src/YanJi.App/PresentationConverters.cs": {
+      "Bytes": 1331,
+      "Sha256": "D48220B17BF1B019DB3DE76657D69D48DBDA1F367A0B10B41E2DE86FBC8519B8"
+    },
+    "src/YanJi.App/SaveShortcuts.cs": {
+      "Bytes": 2740,
+      "Sha256": "8CEDAF18A3E8E9E73B1A981DA399C48429FBD15B6835D4CE060DF0192FE14D43"
+    },
+    "src/YanJi.App/SimpleInteractionValidation.cs": {
+      "Bytes": 13905,
+      "Sha256": "9B08E07C86FB7D1007A463A8B6577C8211F94818B5478E0C2BD3CB666AA86F58"
+    },
+    "src/YanJi.App/SimpleProgressViewModel.cs": {
+      "Bytes": 4390,
+      "Sha256": "9460B552C69A7BE686BAC57F36E25DBCD104518893CE2298096B07913A8DC2FC"
+    },
+    "src/YanJi.App/SimpleProgressWorkspace.xaml": {
+      "Bytes": 7084,
+      "Sha256": "1A308C1860F1A8DD52763B80C18EB4D1A242261200D65850504428B1E7A11759"
+    },
+    "src/YanJi.App/SimpleProgressWorkspace.xaml.cs": {
+      "Bytes": 3993,
+      "Sha256": "9F84FA798804D477903620632E857F923858F87288F8794B70E9223DCEEA5C53"
+    },
+    "src/YanJi.App/SimpleWindowValidation.cs": {
+      "Bytes": 14555,
+      "Sha256": "F9E42F3EA1C8D62D1503CB7A89F18E3CAA6C7AF461D37BF41116AABDBED3F623"
+    },
+    "src/YanJi.App/SmokeRunner.cs": {
+      "Bytes": 12023,
+      "Sha256": "B2739EE8BEC052A9ABFE98B0020F724B7DFD332382F6CBE753F8004DA054C4BC"
+    },
+    "src/YanJi.App/StudioValidation.cs": {
+      "Bytes": 8711,
+      "Sha256": "7A2B9DBC110AE0E45062C0EC905D3C0CAE3B10E8E9548FC8A8A096AEF6E197DC"
+    },
+    "src/YanJi.App/StudyChart.cs": {
+      "Bytes": 18059,
+      "Sha256": "792963DEF70C3FE8D4864CF01D9482B000C01CBAEB7F99276C6FF84CCC6C9636"
+    },
+    "src/YanJi.App/Styles.xaml": {
+      "Bytes": 34558,
+      "Sha256": "26900EAD949003059AA9F043920A7CDE522F06CAB1CEA5306504D639A6CB8578"
+    },
+    "src/YanJi.App/SurfaceValidation.cs": {
+      "Bytes": 8380,
+      "Sha256": "A98C1E4514E002A6D93BB477A42FB16A9D9BCD693ED2DCABB53E7EBC7FC2EAE2"
+    },
+    "src/YanJi.App/ThemeService.cs": {
+      "Bytes": 4924,
+      "Sha256": "7284C292782F404D1AF41FBE90CB9E9418BF0BAF9DD98CF5DC98097940730C7F"
+    },
+    "src/YanJi.App/TimerDisplayValidation.cs": {
+      "Bytes": 8049,
+      "Sha256": "0ABEF2E5268770CC29B6A0249FDB44D08302DB0654F6FFB5104CFB58A0249AC0"
+    },
+    "src/YanJi.App/V021CaptureRunner.cs": {
+      "Bytes": 6296,
+      "Sha256": "EB99E0E37C91F897E8BC7FBDE9BF3CEFC30B6375499456CFB2E74192D3E4FB70"
+    },
+    "src/YanJi.App/V021VisualRunner.cs": {
+      "Bytes": 8774,
+      "Sha256": "E4F58340D5848D5ECCB8FD23DD78C5A24ECBE5539E25634C9906069BAC1F16F5"
+    },
+    "src/YanJi.App/V022CaptureRunner.cs": {
+      "Bytes": 9545,
+      "Sha256": "8D5499F5AA71434D129B8431D6E0719B84BDB39FCB73AEB85DE2C6E99C0C830A"
+    },
+    "src/YanJi.App/V022NativeRunner.cs": {
+      "Bytes": 7871,
+      "Sha256": "4F09130E5AF0D310336630DA8AF466A33D4775058D248461B155CD07BA2E2A9C"
+    },
+    "src/YanJi.App/V023CaptureRunner.cs": {
+      "Bytes": 7519,
+      "Sha256": "023EC09AF3848CE6F495770811C5E84FB606BB8C8CF39C46EA3ED80646AA5857"
+    },
+    "src/YanJi.App/V023NativeRunner.cs": {
+      "Bytes": 3748,
+      "Sha256": "86C2136F8603FA0DFAE02279370AB97FA9A79EA621F1689A47980B5C4313543C"
+    },
+    "src/YanJi.App/V02VisualRunner.cs": {
+      "Bytes": 12422,
+      "Sha256": "E5A5D7DF34BB39BB722C51D0105AE27FA000A9B05DF740441CDE921C6B3032BB"
+    },
+    "src/YanJi.App/V03CaptureRunner.cs": {
+      "Bytes": 15636,
+      "Sha256": "2CC2B29E1EC27A55B59E1F817BB0B62D31605569EDCBF75C99E3B7DAB75C9ADE"
+    },
+    "src/YanJi.App/VisualUpgradeRunner.cs": {
+      "Bytes": 18892,
+      "Sha256": "0B6DD45D45B123BF7884DC6CF100CB331E35190B64B7F4883CFCA60DF758AAC0"
+    },
+    "src/YanJi.App/WindowsClock.cs": {
+      "Bytes": 1825,
+      "Sha256": "48000EBC06870935C53C3DF99515BEA63BA5418FF9F4D566B308D5BB82C6DFC2"
+    },
+    "src/YanJi.App/YanJi.App.csproj": {
+      "Bytes": 2881,
+      "Sha256": "F1613F5F2160ED611866CD8BF9D6452192699F1EDB40C1E094C9199161DE8E15"
+    },
+    "src/YanJi.App/app.manifest": {
+      "Bytes": 695,
+      "Sha256": "CB23BA7C9EDC35D72EAB0481995767738154221106B2D879F8DF1EB1FD1B10F4"
+    },
+    "src/YanJi.App/packages.lock.json": {
+      "Bytes": 2742,
+      "Sha256": "5642149B11D72AE60F37C6E0FB5CB52F37C1E698DEAA7CF36A2514287CBF4E9B"
+    },
+    "src/YanJi.Core/KnowledgeNode.cs": {
+      "Bytes": 3616,
+      "Sha256": "7A6D5DDDDD1B9F2B7E91C9BB4F31CBA081D519F17FDEF9DA00C18B39BF582079"
+    },
+    "src/YanJi.Core/KnowledgePackage.cs": {
+      "Bytes": 8833,
+      "Sha256": "E458467AFC896664268951AEC9DC905C1D6D0687FBCCFA5E0B8918A07A9B08C4"
+    },
+    "src/YanJi.Core/LearningContext.cs": {
+      "Bytes": 878,
+      "Sha256": "39411DDB99DC57BDA8B304B16EAA50DBD28B70B0732874856586C8AFA83BCC39"
+    },
+    "src/YanJi.Core/Models.cs": {
+      "Bytes": 3303,
+      "Sha256": "EE59F6D85291F374131EF7ADDD19729A25AD701E674B858E198D5A933F455D98"
+    },
+    "src/YanJi.Core/NodeProgressNote.cs": {
+      "Bytes": 272,
+      "Sha256": "EEED10DF0C751688CAF426B2B98703850E5E3B6103DCCDBBD37AABCA032680F7"
+    },
+    "src/YanJi.Core/NonStudyCountdown.cs": {
+      "Bytes": 1076,
+      "Sha256": "172A8E8FDE80465EE8D3506A3D82366CB3D3929FBE27B8420AF44AE76DDFA21F"
+    },
+    "src/YanJi.Core/ReferenceScopes.cs": {
+      "Bytes": 4558,
+      "Sha256": "1099989B6A5CAC1D85F2B9DE073296227C8E54B75576DAAA2C85C57AE3B11F6D"
+    },
+    "src/YanJi.Core/StudyAnalytics.cs": {
+      "Bytes": 4618,
+      "Sha256": "B3E7073C64846BA4092B8101B89CD2A4DA12FD7FD64F8A37621A989130E95A34"
+    },
+    "src/YanJi.Core/TimeParts.cs": {
+      "Bytes": 2634,
+      "Sha256": "1AD99FDE795F5F34D8E2318D0FCC73E3C7D92E2B464682828320D5502B413DF2"
+    },
+    "src/YanJi.Core/TimerMachine.cs": {
+      "Bytes": 5098,
+      "Sha256": "77F52A45374E4C50767AC217E7374AC3DE91E216B0691A702E470AF18C803E5A"
+    },
+    "src/YanJi.Core/YanJi.Core.csproj": {
+      "Bytes": 36,
+      "Sha256": "8D654C44B7BEBB6B31A9F2F606927F45B5072193ADC4EEF8CCE3F3CF3B278DF3"
+    },
+    "src/YanJi.Core/packages.lock.json": {
+      "Bytes": 94,
+      "Sha256": "1E39B4149E1289978E01A366893A0697356E855BC7156B7C70747288030042F9"
+    },
+    "src/YanJi.Data/AssemblyInfo.cs": {
+      "Bytes": 131,
+      "Sha256": "5C0256E84C0C7A0AD7F1102A49015651DBB4B29A67A0329FFBEDA2B7AD37C42F"
+    },
+    "src/YanJi.Data/KnowledgePackageModels.cs": {
+      "Bytes": 1522,
+      "Sha256": "8D523B120E986C7443A82518C4B6871D1D8DAA9FA1D227E13F365658FE1172A0"
+    },
+    "src/YanJi.Data/YanJi.Data.csproj": {
+      "Bytes": 198,
+      "Sha256": "8F76C96AB8A36E6043136E4E27AC1A65151EA97419805F0A20FDD08C8BA96F9A"
+    },
+    "src/YanJi.Data/YanJiDatabase.Knowledge.cs": {
+      "Bytes": 9551,
+      "Sha256": "8149A6EDC7C35D032E6B0F781FA78F5C7ACF8E77A599D81BDA6573C5B514A6F3"
+    },
+    "src/YanJi.Data/YanJiDatabase.Learning.cs": {
+      "Bytes": 3900,
+      "Sha256": "2E4D11B46B1D691EFEEFE54A1C4E093BD5CEBEC8939F0C7EA1BA1A06376F6766"
+    },
+    "src/YanJi.Data/YanJiDatabase.LearningMigration.cs": {
+      "Bytes": 4358,
+      "Sha256": "745D542B61017DDF8D6C783CBE01689BA34D12A76F8397A8F302635E7FC0310D"
+    },
+    "src/YanJi.Data/YanJiDatabase.LearningSchema.cs": {
+      "Bytes": 10242,
+      "Sha256": "238558DFA0C02F8F190988A98F66D2E9263E1F32CBA287B8C5ACA2FF033337A3"
+    },
+    "src/YanJi.Data/YanJiDatabase.Migrations.cs": {
+      "Bytes": 7065,
+      "Sha256": "7E0F0819D4FA21CE405247834137C2700024D2C587311626799557F875D4146E"
+    },
+    "src/YanJi.Data/YanJiDatabase.PackageMigration.cs": {
+      "Bytes": 4262,
+      "Sha256": "6F0B9882979519C38515CE10D6E8A1EFDB0604E791CC418BADCB8ED60C6A02CD"
+    },
+    "src/YanJi.Data/YanJiDatabase.PackageSchema.cs": {
+      "Bytes": 8043,
+      "Sha256": "2401F21C959D037D3C858DE384975CA184BED1B23BF5FD801FB3A29CCDD48D02"
+    },
+    "src/YanJi.Data/YanJiDatabase.Packages.cs": {
+      "Bytes": 24955,
+      "Sha256": "E0C0774A35FF1F96A47A126CCF41604E668E074B1A0524D1DA2591D8977751FD"
+    },
+    "src/YanJi.Data/YanJiDatabase.Profile.cs": {
+      "Bytes": 1507,
+      "Sha256": "C6D732999A11F69952D4C9A1822BC226FC50472AAB09CDEBABC84D773FC5312E"
+    },
+    "src/YanJi.Data/YanJiDatabase.Progress.cs": {
+      "Bytes": 6142,
+      "Sha256": "9A7DD8B9D5553DD7F26B26DCB17AEE99EEE806718D9C489FB99B5237A0A43BF8"
+    },
+    "src/YanJi.Data/YanJiDatabase.ReleaseUpgrade.cs": {
+      "Bytes": 11091,
+      "Sha256": "E03BC0C7D0AF407C22D070BDA97740963D1665CEA6DFA7E3AC88629A8706AA4D"
+    },
+    "src/YanJi.Data/YanJiDatabase.cs": {
+      "Bytes": 49267,
+      "Sha256": "B386004B8C1A94331F6A63E8C81B295F38F6FF676328D9F2589C1464C8D1AA23"
+    },
+    "src/YanJi.Data/packages.lock.json": {
+      "Bytes": 2266,
+      "Sha256": "4E0631CF91D6FCFC4188F6CC7D6CA535A4D251C6F807CF9C72422F0F8156F5CD"
+    },
+    "src/YanJi/Assets/Icons/YanJi.ico": {
+      "Bytes": 111013,
+      "Sha256": "5390EB4629A383397820457937CE483ACF8C6BD32D2A785DDADE99037CAF2010"
+    },
+    "src/YanJi/Assets/Icons/YanJi.png": {
+      "Bytes": 74142,
+      "Sha256": "71F93F33D4EA1A8D4DEF335D9C67B2D0C8B7FEE0C27BD1DBE40C6FE816EEB2FF"
+    }
+  },
+  "Committed": false
+}

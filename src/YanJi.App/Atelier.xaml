@@ -1,0 +1,43 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="clr-namespace:YanJi.App">
+  <!-- Scoped to Today; no implicit styles or shared palette replacement. -->
+  <local:FocusModeCheckedConverter x:Key="AtelierModeChecked"/>
+  <Style x:Key="AtelierTitle" TargetType="TextBlock" BasedOn="{StaticResource FocusTextBlock}">
+    <Setter Property="FontFamily" Value="SimSun, Microsoft YaHei UI"/><Setter Property="FontWeight" Value="Normal"/><Setter Property="FontSize" Value="38"/><Setter Property="Foreground" Value="{DynamicResource Ink}"/><Setter Property="Margin" Value="0,10,0,12"/><Setter Property="TextWrapping" Value="NoWrap"/>
+  </Style>
+  <Style x:Key="AtelierPlane" TargetType="Border"><Setter Property="Background" Value="{DynamicResource AtelierGlass}"/><Setter Property="BorderBrush" Value="{DynamicResource AtelierEdge}"/><Setter Property="BorderThickness" Value="0,0.75,0,0"/><Setter Property="CornerRadius" Value="20"/><Setter Property="Padding" Value="26,22"/></Style>
+  <Style x:Key="AtelierField" TargetType="ComboBox" BasedOn="{StaticResource FocusComboBox}"><Setter Property="MinHeight" Value="44"/><Setter Property="Background" Value="{DynamicResource AtelierField}"/><Setter Property="Margin" Value="0,5,0,0"/></Style>
+  <Style x:Key="AtelierMode" TargetType="RadioButton">
+    <Setter Property="Padding" Value="12,8"/><Setter Property="Foreground" Value="{DynamicResource Muted}"/><Setter Property="FontSize" Value="12"/><Setter Property="Cursor" Value="Hand"/><Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+    <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="RadioButton"><Grid><Border x:Name="ModeFace" Background="Transparent" CornerRadius="8" Padding="{TemplateBinding Padding}"><ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center"/></Border><Border x:Name="Ring" Margin="-2" CornerRadius="10" BorderBrush="{DynamicResource FocusOutline}" BorderThickness="2" Visibility="Collapsed"/></Grid><ControlTemplate.Triggers>
+      <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="ModeFace" Property="Background" Value="{DynamicResource Hover}"/></Trigger>
+      <Trigger Property="IsChecked" Value="True"><Setter TargetName="ModeFace" Property="Background" Value="{DynamicResource CardBackground}"/><Setter Property="Foreground" Value="{DynamicResource Accent}"/><Setter Property="FontWeight" Value="SemiBold"/></Trigger>
+      <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="Ring" Property="Visibility" Value="Visible"/></Trigger>
+      <Trigger Property="IsEnabled" Value="False"><Setter Property="Opacity" Value="0.55"/></Trigger>
+    </ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter>
+  </Style>
+  <Style x:Key="AtelierPrimary" TargetType="Button" BasedOn="{StaticResource Primary}">
+    <Setter Property="Background" Value="{DynamicResource AtelierButton}"/><Setter Property="Foreground" Value="{DynamicResource AtelierButtonInk}"/><Setter Property="MinHeight" Value="58"/><Setter Property="FontSize" Value="17"/><Setter Property="FontWeight" Value="Normal"/><Setter Property="Padding" Value="22,12"/><Setter Property="Margin" Value="0"/>
+    <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Grid>
+      <Border x:Name="Shadow" Background="#220F3529" CornerRadius="13" Margin="1,4,1,-3" IsHitTestVisible="False"/>
+      <Grid x:Name="ButtonFace"><Border x:Name="Surface" CornerRadius="12" Background="{TemplateBinding Background}"/>
+        <Border x:Name="Glaze" CornerRadius="12" IsHitTestVisible="False"><Border.Background><LinearGradientBrush StartPoint="0,0" EndPoint="0,1"><GradientStop Color="#32FFFFFF" Offset="0"/><GradientStop Color="#04FFFFFF" Offset="0.5"/><GradientStop Color="#18001309" Offset="1"/></LinearGradientBrush></Border.Background></Border>
+        <Border CornerRadius="12" BorderThickness="0,1,0,0" BorderBrush="#48FFFFFF" Margin="1" IsHitTestVisible="False"/>
+        <Border x:Name="Feedback" Background="{TemplateBinding Foreground}" CornerRadius="12" Opacity="0" IsHitTestVisible="False"/>
+        <Grid Margin="{TemplateBinding Padding}"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition/></Grid.ColumnDefinitions><Path x:Name="Play" Data="M0,0 L0,13 L10,6.5 Z" Fill="{TemplateBinding Foreground}" Width="10" Height="13" Margin="0,0,14,0" VerticalAlignment="Center"/><ContentPresenter Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" RecognizesAccessKey="True"/></Grid>
+      </Grid><Border x:Name="FocusRing" Margin="-4" BorderThickness="2" CornerRadius="16" BorderBrush="{DynamicResource FocusOutline}" Visibility="Collapsed" IsHitTestVisible="False"/>
+    </Grid><ControlTemplate.Triggers>
+      <Trigger Property="IsPressed" Value="True"><Setter TargetName="ButtonFace" Property="RenderTransform"><Setter.Value><TranslateTransform Y="2"/></Setter.Value></Setter><Setter TargetName="Shadow" Property="Opacity" Value="0"/></Trigger>
+      <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="FocusRing" Property="Visibility" Value="Visible"/></Trigger>
+      <Trigger Property="IsEnabled" Value="False"><Setter Property="Opacity" Value="0.6"/><Setter TargetName="Shadow" Property="Visibility" Value="Collapsed"/></Trigger>
+      <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True"><Setter TargetName="Glaze" Property="Visibility" Value="Collapsed"/><Setter TargetName="Shadow" Property="Visibility" Value="Collapsed"/><Setter TargetName="Surface" Property="BorderThickness" Value="1"/><Setter TargetName="Surface" Property="BorderBrush" Value="{DynamicResource Ink}"/></DataTrigger>
+    </ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter>
+  </Style>
+
+  <!-- Local finish only: shared commands, geometry and global control templates remain intact. -->
+  <Style x:Key="AtelierSummaryPlane" TargetType="Border"><Setter Property="Background" Value="{DynamicResource AtelierSummary}"/><Setter Property="CornerRadius" Value="14"/><Setter Property="Padding" Value="16,13"/><Setter Property="BorderBrush" Value="{DynamicResource AtelierEdge}"/><Setter Property="BorderThickness" Value="0,0.75,0,0"/></Style>
+  <Style x:Key="AtelierAuxiliaryButton" TargetType="Button" BasedOn="{StaticResource QuietButton}"><Setter Property="Background" Value="{DynamicResource AtelierAuxiliary}"/><Setter Property="Foreground" Value="{DynamicResource AtelierMuted}"/><Setter Property="Padding" Value="10,5"/><Setter Property="MinHeight" Value="30"/><Setter Property="FontSize" Value="12"/><Setter Property="Margin" Value="0"/></Style>
+  <Style x:Key="AtelierInlineButton" TargetType="Button" BasedOn="{StaticResource AtelierAuxiliaryButton}"><Setter Property="Background" Value="Transparent"/><Setter Property="Padding" Value="8,2"/><Setter Property="MinHeight" Value="24"/></Style>
+  <Style x:Key="AtelierManualButton" TargetType="Button" BasedOn="{StaticResource AtelierAuxiliaryButton}"><Setter Property="Background" Value="{DynamicResource AtelierSecondary}"/><Setter Property="Foreground" Value="{DynamicResource Ink}"/><Setter Property="MinHeight" Value="36"/><Setter Property="FontSize" Value="13"/><Setter Property="Margin" Value="0,12,0,0"/></Style>
+  <Style x:Key="AtelierMetricButton" TargetType="Button" BasedOn="{StaticResource QuietButton}"><Setter Property="Padding" Value="0"/><Setter Property="Margin" Value="0"/><Setter Property="HorizontalAlignment" Value="Stretch"/><Setter Property="HorizontalContentAlignment" Value="Left"/></Style>
+  <Style x:Key="AtelierMeta" TargetType="TextBlock" BasedOn="{StaticResource MutedText}"><Setter Property="Foreground" Value="{DynamicResource AtelierMuted}"/></Style>
+</ResourceDictionary>

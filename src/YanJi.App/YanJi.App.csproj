@@ -9,6 +9,8 @@
   <ItemGroup>
     <Resource Include="../YanJi/Assets/Icons/YanJi.ico" Link="Assets/Icons/YanJi.ico" />
     <Resource Include="../YanJi/Assets/Icons/YanJi.png" Link="Assets/Icons/YanJi.png" />
+    <Resource Include="Assets/Atmosphere/window-light-v1.png" />
+    <None Include="Assets/Atmosphere/README.md" Link="ATMOSPHERE-SOURCE.md" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
   <ItemGroup><ProjectReference Include="../YanJi.Data/YanJi.Data.csproj" /><PackageReference Include="CommunityToolkit.Mvvm" /></ItemGroup>
   <ItemGroup><None Include="../../resources/licenses/**/*" Link="licenses/%(RecursiveDir)%(Filename)%(Extension)" CopyToPublishDirectory="PreserveNewest" /></ItemGroup>
@@ -18,12 +20,12 @@
     <None Include="../../COPYRIGHT.md" Link="COPYRIGHT.md" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <None Include="../../THIRD-PARTY-NOTICES.md" Link="THIRD-PARTY-NOTICES.md" CopyToPublishDirectory="PreserveNewest" />
     <None Include="../../resources/legal/third-party-licenses.json" Link="third-party-licenses.json" CopyToPublishDirectory="PreserveNewest" />
-    <None Include="../../docs/QUIET-FOCUS-2.md" Link="START-HERE.md" CopyToPublishDirectory="PreserveNewest" />
-    <None Include="../../docs/QUIET-FOCUS-2.md" Link="USER-GUIDE.md" CopyToPublishDirectory="PreserveNewest" />
+    <None Include="../../docs/CHENGJING-RESTORATION.md" Link="START-HERE.md" CopyToPublishDirectory="PreserveNewest" />
+    <None Include="../../docs/CHENGJING-RESTORATION.md" Link="USER-GUIDE.md" CopyToPublishDirectory="PreserveNewest" />
     <None Include="../../docs/V04-RCFINAL-UPGRADE.md" Link="UPGRADE-ROLLBACK.md" CopyToPublishDirectory="PreserveNewest" />
     <None Include="../../docs/V04-RCFINAL-MANUAL.md" Link="MANUAL-ACCEPTANCE.md" CopyToPublishDirectory="PreserveNewest" />
     <None Include="../../docs/V04-SIMPLE-REFERENCES.md" Link="KNOWLEDGE-SOURCES.md" CopyToPublishDirectory="PreserveNewest" />
-    <None Include="../../docs/QUIET-FOCUS-2.md" Link="RELEASE-NOTES.md" CopyToPublishDirectory="PreserveNewest" />
+    <None Include="../../docs/CHENGJING-RESTORATION.md" Link="RELEASE-NOTES.md" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
   <ItemGroup><None Include="../../resources/knowledge-packages/**/*.json" Link="knowledge-packages/%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" /></ItemGroup>
 </Project>

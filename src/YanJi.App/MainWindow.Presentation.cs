@@ -34,18 +34,29 @@ public partial class MainWindow
         foreach(var text in VisualChildren(this).OfType<TextBlock>().Where(t=>Equals(t.Tag,"NavLabel")))text.Visibility=Visibility.Visible;
         foreach(var item in NavigationList.Items.OfType<ListBoxItem>())item.Padding=new Thickness(narrow?8:12,11,8,11);
         MainScroll.Padding=new Thickness(narrow?24:32,narrow?22:29,narrow?24:32,20);
-        TimerDigits.FontSize=narrow?56:72;StudioTodayTitle.FontSize=narrow?28:32;
+        TimerDigits.FontSize=narrow?88:104;StudioTodayTitle.FontSize=narrow?32:38;
+        AtelierClockBox.Height=narrow?100:120;
+        AtelierFocusWidth.Margin=new Thickness(0,0,narrow?0:72,20);
+        AtelierFocusPlane.Padding=new Thickness(narrow?20:26,narrow?18:22,narrow?20:26,narrow?18:22);
+        AtelierClockGrid.Margin=new Thickness(0,narrow?12:16,0,narrow?12:16);
+        TodayReflection.Padding=narrow?new Thickness(14,9,14,9):new Thickness(16,13,16,13);
         UpdateStudioDate();
         if(RecordList!=null)RecordList.MaxHeight=Math.Max(200,ActualHeight-300);
         var content=Math.Max(0,ActualWidth-NavColumn.Width.Value-MainScroll.Padding.Left-MainScroll.Padding.Right-24);
-        TodayLeft.Width=new GridLength(1,GridUnitType.Star);TodayGap.Width=new GridLength(narrow?19:24);TodayRight.Width=new GridLength(narrow?170:238);
-        Grid.SetColumn(TodayReflection,2);Grid.SetRow(TodayReflection,0);
+        TodayLeft.Width=new GridLength(1,GridUnitType.Star);TodayGap.Width=new GridLength(narrow?19:24);TodayRight.Width=new GridLength(narrow?180:210);
+        Grid.SetColumn(TodayReflection,narrow?0:1);Grid.SetRow(TodayReflection,narrow?1:0);
+        TodayReflection.Margin=narrow?new Thickness(0,14,0,0):new Thickness(24,8,0,0);
+        AtelierHeader.Margin=new Thickness(0,2,0,narrow?14:26);
+        AtelierJournal.ColumnDefinitions[1].Width=new GridLength(narrow?0:20);
+        AtelierJournal.ColumnDefinitions[2].Width=new GridLength(narrow?0:1,GridUnitType.Star);
+        Grid.SetColumn(AtelierNext,narrow?0:2);Grid.SetRow(AtelierNext,narrow?1:0);
+        AtelierNext.Margin=new Thickness(0,narrow?16:0,0,0);
         CalendarLeft.Width=StatsLeft.Width=new GridLength(1,GridUnitType.Star);
         CalendarGap.Width=StatsGap.Width=new GridLength(narrow?16:24);
         CalendarRight.Width=new GridLength(narrow?220:285);StatsRight.Width=new GridLength(narrow?190:265);
         Grid.SetColumn(CalendarDetail,2);Grid.SetRow(CalendarDetail,0);Grid.SetColumn(StatsDailyCard,2);Grid.SetRow(StatsDailyCard,0);
         if(TimerFields!=null&&TimerChapterField!=null)
-        {TimerFields.ColumnDefinitions[0].Width=new GridLength(narrow?105:130);TimerFields.ColumnDefinitions[1].Width=new GridLength(12);TimerFields.ColumnDefinitions[2].Width=new GridLength(1,GridUnitType.Star);Grid.SetColumn(TimerChapterField,2);Grid.SetRow(TimerChapterField,0);}
+        {TimerFields.ColumnDefinitions[0].Width=new GridLength(1,GridUnitType.Star);TimerFields.ColumnDefinitions[1].Width=new GridLength(12);TimerFields.ColumnDefinitions[2].Width=new GridLength(1,GridUnitType.Star);Grid.SetColumn(TimerChapterField,2);Grid.SetRow(TimerChapterField,0);}
         if(DrawerSurface!=null)DrawerSurface.Width=Math.Min(620,Math.Max(0,ActualWidth-32));
         foreach(var pair in new[]{(AuxGrid2,AuxRight2),(AuxGrid3,AuxRight3),(AuxGrid5,AuxRight5)})
         {var stack=content<740;pair.Item1.ColumnDefinitions[0].Width=new GridLength(stack?1:1.6,GridUnitType.Star);pair.Item1.ColumnDefinitions[1].Width=new GridLength(stack?0:16);pair.Item1.ColumnDefinitions[2].Width=new GridLength(stack?0:1,GridUnitType.Star);Grid.SetColumn(pair.Item2,stack?0:2);Grid.SetRow(pair.Item2,stack?1:0);}

@@ -23,3 +23,9 @@ TestResults/
 # Approved application branding, not disposable screenshots.
 !design/branding/yanji-icon-v1.png
 !src/YanJi/Assets/Icons/YanJi.png
+
+# Selected, redistributable Quiet Focus scenery (not test captures).
+!src/YanJi.App/Assets/Atmosphere/window-light-v1.png
+
+# Approved original A reference, not transient design screenshots.
+!design/quiet-focus-2/concepts/A-inspiration.png

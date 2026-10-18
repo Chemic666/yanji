@@ -109,10 +109,10 @@ internal static class Polish2Validation
             base.OnMouseLeftButtonUp(e);
         }
     }
-    internal static void ShowButtonLab(MainWindow main,string output)
+    internal static void ShowButtonLab(MainWindow main,string output,string styleKey="Primary")
     {
         var root=new StackPanel{Margin=new Thickness(30),Focusable=true};root.Children.Add(new TextBlock{Text="Quiet Focus · Soft Depth",FontSize=22,Margin=new Thickness(0,0,0,24)});
-        var sample=new StateSpecimenButton{ToolTip="仅验收样本延迟释放140ms以采集绘制帧，正式按钮没有释放延迟。",Content="开始学习",Style=(Style)main.FindResource("Primary"),Width=150,HorizontalAlignment=HorizontalAlignment.Left};System.Windows.Automation.AutomationProperties.SetAutomationId(sample,"StateSample");root.Children.Add(sample);
+        var sample=new StateSpecimenButton{ToolTip="仅验收样本延迟释放140ms以采集绘制帧，正式按钮没有释放延迟。",Content="开始学习",Style=(Style)main.FindResource(styleKey),Width=styleKey=="AtelierPrimary"?210:150,HorizontalAlignment=HorizontalAlignment.Left};System.Windows.Automation.AutomationProperties.SetAutomationId(sample,"StateSample");root.Children.Add(sample);
         var lab=new Window{Owner=main,Title="研迹 · 按钮验收",Width=600,Height=300,Content=root,WindowStartupLocation=WindowStartupLocation.CenterOwner};
         var saved=new HashSet<string>();var events=new List<object>();
         var row=new WrapPanel{Margin=new Thickness(0,18,0,0)};

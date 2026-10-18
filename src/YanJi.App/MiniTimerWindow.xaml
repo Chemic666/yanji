@@ -11,8 +11,10 @@
           <TextBlock Text="{Binding TimerChapter.Name}" Style="{StaticResource MutedText}" FontSize="12" TextAlignment="Center" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" Margin="0,3,0,0" ToolTip="{Binding TimerChapter.Name}"/>
           <TextBlock Text="{Binding TimerStateText}" Style="{StaticResource MutedText}" FontSize="11" TextAlignment="Center" Margin="0,3,0,0"/>
         </StackPanel>
-        <Grid Grid.Row="2"><TextBlock Text="悬停或 Tab 显示操作 · 拖动面板移动" Style="{StaticResource MutedText}" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0" IsHitTestVisible="False"/>
-          <Border x:Name="Toolbar" Background="{DynamicResource MiniSurface}" CornerRadius="10" Padding="0,4">
+        <Grid Grid.Row="2"><TextBlock x:Name="ToolbarHint" Text="悬停或 Tab 显示操作 · 拖动面板移动" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0" IsHitTestVisible="False">
+          <TextBlock.Style><Style TargetType="TextBlock" BasedOn="{StaticResource MutedText}"><Style.Triggers><DataTrigger Binding="{Binding IsMouseOver,RelativeSource={RelativeSource AncestorType=Window}}" Value="True"><Setter Property="Visibility" Value="Hidden"/></DataTrigger><DataTrigger Binding="{Binding IsKeyboardFocusWithin,RelativeSource={RelativeSource AncestorType=Window}}" Value="True"><Setter Property="Visibility" Value="Hidden"/></DataTrigger></Style.Triggers></Style></TextBlock.Style>
+        </TextBlock>
+          <Border x:Name="Toolbar" Background="{DynamicResource CardBackground}" CornerRadius="10" Padding="0,4">
             <Border.Style><Style TargetType="Border"><Setter Property="Opacity" Value="0"/><Setter Property="IsHitTestVisible" Value="False"/><Style.Triggers><DataTrigger Binding="{Binding IsMouseOver,RelativeSource={RelativeSource AncestorType=Window}}" Value="True"><Setter Property="Opacity" Value="1"/><Setter Property="IsHitTestVisible" Value="True"/></DataTrigger><DataTrigger Binding="{Binding IsKeyboardFocusWithin,RelativeSource={RelativeSource AncestorType=Window}}" Value="True"><Setter Property="Opacity" Value="1"/><Setter Property="IsHitTestVisible" Value="True"/></DataTrigger></Style.Triggers></Style></Border.Style>
             <WrapPanel HorizontalAlignment="Center">
               <Button Content="开始" Visibility="{Binding CanStartFocus,Converter={StaticResource MiniVisible}}" Command="{Binding StartCommand}" IsEnabled="{Binding CanStartFocus}" Style="{StaticResource Primary}" Padding="10,4" MinHeight="32" Margin="0,0,6,0" ToolTip="开始学习"/>
