@@ -80,7 +80,7 @@ certutil -hashfile YanJi-v0.4.0-beta.1-windows-x64.zip SHA256
 
 ## 反馈与参与
 
-普通问题可在[项目 Issues](https://github.com/Chemic666/yanji/issues)提供版本、复现步骤和脱敏截图；本轮未创建任何 Issue。**不要上传学习数据库、完整备份、私人路径或凭据。** 安全问题先阅读 [SECURITY.md](SECURITY.md)，私密渠道未确认前不要公开攻击细节。
+普通问题可在[项目 Issues](https://github.com/Chemic666/yanji/issues)提供版本、复现步骤和脱敏截图；开发任务及协作执行约定见 [GitHub 协作流程](docs/GITHUB-COLLABORATION.md)；Issues 与 Projects 看板分别核查，未验证的看板草稿不视为已完成或不存在。**不要上传学习数据库、完整备份、私人路径或凭据。** 安全问题先阅读 [SECURITY.md](SECURITY.md)，私密渠道未确认前不要公开攻击细节。
 
 开发使用 C#、WPF、.NET 10、SQLite 与 MVVM，见 [CONTRIBUTING.md](CONTRIBUTING.md)。欢迎小范围、可复现、附必要验证的改进；日常使用不需要理解这些技术。
 
