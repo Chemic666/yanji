@@ -1,6 +1,6 @@
 # GitHub 驱动的协作与交付约定
 
-更新：2026-10-19。对应 [Issue #2](https://github.com/Chemic666/yanji/issues/2)。本文件记录工作流程，不代表已实现无人值守调度或已通过本机环境验证。
+更新：2026-10-19。对应 [Issue #2](https://github.com/Chemic666/yanji/issues/2) 与 [PR #3](https://github.com/Chemic666/yanji/pull/3)。本地工具链、隔离测试和看板访问已补验；尚未配置周期唤醒、GitHub 事件触发或 CI。
 
 ## 事实来源与核查顺序
 
@@ -18,23 +18,42 @@
 
 ## 分支、验证与进度回写
 
-1. 从核实后的基线创建 `fix/...` 或 `feat/...` 或 `chore/...`；禁止在未检查本地差异时远程强推、覆盖用户工作区或自动合并复杂变更。
-2. 先读受影响模块的代码和隔离测试规范，再实现最小范围更改。使用测试专用目录，不访问默认 `%LOCALAPPDATA%\\YanJi` 的真实数据库和备份；不可用的真实环境记 `NOT TESTED`。
+1. 优先接续同一任务已有分支和 PR；新分支默认使用 `codex/` 前缀。从核实后的远程基线开始，禁止在未检查本地差异时远程强推、覆盖用户工作区或自动合并复杂变更。若本地与远程历史无共同祖先，先核查历史清理记录，保留旧分支，禁止直接合并旧历史。
+2. 先读受影响模块的代码和隔离测试规范，再实现最小范围更改。使用测试专用目录，不访问默认 `%LOCALAPPDATA%\YanJi` 的真实数据库和备份；不可用的真实环境记 `NOT TESTED`。
 3. 阶段结束提交有意义的 commit；PR 正文链接 Issue，附测试命令、输出摘要、构建环境、回归风险、未测边界和必要回退方式。只对实际执行的测试写 PASS/FAIL，不把旧证据当新验证。
 4. 同步 Issue 进展与验收项；若有 Projects 写入途径，则同步看板字段，否则留待后续手动验证。仅在验收条件实际满足时关闭 Issue；合并前核对 CI、PR diff、最新 main 与当前发行状态。
-5. 阶段收尾重新读取 Issues、PR、需求更新及 Projects（若可访问），对新依赖重新排序。不得自行设定“持续运行”的后台代理；**后续自动执行需要真实外部触发器、在线执行器及适当权限**，本次聊天的权限不能构成持久在线保障。
+5. 阶段收尾重新读取 Issues、PR、需求更新及 Projects（若可访问），对新依赖重新排序。当前对话运行期间，这些步骤及必要的开发、测试、修复、阶段提交/推送和 Issue 回写可自主执行；PR 合并、Release、标签和高风险操作仍按单独授权办理。**后续自动执行需要真实触发器、在线执行器及适当权限**，本次聊天的权限不能构成持久在线保障。
 
 ## 当前连接和测试矩阵（2026-10-19）
 
 | 能力 | 本次状态 | 说明 |
 |---|---|---|
-| GitHub 仓库、Issues、PR、分支 | 已验证可读，仓库有写权限 | 具体写入逐操作审计，不能据此推断 Projects 写权限 |
-| GitHub Projects #2 草稿与状态字段 | NOT VERIFIED | 仅知道看板 URL，尚未读取条目或验证同步 |
+| GitHub 仓库、Issues、PR、分支 | 已验证读取与远程 fetch | 连接账户具备仓库写权限；阶段提交仅推送对应任务分支 |
+| GitHub Projects #2 条目与状态字段 | 已通过登录浏览器读取、写回并刷新验证 | 无筛选的当前看板：Todo 0、In Progress 为 #2、Done 为 #1；无其他当前任务。已有测试 Issue #1 的 Status 写回 Done，刷新后保留；没有更改 Issue 开关状态 |
+| Projects 自动加入/状态联动 | 配置与已有运行事件已核对 | 自动加入启用，目标 yanji，过滤 `is:issue is:open`；#1 时间线实际记录自动加入、设为 Todo、关闭后转 Done。本轮未新建重复测试 Issue，未新测所有七项规则 |
 | 远程 main/Release | 已读取 | 当前 main `9f1089f4eecbface7084a7387b992bdf029cd621`；已有 Beta 预发行 |
-| Windows 本地 `D:\\Projects\\yanji` | BLOCKED | 登记的 Desktop Commander 设备离线，未验证 `git status` |
-| .NET 10/WPF 构建及本地隔离测试 | NOT TESTED | 不将仓库历史验证报告冒充本轮运行 |
-| GitHub Actions CI | 无运行记录 | 自动化流水线实际执行能力尚未建立 |
-| 自动周期唤醒/无人值守开发 | 未建立 | 本文件不是调度系统，不承诺聊天结束后继续工作 |
+| Windows 本地工作树 | 已核对并接续 PR #3 分支 | 原本地 `codex/v04-rc-polish2` 保留；未跟踪文件逐项哈希保存，本轮不提交这些资料；产品源码与远程 main 一致 |
+| .NET 10/WPF 构建及本地隔离测试 | PASS，限下述范围 | 已安装 SDK 10.0.401 与缓存可用；默认系统 dotnet 仅有 6.0 运行时，不能直接使用 |
+| GitHub Actions CI | 未配置 | 当前仓库没有 workflow 文件，本机通过不等于 CI 通过 |
+| 自动周期唤醒/GitHub 事件触发开发 | 未配置，后续需触发 | 当前没有为此项目设置计划或事件调度；新的对话指令可启动下一轮，用户无需转发任务报告 |
+
+## 本次环境基线与任务顺序
+
+1. 已读取当前 Issues、PR #3、远程 main 和看板，确认现有 Beta/安装器已交付；不按过期本地发布报告重做功能。当前唯一开放任务为 #2，本次继续其剩余验收项。
+2. 已拉取远程引用。旧本地历史与远程无共同祖先；结合 `docs/HISTORY-SANITIZATION.md` 核对后，直接接续已有 `chore/github-collaboration-baseline-20261019`，不合并或推送旧历史。
+3. 已复用安装的 .NET 10 SDK 和包缓存，测试/构建使用 `--no-restore`。测试写入隔离目录，不启动正式模式，不读取真实学习库。
+4. 已完成看板访问、自动规则和既有自动加入事件核查、测试事项状态写回验证，再补齐 Issue/PR 验收记录。原始本机日志和截图留在忽略的 `artifacts/github-collaboration-20261019/`，不上传原始证据。
+5. 阶段交付后重新抓取待办。若没有其他开放任务或看板草稿，则停止当前轮次，不从历史计划编造新功能。PR 的审查/合并与新的运行触发分别报告。
+
+## 本轮真实验证
+
+验证源码基线为 PR #3 的 `888ac06`，其产品源码与 main `9f1089f` 一致。后续仅修改本协作文档，不重跑不受影响的业务检查。
+
+- SDK：10.0.401；测试宿主运行时为现有 10.0.12，WPF 应用的自包含运行时配置仍为 10.0.13。本次未发布或重新制作安装器。
+- xUnit/VSTest 定向测试：`dotnet test tests/YanJi.Tests/YanJi.Tests.csproj -c Release --no-restore --filter "FullyQualifiedName~RuntimeLocationTests|FullyQualifiedName~TimerMachineTests|FullyQualifiedName~TimePartsTests|FullyQualifiedName~DatabaseTests" --logger "trx;LogFileName=baseline.trx" --results-directory artifacts/github-collaboration-20261019/test-results --nologo`。**Passed: 44, Failed: 0, Skipped: 0**。
+- WPF 构建：`dotnet build src/YanJi.App/YanJi.App.csproj -c Release --no-restore --nologo`。退出码 0，**0 warnings / 0 errors**。
+- 上述 `dotnet` 指本轮确认的现有 SDK 可执行文件；包缓存沿用既有位置，CLI 状态和测试数据重定向到本轮 artifacts。没有新增安装或下载。其他环境先核对 SDK/缓存，不照搬本机路径。
+- NOT TESTED：本轮没有新做 WPF 交互验收、真实电源/IME/DPI/干净机测试、全量回归或 CI。构建成功不能代替这些验收。
 
 ## 免费与安全约束
 
